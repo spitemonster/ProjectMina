@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://c37sghih0u831"]
+
+[ext_resource type="Script" path="res://scenes/levels/level_base/LevelBase.cs" id="1_2guyt"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0bn2h"]
+
+[sub_resource type="Sky" id="Sky_d7hja"]
+sky_material = SubResource("ProceduralSkyMaterial_0bn2h")
+
+[sub_resource type="Environment" id="Environment_r8hml"]
+background_mode = 2
+sky = SubResource("Sky_d7hja")
+ambient_light_source = 3
+reflected_light_source = 2
+tonemap_mode = 2
+
+[node name="LevelBase" type="Node3D"]
+script = ExtResource("1_2guyt")
+
+[node name="PlayerStart" type="Marker3D" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_r8hml")

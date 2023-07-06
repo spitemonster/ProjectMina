@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://waxi0ov75vye"]
+
+[ext_resource type="Script" path="res://ui/MainMenu.cs" id="1_snfw4"]
+
+[node name="MainMenu" type="Control" node_paths=PackedStringArray("_returnButton", "_quitButton")]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_snfw4")
+_returnButton = NodePath("ColorRect/MarginContainer/VBoxContainer/ReturnButton")
+_quitButton = NodePath("ColorRect/MarginContainer/VBoxContainer/QuitButton")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.509804, 0.509804, 0.509804, 0.760784)
+
+[node name="MarginContainer" type="MarginContainer" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect/MarginContainer"]
+layout_mode = 2
+
+[node name="ReturnButton" type="Button" parent="ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Return to Game"
+
+[node name="QuitButton" type="Button" parent="ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Quit"

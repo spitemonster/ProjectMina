@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://qs22y507arl5"]
+
+[ext_resource type="Script" path="res://scenes/MainScene.cs" id="1_i74qh"]
+[ext_resource type="PackedScene" uid="uid://cj5ac5ca2h247" path="res://_dev/scenes/gyms/ModularMapTest.tscn" id="2_e7ueg"]
+[ext_resource type="PackedScene" uid="uid://c45weam7tjqmw" path="res://scenes/characters/player_character/PlayerCharacter.tscn" id="3_ofqq3"]
+[ext_resource type="PackedScene" uid="uid://waxi0ov75vye" path="res://ui/MainMenu.tscn" id="4_hgum0"]
+
+[node name="MainScene" type="Node3D" node_paths=PackedStringArray("_levelSlot")]
+script = ExtResource("1_i74qh")
+_levelSlot = NodePath("LevelSlot")
+_startingLevel = ExtResource("2_e7ueg")
+
+[node name="LevelSlot" type="Node3D" parent="."]
+
+[node name="PlayerCharacter" parent="." instance=ExtResource("3_ofqq3")]
+_stealthCapsulePosition = Vector3(0, 0, 0)
+
+[node name="MainMenu" parent="." instance=ExtResource("4_hgum0")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]

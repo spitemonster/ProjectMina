@@ -1,0 +1,38 @@
+[gd_scene load_steps=9 format=3 uid="uid://d2r7tsyvv6gsp"]
+
+[ext_resource type="Texture2D" uid="uid://0a4vrlttxrba" path="res://_dev/assets/images/crate2_diffuse.png" id="1_m5nl0"]
+[ext_resource type="Texture2D" uid="uid://b2xxixvb035p6" path="res://_dev/assets/images/crate2_bump.png" id="2_kmotd"]
+[ext_resource type="Texture2D" uid="uid://3ivkysa18khd" path="res://_dev/assets/images/crate2_normal.png" id="3_wqqa1"]
+[ext_resource type="PackedScene" uid="uid://do7fbomwbyldg" path="res://_dev/scenes/gizmo.tscn" id="5_wlyjh"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_xmm4g"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ueadv"]
+albedo_texture = ExtResource("1_m5nl0")
+metallic_specular = 0.1
+normal_enabled = true
+normal_texture = ExtResource("3_wqqa1")
+heightmap_texture = ExtResource("2_kmotd")
+uv1_offset = Vector3(0.5, 0.5, 0.5)
+uv1_triplanar = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_16s4j"]
+material = SubResource("StandardMaterial3D_ueadv")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_crahu"]
+points = PackedVector3Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5)
+
+[node name="Crate" type="RigidBody3D"]
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, -5, 0)
+collision_mask = 11
+mass = 150.0
+physics_material_override = SubResource("PhysicsMaterial_xmm4g")
+angular_damp = 2.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_16s4j")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_crahu")
+
+[node name="Gizmo" parent="." instance=ExtResource("5_wlyjh")]

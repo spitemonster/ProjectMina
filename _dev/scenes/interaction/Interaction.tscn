@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://p7v7yqiyokub"]
+
+[ext_resource type="Script" path="res://_dev/scenes/interaction/Interaction.cs" id="1_rulmw"]
+
+[node name="Interaction" type="Node"]
+script = ExtResource("1_rulmw")

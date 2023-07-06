@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://byh3hlhe1fd0j"]
+
+[ext_resource type="Script" path="res://scenes/characters/character_base/CharacterBase.cs" id="1_5qytg"]
+[ext_resource type="PackedScene" uid="uid://deagggwvcpss3" path="res://scenes/components/health/HealthComponent.tscn" id="2_kt7d1"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d1qpq"]
+
+[node name="CharacterBase" type="CharacterBody3D" node_paths=PackedStringArray("_characterBody", "_characterHealthComponent")]
+script = ExtResource("1_5qytg")
+_characterBody = NodePath("CharacterBody")
+_characterHealthComponent = NodePath("HealthComponent")
+
+[node name="CharacterBody" type="CollisionShape3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_d1qpq")
+
+[node name="HealthComponent" parent="." instance=ExtResource("2_kt7d1")]
