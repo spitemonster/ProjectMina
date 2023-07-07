@@ -8,12 +8,14 @@ public partial class DevUI : Control
 	private Label _FPSLabel;
 	private Label _maxFPSLabel;
 	private Label _minFPSLabel;
+	private Label _frameTimeLabel;
 	private VBoxContainer _notificationQueue;
 	private VBoxContainer _monitorContainer;
 	private double _minFPS = 120.0;
 	private double _maxFPS = 0.0;
 	private bool _minFPSTimeoutEnded = false;
 	private PackedScene ui;
+	private int _lastuSec = 0;
 
 	public override void _Ready()
 	{
@@ -23,8 +25,24 @@ public partial class DevUI : Control
 		_FPSLabel = GetNode<Label>("%FPS");
 		_maxFPSLabel = GetNode<Label>("%MaxFPS");
 		_minFPSLabel = GetNode<Label>("%MinFPS");
+		_frameTimeLabel = GetNode<Label>("%FrameTime");
 		_monitorContainer = GetNode<VBoxContainer>("%MonitorContainer");
 		_notificationQueue = GetNode<VBoxContainer>("%NotificationQueue");
+
+		Timer minFPSTimer = new()
+		{
+			OneShot = true,
+			Autostart = true,
+			WaitTime = .75f
+		};
+
+		minFPSTimer.Timeout += () =>
+		{
+			_minFPSTimeoutEnded = true;
+			minFPSTimer.QueueFree();
+		};
+
+		AddChild(minFPSTimer);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -46,6 +64,8 @@ public partial class DevUI : Control
 			_maxFPS = currentFPS;
 			_maxFPSLabel.Text = _maxFPS.ToString();
 		}
+
+		_frameTimeLabel.Text = (Mathf.Round(Performance.GetMonitor(Performance.Monitor.TimeProcess) * 1000) / 100).ToString();
 	}
 
 	public void PushDevNotification(string notification)
@@ -56,5 +76,14 @@ public partial class DevUI : Control
 		};
 
 		_notificationQueue.AddChild(msg);
+	}
+
+	public LabelValueRow AddDevMonitor(string label)
+	{
+		LabelValueRow newMonitor = new();
+		_monitorContainer.AddChild(newMonitor);
+		newMonitor.DisplayLabel = label;
+
+		return newMonitor;
 	}
 }
