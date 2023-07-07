@@ -77,7 +77,7 @@ public partial class InputManager : Node
 
 		if (e.IsActionPressed("jump"))
 		{
-			Dev.UI.PushDevNotification("jumped");
+			Dev.UI.AddDevMonitor("test");
 			EmitSignal(SignalName.Jump);
 			return;
 		}

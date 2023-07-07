@@ -8,7 +8,11 @@ public partial class LabelValueRow : HBoxContainer
 	public string DisplayLabel
 	{
 		get => _displayLabel;
-		set => _displayLabel = value;
+		set
+		{
+			_labelNode.Text = value;
+			_displayLabel = value;
+		}
 	}
 
 	[Export]
