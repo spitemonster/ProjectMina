@@ -10,6 +10,7 @@ namespace ProjectMina
 
 		[Export]
 		private Resource _startingLevel;
+
 		private InputManager _inputManager;
 		public LevelBase CurrentLevel { get; private set; }
 

@@ -13,8 +13,6 @@ public partial class Growler : Label
 
 	public override void _Ready()
 	{
-		GD.Print("growler ready");
-
 		// Debug.Assert(_animPlayer != null, "no anim player");
 		// _animPlayer?.Play("FadeOut");
 
