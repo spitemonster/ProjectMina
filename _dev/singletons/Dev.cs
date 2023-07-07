@@ -5,6 +5,16 @@ public partial class Dev : Node
 {
 	public static Dev Core { get; private set; }
 	public static DevUI UI { get; private set; }
+	private static readonly string _scenePath = "res://_dev/ui/DevUI.tscn";
+
+	public override void _EnterTree()
+	{
+		if (Core != null)
+		{
+			QueueFree();
+		}
+		Core = this;
+	}
 
 	public override void _Ready()
 	{
@@ -12,9 +22,21 @@ public partial class Dev : Node
 
 		if (Global.Data != null)
 		{
-			UI = new DevUI();
-			Global.Data.DevLog = UI;
-			GetNode("/root/MainScene").AddChild(UI);
+			if (ResourceLoader.Exists(_scenePath) && ResourceLoader.Load(_scenePath) is PackedScene s)
+			{
+				CallDeferred("InitializeUI", s);
+			}
+		}
+	}
+
+
+	private void InitializeUI(PackedScene hudScene)
+	{
+		DevUI devHUD = hudScene.Instantiate<DevUI>();
+		if (devHUD != null)
+		{
+			GetTree().Root.GetNode("MainScene").AddChild(devHUD);
+			UI = devHUD;
 		}
 	}
 }

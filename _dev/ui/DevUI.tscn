@@ -37,69 +37,69 @@ offset_bottom = 171.0
 grow_horizontal = 0
 theme_override_styles/panel = SubResource("StyleBoxFlat_38dsi")
 
-[node name="InfoWrapper" type="VBoxContainer" parent="PanelContainer"]
+[node name="MonitorContainer" type="VBoxContainer" parent="PanelContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
 
-[node name="FPSCounter" type="HBoxContainer" parent="PanelContainer/InfoWrapper"]
+[node name="FPSCounter" type="HBoxContainer" parent="PanelContainer/MonitorContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 
-[node name="FPSLabel" type="Label" parent="PanelContainer/InfoWrapper/FPSCounter"]
+[node name="FPSLabel" type="Label" parent="PanelContainer/MonitorContainer/FPSCounter"]
 modulate = Color(0.647059, 0.647059, 0.647059, 1)
 layout_mode = 2
 theme = SubResource("Theme_0f8xc")
 text = "FPS:
 "
 
-[node name="FPS" type="Label" parent="PanelContainer/InfoWrapper/FPSCounter"]
+[node name="FPS" type="Label" parent="PanelContainer/MonitorContainer/FPSCounter"]
 unique_name_in_owner = true
 modulate = Color(0, 0.784314, 1, 1)
 layout_mode = 2
 theme = SubResource("Theme_0f8xc")
 text = "999"
 
-[node name="MaxFPSCounter" type="HBoxContainer" parent="PanelContainer/InfoWrapper"]
+[node name="MaxFPSCounter" type="HBoxContainer" parent="PanelContainer/MonitorContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 
-[node name="MaxFPSLabel" type="Label" parent="PanelContainer/InfoWrapper/MaxFPSCounter"]
+[node name="MaxFPSLabel" type="Label" parent="PanelContainer/MonitorContainer/MaxFPSCounter"]
 modulate = Color(0.647059, 0.647059, 0.647059, 1)
 layout_mode = 2
 theme = SubResource("Theme_0f8xc")
 text = "Max FPS:
 "
 
-[node name="MaxFPS" type="Label" parent="PanelContainer/InfoWrapper/MaxFPSCounter"]
+[node name="MaxFPS" type="Label" parent="PanelContainer/MonitorContainer/MaxFPSCounter"]
 unique_name_in_owner = true
 modulate = Color(0.411765, 1, 0, 1)
 layout_mode = 2
 theme = SubResource("Theme_0f8xc")
 text = "999"
 
-[node name="MinFPSCounter" type="HBoxContainer" parent="PanelContainer/InfoWrapper"]
+[node name="MinFPSCounter" type="HBoxContainer" parent="PanelContainer/MonitorContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 
-[node name="MinFPSLabel" type="Label" parent="PanelContainer/InfoWrapper/MinFPSCounter"]
+[node name="MinFPSLabel" type="Label" parent="PanelContainer/MonitorContainer/MinFPSCounter"]
 modulate = Color(0.647059, 0.647059, 0.647059, 1)
 layout_mode = 2
 theme = SubResource("Theme_0f8xc")
 text = "Min FPS:
 "
 
-[node name="MinFPS" type="Label" parent="PanelContainer/InfoWrapper/MinFPSCounter"]
+[node name="MinFPS" type="Label" parent="PanelContainer/MonitorContainer/MinFPSCounter"]
 unique_name_in_owner = true
 modulate = Color(1, 0, 0.0823529, 1)
 layout_mode = 2
 theme = SubResource("Theme_0f8xc")
 text = "999"
 
-[node name="NotificationQueue" type="VBoxContainer" parent="PanelContainer/InfoWrapper"]
+[node name="NotificationQueue" type="VBoxContainer" parent="PanelContainer/MonitorContainer"]
 unique_name_in_owner = true
 layout_mode = 2
