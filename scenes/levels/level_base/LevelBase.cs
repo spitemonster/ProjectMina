@@ -10,7 +10,7 @@ public partial class LevelBase : Node3D
 
 	public override void _Ready()
 	{
-		if (GetNode("PlayerStart") is Marker3D s)
+		if (GetNode("%PlayerStart") is Marker3D s)
 		{
 			_playerStart = s;
 			Global.Data.Player.GlobalPosition = _playerStart.GlobalPosition;

@@ -5,10 +5,11 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d1qpq"]
 
-[node name="CharacterBase" type="CharacterBody3D" node_paths=PackedStringArray("_characterBody", "_characterHealthComponent")]
+[node name="CharacterBase" type="CharacterBody3D" node_paths=PackedStringArray("CharacterBody", "CharacterHealthComponent")]
+collision_layer = 5
 script = ExtResource("1_5qytg")
-_characterBody = NodePath("CharacterBody")
-_characterHealthComponent = NodePath("HealthComponent")
+CharacterBody = NodePath("CharacterBody")
+CharacterHealthComponent = NodePath("HealthComponent")
 
 [node name="CharacterBody" type="CollisionShape3D" parent="."]
 unique_name_in_owner = true

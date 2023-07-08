@@ -18,3 +18,5 @@ _stealthCapsulePosition = Vector3(0, 0, 0)
 [node name="MainMenu" parent="." instance=ExtResource("4_hgum0")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[editable path="PlayerCharacter"]
