@@ -1,9 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://c45weam7tjqmw"]
+[gd_scene load_steps=9 format=3 uid="uid://c45weam7tjqmw"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b5t2"]
 [ext_resource type="Script" path="res://scenes/characters/player_character/PlayerCharacter.cs" id="2_7uq42"]
 [ext_resource type="Script" path="res://scenes/components/interaction/InteractionComponent.cs" id="3_3gtcp"]
-[ext_resource type="Script" path="res://scenes/characters/player_character/PlayerHUD.cs" id="4_1jvuk"]
+[ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://ui/PlayerHUD.tscn" id="4_161ca"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u7t72"]
 radius = 0.025
@@ -15,14 +15,13 @@ height = 0.2
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_f2213"]
 points = PackedVector3Array(-0.262588, -0.0843678, -0.175087, 0.442666, 0.1, 0.082937, 0.4288, 0.1, 0.138315, -0.485511, 0.0941926, -0.090962, 0.090955, 0.0941929, -0.485513, 0.189685, -0.0990031, 0.233596, -0.255773, 0.0934521, 0.421318, 0.233507, -0.0990084, -0.189795, -0.262869, -0.099075, 0.146077, 0.255754, 0.0934498, 0.421308, 0.421302, 0.0934509, -0.255767, -0.255763, 0.0934484, -0.421301, -0.0587393, -0.0998311, -0.294314, -0.0587393, -0.0998311, 0.294315, 0.29427, -0.0998511, 0.0588375, -0.415027, 0.1, 0.179862, 0.0909544, 0.0941924, 0.48551, 0.485514, 0.0941954, 0.0909648, -0.421303, 0.0934486, 0.25576, -0.0829584, 0.1, -0.442764, 0.421319, 0.0934546, 0.255777, -0.2943, -0.0998251, 0.0588226, 0.485511, 0.0941948, -0.0909642, 0.300376, 0.0933176, -0.390662, 0.116721, -0.0990229, -0.277368, -0.390581, 0.0933205, -0.300489, -0.485508, 0.0941921, 0.0909614, -0.090967, 0.0941925, 0.48551, -0.0909664, 0.094192, -0.485507, 0.082946, 0.1, 0.442764, 0.29427, -0.0998511, -0.0588374, -0.189694, -0.0990012, -0.233591)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jbas8"]
-
 [sub_resource type="CylinderMesh" id="CylinderMesh_oel4a"]
 bottom_radius = 0.3
 height = 0.2
 
-[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "_interactionComponent", "_head", "CharacterBody", "CharacterHealthComponent") instance=ExtResource("1_5b5t2")]
-collision_layer = 2
+[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "_interactionComponent", "_head") instance=ExtResource("1_5b5t2")]
+collision_layer = 6
+collision_mask = 5
 script = ExtResource("2_7uq42")
 _movementSpeed = 2.0
 _sprintMultiplier = 2.0
@@ -37,8 +36,6 @@ _carryGrabSpeedMultiplier = 0.2
 _carryMovementSpeedMultiplier = 0.3
 _stealthCapsuleHeight = 0.9
 _stealthCapsulePosition = Vector3(0, 0.45, 0)
-CharacterBody = NodePath("CharacterBody")
-CharacterHealthComponent = NodePath("HealthComponent")
 
 [node name="Hips" type="Node3D" parent="CharacterBody" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
@@ -86,46 +83,13 @@ _grabJoint = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabJoint")
 _grabAnchor = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/StaticBody3D")
 _grabRotationStrength = 8.0
 
-[node name="PlayerHUD" type="Control" parent="." index="4" node_paths=PackedStringArray("_interactionComponent", "_reticle")]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("4_1jvuk")
+[node name="PlayerHUD" parent="." index="4" node_paths=PackedStringArray("_interactionComponent", "_healthComponent") instance=ExtResource("4_161ca")]
 reticleDefaultColor = Color(1, 1, 1, 1)
-reticleUseColor = Color(0, 1, 0, 1)
+reticleUseColor = Color(0, 0, 1, 1)
 reticleGrabColor = Color(1, 1, 0, 1)
-reticleEquipColor = Color(0, 0, 1, 1)
+reticleEquipColor = Color(0, 1, 0, 1)
 _interactionComponent = NodePath("../InteractionComponent")
-_reticle = NodePath("Panel/Reticle")
-
-[node name="Panel" type="Panel" parent="PlayerHUD" index="0"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_jbas8")
-
-[node name="Reticle" type="ColorRect" parent="PlayerHUD/Panel" index="0"]
-clip_contents = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -4.0
-offset_top = -4.0
-offset_right = 4.0
-offset_bottom = 4.0
-grow_horizontal = 2
-grow_vertical = 2
-rotation = 0.785398
-pivot_offset = Vector2(4, 4)
+_healthComponent = NodePath("../HealthComponent")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." index="5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)

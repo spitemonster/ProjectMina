@@ -1,6 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://c37sghih0u831"]
+[gd_scene load_steps=6 format=3 uid="uid://c37sghih0u831"]
 
 [ext_resource type="Script" path="res://scenes/levels/level_base/LevelBase.cs" id="1_2guyt"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_o7sw1"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0bn2h"]
 
@@ -17,7 +19,10 @@ tonemap_mode = 2
 [node name="LevelBase" type="Node3D"]
 script = ExtResource("1_2guyt")
 
-[node name="PlayerStart" type="Marker3D" parent="."]
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_o7sw1")
+
+[node name="PlayerStart" type="Marker3D" parent="NavigationRegion3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 

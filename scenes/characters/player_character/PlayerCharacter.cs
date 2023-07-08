@@ -94,10 +94,9 @@ public partial class PlayerCharacter : CharacterBase
 			// if the player is on the floor, update the _currentFloor value because we're using it down the line
 			PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
 			Godot.Collections.Array<Rid> x = new() { GetRid() };
-			Godot.Collections.Dictionary traceResult = Trace.Line(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
+			HitResult traceResult = Trace.Line(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
 
-			traceResult.TryGetValue("collider", out Variant collider);
-			if (collider.As<Node3D>() is Node3D n)
+			if (traceResult.Collider is Node3D n)
 			{
 				if (n is RigidBody3D r)
 				{
