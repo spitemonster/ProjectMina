@@ -77,7 +77,7 @@ public partial class InputManager : Node
 
 		if (e.IsActionPressed("jump"))
 		{
-			Dev.UI.AddDevMonitor("test");
+			Global.Data.Player.CharacterHealthComponent.ChangeHealth(25.0, true);
 			EmitSignal(SignalName.Jump);
 			return;
 		}
