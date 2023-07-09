@@ -1,20 +1,13 @@
-[gd_scene load_steps=7 format=3 uid="uid://8d7kh7v3msbl"]
+[gd_scene load_steps=5 format=3 uid="uid://8d7kh7v3msbl"]
 
 [ext_resource type="Script" path="res://scenes/components/ai_sight/AISightComponent.cs" id="1_nkvkb"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gqfas"]
-transparency = 1
-albedo_color = Color(1, 0, 0, 0.12549)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_23852"]
-material = SubResource("StandardMaterial3D_gqfas")
-top_radius = 0.0
-bottom_radius = 10.0
-height = 20.0
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m8kk8"]
 transparency = 1
+cull_mode = 2
+shading_mode = 0
 albedo_color = Color(1, 0, 0, 0.12549)
+proximity_fade_enabled = true
 
 [sub_resource type="SphereMesh" id="SphereMesh_tswdt"]
 material = SubResource("StandardMaterial3D_m8kk8")
@@ -32,11 +25,6 @@ _sightCollision = NodePath("SightCollision")
 unique_name_in_owner = true
 collision_layer = 0
 collision_mask = 4
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SightCollision"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 10)
-visible = false
-mesh = SubResource("CylinderMesh_23852")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="SightCollision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12)

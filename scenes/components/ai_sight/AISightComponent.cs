@@ -1,5 +1,5 @@
 using Godot;
-
+using Godot.Collections;
 namespace ProjectMina;
 [GlobalClass]
 public partial class AISightComponent : Node3D
@@ -10,8 +10,8 @@ public partial class AISightComponent : Node3D
 		public float Visibility;
 	}
 
-	public Godot.Collections.Array<CharacterBase> CharactersInSightRadius { get; private set; } = new();
-	public Godot.Collections.Array<CharacterBase> VisibleCharacters { get; private set; } = new();
+	public Array<CharacterBase> CharactersInSightRadius { get; private set; } = new();
+	public Array<CharacterBase> VisibleCharacters { get; private set; } = new();
 
 	[Signal]
 	public delegate void CharacterEnteredSightRadiusEventHandler(CharacterBase character);
@@ -37,6 +37,20 @@ public partial class AISightComponent : Node3D
 
 			CallDeferred("CheckInitialOverlaps");
 			exclude.Add(GetOwner<CharacterBase>().GetRid());
+		}
+	}
+
+	public override void _Process(double delta)
+	{
+		if (CharactersInSightRadius.Count > 0)
+		{
+			CharacterBase visibilityCheckTarget = CharactersInSightRadius[_visibilityCheckIndex];
+			CheckCharacterVisibility(visibilityCheckTarget);
+			CalculateCharacterVisibility(visibilityCheckTarget);
+		}
+		else if (_visibilityCheckIndex > 0)
+		{
+			_visibilityCheckIndex = 0;
 		}
 	}
 
@@ -76,20 +90,6 @@ public partial class AISightComponent : Node3D
 				CharactersInSightRadius.Add(c);
 				EmitSignal(SignalName.CharacterEnteredSightRadius, c);
 			}
-		}
-	}
-
-	public override void _Process(double delta)
-	{
-		if (CharactersInSightRadius.Count > 0)
-		{
-			CharacterBase visibilityCheckTarget = CharactersInSightRadius[_visibilityCheckIndex];
-			CheckCharacterVisibility(visibilityCheckTarget);
-			CalculateCharacterVisibility(visibilityCheckTarget);
-		}
-		else if (_visibilityCheckIndex > 0)
-		{
-			_visibilityCheckIndex = 0;
 		}
 	}
 
