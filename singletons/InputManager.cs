@@ -2,6 +2,7 @@ using Godot;
 
 namespace ProjectMina;
 
+[GlobalClass]
 public partial class InputManager : Node
 {
 	[Signal]
@@ -77,7 +78,6 @@ public partial class InputManager : Node
 
 		if (e.IsActionPressed("jump"))
 		{
-			Global.Data.Player.CharacterHealthComponent.ChangeHealth(25.0, true);
 			EmitSignal(SignalName.Jump);
 			return;
 		}
@@ -87,6 +87,7 @@ public partial class InputManager : Node
 			EmitSignal(SignalName.Stealth);
 			return;
 		}
+
 	}
 
 	static public void SetMouseCapture(bool shouldCapture)
@@ -96,7 +97,7 @@ public partial class InputManager : Node
 
 	static public Vector2 GetInputDirection()
 	{
-		Vector2 inputDirection = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+		Vector2 inputDirection = Input.GetVector("movement_left", "movement_right", "movement_forward", "movement_back");
 
 		return inputDirection;
 	}

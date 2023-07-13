@@ -16,60 +16,44 @@ public partial class InteractionComponent : Node
 	};
 
 	public bool CanGrab { get => _canGrab; }
-
 	public bool CanEquip { get => _canEquip; }
-
 	public bool CanInteract { get => _canInteract; }
-
 	public bool IsGrabbing { get => _grabbedItem != null; }
 
 	[Signal]
 	public delegate void FocusedEventHandler(Node3D item);
-
 	[Signal]
 	public delegate void LostFocusEventHandler(Node3D item);
-
 	[Signal]
 	public delegate void InteractedEventHandler(Node3D item);
-
 	[Signal]
 	public delegate void GrabbedEventHandler(RigidBody3D item);
-
 	[Signal]
 	public delegate void DroppedEventHandler(RigidBody3D item, bool thrown);
-
 	[Signal]
 	public delegate void InteractionStateChangedEventHandler(InteractionType newState);
 
 	[Export]
 	protected Area3D _interactionCollision;
-
 	[Export]
 	protected Marker3D _grabPosition;
-
 	[Export]
 	protected Generic6DofJoint3D _grabJoint;
-
 	[Export]
 	protected StaticBody3D _grabAnchor;
-
 	[Export]
 	protected float _grabStrength = 20.0f;
-
 	[Export]
 	protected float _grabRotationStrength = 2.0f;
 
 	private bool _canInteract;
 	private bool _canEquip;
 	private bool _canGrab;
-
 	private Node3D _focusedItem;
 	private RigidBody3D _grabbedItem;
 	private InputManager _inputManager;
 	private Quaternion _grabbedItemDesiredRotation;
 	private InteractionType _interactionState = InteractionType.None;
-
-	// private LabelValueRow _interactionStateLog;
 
 	public override void _Ready()
 	{
@@ -81,14 +65,16 @@ public partial class InteractionComponent : Node
 			_interactionCollision.BodyExited += CheckLoseFocus;
 		}
 
+		Debug.Assert(_interactionCollision != null, "no interaction collision");
+		Debug.Assert(_grabJoint != null, "no grab joint");
+		Debug.Assert(_grabAnchor != null, "no grab anchor");
+
 		if (GetNode("/root/InputManager") is InputManager i)
 		{
 			_inputManager = i;
 
 			_inputManager.Interact += Interact;
 		}
-
-		// InteractionStateChanged += (interactionState) => { _interactionStateLog.SetValue(interactionState.ToString()); };
 	}
 
 	private void Interact(bool isAlt)
@@ -120,22 +106,7 @@ public partial class InteractionComponent : Node
 
 			Vector3 targetLinearVelocity = (handPosition - pickedObjectPosition) * 5.0f;
 			targetLinearVelocity.Y *= 0.5f;
-			// targetLinearVelocity.Y -= 2.0f;
-
 			_grabbedItem.LinearVelocity = targetLinearVelocity;
-
-			// Quaternion currentRotation = _grabbedItem.GlobalTransform.Basis.GetRotationQuaternion();
-			// Quaternion desiredRotation = _grabAnchor.GlobalTransform.Basis.GetRotationQuaternion();
-
-			// if (currentRotation.Dot(desiredRotation) < 0)
-			// {
-			// 	desiredRotation = -desiredRotation;
-			// }
-
-			// Quaternion rotationDifference = desiredRotation * currentRotation.Inverse();
-			// Vector3 axis = rotationDifference.GetAxis();
-			// float angle = rotationDifference.GetAngle();
-			// _grabbedItem.AngularVelocity = axis * angle * 20.0f;
 		}
 	}
 
@@ -145,8 +116,6 @@ public partial class InteractionComponent : Node
 		{
 			return;
 		}
-
-		GD.Print(targetItem);
 
 		InteractionType t = CheckCanFocus(targetItem);
 
@@ -164,8 +133,6 @@ public partial class InteractionComponent : Node
 			EmitSignal(SignalName.InteractionStateChanged, (int)t);
 			EmitSignal(SignalName.LostFocus, targetItem);
 		}
-
-		// _interactionStateLog.SetValue(_interactionState.ToString());
 	}
 
 	private static InteractionType CheckCanFocus(Node3D targetItem)

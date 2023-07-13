@@ -20,6 +20,9 @@ public partial class PlayerCharacter : CharacterBase
 	[Export]
 	public Camera3D PrimaryCamera { get; protected set; }
 	[Export]
+	protected MovementComponent CharacterMovement { get; set; }
+
+	[Export]
 	protected InteractionComponent _interactionComponent;
 	[Export]
 	protected Node3D _head;
@@ -44,9 +47,17 @@ public partial class PlayerCharacter : CharacterBase
 	protected float _stealthCapsuleHeight;
 	[Export]
 	protected Vector3 _stealthCapsulePosition;
+	[Export]
+	protected SoundComponent _soundComponent;
+
+	protected Timer _footstepTimer;
+
+	[ExportGroup("Combat")]
+	[Export]
+	public CombatGridComponent CombatGrid { get; protected set; }
 
 
-	private Node3D _currentFloor;
+	public Node3D _currentFloor;
 	private bool _isStealthMode = false;
 	private float _defaultCapsuleHeight;
 	private Vector3 _defaultCapsulePosition;
@@ -56,6 +67,7 @@ public partial class PlayerCharacter : CharacterBase
 		// get gravity project settings
 		_gravity = (double)ProjectSettings.GetSetting("physics/3d/default_gravity");
 
+		// setup player in global data
 		Global.Data.Player = this;
 
 		// ensure there is an input manager before binding events to it
@@ -63,10 +75,30 @@ public partial class PlayerCharacter : CharacterBase
 		{
 			_inputManager = m;
 			_inputManager.MouseMove += HandleMouseMove;
-			_inputManager.Sprint += ToggleSprint;
-			_inputManager.Jump += Jump;
+			_inputManager.Sprint += CharacterMovement.ToggleSprint;
+			_inputManager.Jump += CharacterMovement.Jump;
 			_inputManager.Stealth += ToggleStealth;
 		}
+
+		if (_soundComponent != null)
+		{
+			_footstepTimer = new()
+			{
+				WaitTime = .7f,
+				Autostart = true,
+				OneShot = false
+			};
+
+			_footstepTimer.Timeout += () =>
+			{
+				_soundComponent.EmitSound();
+			};
+
+			AddChild(_footstepTimer);
+			_footstepTimer.Start();
+		}
+
+		Debug.Assert(_soundComponent != null, "no sound component");
 
 		// get our default capsule settings for crouching
 		CapsuleShape3D bodyCapsule = (CapsuleShape3D)CharacterBody.Shape;
@@ -76,13 +108,9 @@ public partial class PlayerCharacter : CharacterBase
 
 	public override void _PhysicsProcess(double delta)
 	{
-		Vector3 currentVelocity = Velocity;
-		Vector2 InputDirection = InputManager.GetInputDirection();
-		Vector3 Direction = _head.Transform.Basis * new Vector3(InputDirection.X, 0, InputDirection.Y);
 
 		if (!IsOnFloor())
 		{
-			currentVelocity.Y -= (float)(_gravity * delta * _gravityMultiplier);
 			if (_currentFloor is RigidBody3D r)
 			{
 				r.Sleeping = false;
@@ -96,7 +124,7 @@ public partial class PlayerCharacter : CharacterBase
 			Godot.Collections.Array<Rid> x = new() { GetRid() };
 			HitResult traceResult = Trace.Line(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
 
-			if (traceResult.Collider is Node3D n)
+			if (traceResult != null && traceResult.Collider is Node3D n)
 			{
 				if (n is RigidBody3D r)
 				{
@@ -126,53 +154,24 @@ public partial class PlayerCharacter : CharacterBase
 			}
 		}
 
-
-		// character movement
-		double targetMovementSpeed = _movementSpeed * (IsSprinting ? _sprintMultiplier : 1.0f);
-
-		if (_interactionComponent.IsGrabbing)
-		{
-			targetMovementSpeed *= _carryMovementSpeedMultiplier;
-		}
-
-		if (InputDirection.Length() > 0.1f)
-		{
-			currentVelocity.X = (float)Mathf.MoveToward(currentVelocity.X, Direction.X * targetMovementSpeed, 0.1f);
-			currentVelocity.Z = (float)Mathf.MoveToward(currentVelocity.Z, Direction.Z * targetMovementSpeed, 0.1f);
-		}
-		else
-		{
-			currentVelocity.X = (float)Mathf.MoveToward(currentVelocity.X, 0.0, _brakingForce);
-			currentVelocity.Z = (float)Mathf.MoveToward(currentVelocity.Z, 0.0, _brakingForce);
-		}
-
-		Velocity = currentVelocity;
+		Vector2 inputDirection = InputManager.GetInputDirection();
+		Velocity = CharacterMovement.CalculateMovementVelocity(inputDirection);
 
 		_ = MoveAndSlide();
 	}
 
-	protected void Jump()
-	{
-		if (IsOnFloor())
-		{
-			Vector3 currentVelocity = Velocity;
-			currentVelocity.Y += (float)_jumpForce;
+	// protected void Jump()
+	// {
+	// 	if (IsOnFloor())
+	// 	{
+	// 		Vector3 currentVelocity = Velocity;
+	// 		currentVelocity.Y += (float)_jumpForce;
 
-			Velocity = currentVelocity;
-		}
-	}
+	// 		Velocity = currentVelocity;
+	// 	}
+	// }
 
-	/*
-	* Function: HandleMouseMove
-	* TODO.
-	*
-	* Parameters:
-	* mouseRelative - TODO.
-	*
-	* Returns:
-	* (private void ) - the returned value.
-	*
-	*/
+
 	private void HandleMouseMove(Vector2 mouseRelative)
 	{
 		if (!GetTree().Paused)
@@ -186,7 +185,7 @@ public partial class PlayerCharacter : CharacterBase
 				cameraRelative *= (float)_carryGrabSpeedMultiplier;
 			}
 
-			_head.RotateY(headRelative);
+			RotateY(headRelative);
 			PrimaryCamera.RotateX(cameraRelative);
 
 			Vector3 clampedCameraRotation = new()
@@ -202,6 +201,7 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		_isStealthMode = !_isStealthMode;
 		CapsuleShape3D capsule = (CapsuleShape3D)CharacterBody.Shape;
+		CharacterMovement.ToggleSneak();
 
 		if (_isStealthMode)
 		{
@@ -213,10 +213,5 @@ public partial class PlayerCharacter : CharacterBase
 			capsule.Height = (float)_defaultCapsuleHeight;
 			CharacterBody.Position = _defaultCapsulePosition;
 		}
-	}
-
-	private void ToggleSprint()
-	{
-		IsSprinting = !IsSprinting;
 	}
 }

@@ -44,8 +44,6 @@ public partial class HealthComponent : Node
 			_ = EmitSignal(SignalName.HealthDepleted);
 		}
 
-		GD.Print("should change health: ", _currentHealth.ToString());
-
 		_ = EmitSignal(SignalName.HealthChanged, _currentHealth, isDamage);
 	}
 

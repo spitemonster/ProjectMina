@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://ck5n3ly0vk3iu"]
+
+[ext_resource type="Script" path="res://scenes/weapons/weapon_base/WeaponBase.cs" id="1_7mbeb"]
+[ext_resource type="PackedScene" uid="uid://p7v7yqiyokub" path="res://scenes/interaction/Interaction.tscn" id="2_c2tnx"]
+[ext_resource type="PackedScene" uid="uid://b1jgxjyarpcn8" path="res://scenes/equipment/Equipment.tscn" id="3_ok625"]
+
+[node name="WeaponBase" type="Node3D" node_paths=PackedStringArray("InteractionComponent", "EquipmentComponent")]
+script = ExtResource("1_7mbeb")
+InteractionComponent = NodePath("Interaction")
+EquipmentComponent = NodePath("Equipment")
+
+[node name="Interaction" parent="." instance=ExtResource("2_c2tnx")]
+
+[node name="Equipment" parent="." instance=ExtResource("3_ok625")]

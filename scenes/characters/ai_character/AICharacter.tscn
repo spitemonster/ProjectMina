@@ -1,16 +1,102 @@
-[gd_scene load_steps=6 format=3 uid="uid://biapqvhr7l52k"]
+[gd_scene load_steps=14 format=3 uid="uid://biapqvhr7l52k"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_1wkun"]
 [ext_resource type="Script" path="res://scenes/characters/ai_character/AICharacter.cs" id="1_dtey8"]
 [ext_resource type="PackedScene" uid="uid://8d7kh7v3msbl" path="res://scenes/components/ai_sight/AISightComponent.tscn" id="3_o06c5"]
+[ext_resource type="PackedScene" uid="uid://bp8kh5qgfs2r0" path="res://scenes/components/ai_hearing/AIHearingComponent.tscn" id="4_5chli"]
+[ext_resource type="PackedScene" uid="uid://cneqhuipb5wbf" path="res://scenes/weapons/melee_weapon/MeleeWeapon.tscn" id="4_s8rv8"]
+[ext_resource type="PackedScene" uid="uid://sccy77n6xvl1" path="res://scenes/components/ai_brain/AIBrainComponent.tscn" id="5_4dcp8"]
+[ext_resource type="Animation" uid="uid://driftre7xvs5a" path="res://scenes/weapons/melee_weapon/Attack.res" id="7_5dg40"]
+[ext_resource type="PackedScene" uid="uid://b3rq16aalq4c2" path="res://scenes/components/movement/MovementComponent.tscn" id="8_cxsam"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_bpama"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w5liy"]
 albedo_color = Color(1, 0, 0, 1)
 
-[node name="AICharacter" node_paths=PackedStringArray("_navigationAgent") instance=ExtResource("1_1wkun")]
+[sub_resource type="SphereShape3D" id="SphereShape3D_wsq1b"]
+
+[sub_resource type="Animation" id="Animation_ep4i3"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterBody/MeleeWeapon:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0.399194, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterBody/MeleeWeapon:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterBody/MeleeWeapon:position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.455894, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterBody/MeleeWeapon:rotation:x")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("CharacterBody/MeleeWeapon:rotation:y")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("CharacterBody/MeleeWeapon:rotation:z")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bpvnk"]
+_data = {
+"Attack": ExtResource("7_5dg40"),
+"RESET": SubResource("Animation_ep4i3")
+}
+
+[node name="AICharacter" node_paths=PackedStringArray("_animPlayer", "TempWeapon", "_movementComponent", "_brainComponent", "_navigationAgent") instance=ExtResource("1_1wkun")]
 script = ExtResource("1_dtey8")
+_animPlayer = NodePath("AnimationPlayer")
+TempWeapon = NodePath("CharacterBody/MeleeWeapon")
+_movementComponent = NodePath("MovementComponent")
+_brainComponent = NodePath("Brain")
 _navigationAgent = NodePath("NavigationAgent3D")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody" index="0"]
@@ -22,13 +108,37 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0.5)
 radius = 0.17
 material = SubResource("StandardMaterial3D_w5liy")
 
-[node name="AISightComponent" parent="CharacterBody/MeshInstance3D/CSGSphere3D" index="0" instance=ExtResource("3_o06c5")]
+[node name="Sight" parent="CharacterBody/MeshInstance3D/CSGSphere3D" index="0" instance=ExtResource("3_o06c5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.52775e-07, 0, 1.74754)
+
+[node name="MeleeWeapon" parent="CharacterBody" index="1" instance=ExtResource("4_s8rv8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.399194, 0, -0.455894)
+
+[node name="MeleeAttackZone" type="Area3D" parent="CharacterBody" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.20259)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody/MeleeAttackZone" index="0"]
+shape = SubResource("SphereShape3D_wsq1b")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="." index="2"]
-target_desired_distance = 3.0
+target_desired_distance = 1.5
 path_height_offset = 1.0
-path_max_distance = 0.31
 avoidance_enabled = true
-radius = 1.0
-time_horizon_obstacles = 1.0
 debug_enabled = true
+
+[node name="Hearing" parent="." index="3" instance=ExtResource("4_5chli")]
+
+[node name="Brain" parent="." index="4" node_paths=PackedStringArray("_sightComponent", "_hearingComponent", "_navigationAgent") instance=ExtResource("5_4dcp8")]
+_sightComponent = NodePath("../CharacterBody/MeshInstance3D/CSGSphere3D/Sight")
+_hearingComponent = NodePath("../Hearing")
+_navigationAgent = NodePath("../NavigationAgent3D")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="5"]
+libraries = {
+"": SubResource("AnimationLibrary_bpvnk")
+}
+
+[node name="MovementComponent" parent="." index="6" instance=ExtResource("8_cxsam")]
+MovementSpeed = 2.3
+AccelerationForce = 0.1
+BrakingForce = 0.1

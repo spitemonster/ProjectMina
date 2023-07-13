@@ -40,6 +40,11 @@ public partial class Trace : Node
 
 		Dictionary traceResult = spaceState.IntersectRay(traceQuery);
 
+		if (traceResult == null || !traceResult.ContainsKey("collider"))
+		{
+			return null;
+		}
+
 		HitResult result = new()
 		{
 			Collider = (PhysicsBody3D)traceResult["collider"],

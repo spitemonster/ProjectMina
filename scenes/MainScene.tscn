@@ -15,6 +15,9 @@ _startingLevel = ExtResource("2_ac4x7")
 [node name="PlayerCharacter" parent="." instance=ExtResource("3_ofqq3")]
 _stealthCapsulePosition = Vector3(0, 0, 0)
 
+[node name="CombatGridComponent" parent="PlayerCharacter/CharacterBody" index="1" node_paths=PackedStringArray("GridPoints")]
+GridPoints = [null]
+
 [node name="MainMenu" parent="." instance=ExtResource("4_hgum0")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
