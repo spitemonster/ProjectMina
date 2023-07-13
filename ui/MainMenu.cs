@@ -29,10 +29,14 @@ public partial class MainMenu : Control
 			_returnButton.Pressed += ToggleMainMenu;
 		}
 
+		Debug.Assert(_returnButton != null, "no return button");
+
 		if (_quitButton != null)
 		{
 			_quitButton.Pressed += () => GetTree().Quit();
 		}
+
+		Debug.Assert(_quitButton != null, "no quit button");
 	}
 
 	public override void _Input(InputEvent e)
@@ -47,7 +51,6 @@ public partial class MainMenu : Control
 
 	private void ToggleMainMenu()
 	{
-		GD.Print("should toggle main menu");
 		_isShown = !_isShown;
 		Visible = _isShown;
 		Global.Data.MainScene.SetPause(_isShown);

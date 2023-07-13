@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dthkgruo86yys"]
 
-[ext_resource type="PackedScene" uid="uid://p7v7yqiyokub" path="res://_dev/scenes/interaction/Interaction.tscn" id="1_0buvd"]
-[ext_resource type="Script" path="res://_dev/scenes/interaction/Door.cs" id="1_6v7ht"]
+[ext_resource type="PackedScene" uid="uid://p7v7yqiyokub" path="res://scenes/interaction/Interaction.tscn" id="1_0buvd"]
+[ext_resource type="Script" path="res://scenes/interaction/Door.cs" id="1_6v7ht"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_471hd"]
 size = Vector3(1, 2, 0.1)

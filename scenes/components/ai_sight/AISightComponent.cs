@@ -4,10 +4,11 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class AISightComponent : Node3D
 {
+	// intended to be used in the array rather than direct references to characters
 	class VisibilityContainer
 	{
-		public CharacterBase Character;
-		public float Visibility;
+		public CharacterBase Character = new();
+		public float Visibility = 1.0f;
 	}
 
 	public Array<CharacterBase> CharactersInSightRadius { get; private set; } = new();
@@ -25,7 +26,7 @@ public partial class AISightComponent : Node3D
 	[Export]
 	protected Area3D _sightCollision;
 
-	private Godot.Collections.Array<Rid> exclude = new();
+	private Array<Rid> exclude = new();
 	private int _visibilityCheckIndex;
 
 	public override void _Ready()
@@ -38,13 +39,14 @@ public partial class AISightComponent : Node3D
 			CallDeferred("CheckInitialOverlaps");
 			exclude.Add(GetOwner<CharacterBase>().GetRid());
 		}
+
+		Debug.Assert(_sightCollision != null, "no sight collision");
 	}
 
 	public override void _Process(double delta)
 	{
-		if (CharactersInSightRadius.Count > 0)
+		if (CharactersInSightRadius.Count > 0 && CharactersInSightRadius[_visibilityCheckIndex] is CharacterBase visibilityCheckTarget)
 		{
-			CharacterBase visibilityCheckTarget = CharactersInSightRadius[_visibilityCheckIndex];
 			CheckCharacterVisibility(visibilityCheckTarget);
 			CalculateCharacterVisibility(visibilityCheckTarget);
 		}
@@ -81,7 +83,7 @@ public partial class AISightComponent : Node3D
 
 	private void CheckInitialOverlaps()
 	{
-		Godot.Collections.Array<Node3D> initialOverlaps = _sightCollision.GetOverlappingBodies();
+		Array<Node3D> initialOverlaps = _sightCollision.GetOverlappingBodies();
 
 		foreach (Node3D body in initialOverlaps)
 		{
@@ -100,7 +102,7 @@ public partial class AISightComponent : Node3D
 		PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
 		HitResult traceResult = Trace.Line(spaceState, GlobalPosition, visibilityCheckTarget.CharacterBody.GlobalPosition, exclude);
 
-		if (traceResult.Collider == visibilityCheckTarget)
+		if (traceResult != null && traceResult.Collider == visibilityCheckTarget)
 		{
 			if (!VisibleCharacters.Contains(visibilityCheckTarget))
 			{

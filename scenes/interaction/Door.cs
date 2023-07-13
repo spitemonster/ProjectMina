@@ -15,15 +15,14 @@ public partial class Door : StaticBody3D
 	public bool IsOpen { get; }
 	private Interaction _interaction;
 	private bool _isOpen;
-
 	private Tween _tween;
 
 	public override void _Ready()
 	{
+		// redo!
 		if (GetNode("Interaction") is Interaction i)
 		{
 			_interaction = i;
-
 			_interaction.Used += ToggleOpen;
 		}
 

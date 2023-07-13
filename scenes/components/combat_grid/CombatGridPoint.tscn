@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://hqdj2ivnbab7"]
+
+[ext_resource type="Script" path="res://scenes/components/combat_grid/CombatGridPoint.cs" id="1_ooayq"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_tywsw"]
+radius = 1.0
+
+[node name="CombatGridPoint" type="Node3D" node_paths=PackedStringArray("_collisionArea")]
+script = ExtResource("1_ooayq")
+_collisionArea = NodePath("Area3D")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 207
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_tywsw")

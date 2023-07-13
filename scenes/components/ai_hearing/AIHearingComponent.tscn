@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bp8kh5qgfs2r0"]
+
+[ext_resource type="Script" path="res://scenes/components/ai_hearing/AIHearingComponent.cs" id="1_lamu2"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_dmlr0"]
+radius = 15.0
+
+[node name="AIHearingComponent" type="Area3D"]
+collision_layer = 64
+collision_mask = 64
+script = ExtResource("1_lamu2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_dmlr0")
+
+[node name="AIHearingComponent" type="Node3D" parent="."]

@@ -30,11 +30,11 @@ Trace="*res://singletons/Trace.cs"
 Dev="*res://_dev/singletons/Dev.cs"
 BeehaveGlobalMetrics="*res://addons/beehave/metrics/beehave_global_metrics.gd"
 BeehaveGlobalDebugger="*res://addons/beehave/debug/global_debugger.gd"
+DebugDraw="*res://addons/debug_drawing/DebugDraw.cs"
 
 [debug]
 
 file_logging/enable_file_logging=true
-settings/stdout/print_fps=true
 
 [display]
 
@@ -48,7 +48,7 @@ project/assembly_name="ProjectMina"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/beehave/plugin.cfg", "res://addons/csgtomeshinstance/plugin.cfg")
+enabled=PackedStringArray("res://addons/beehave/plugin.cfg", "res://addons/csgtomeshinstance/plugin.cfg", "res://addons/debug_drawing/plugin.cfg")
 
 [input]
 

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://uywniyg1yd8x"]
+
+[ext_resource type="Script" path="res://scenes/components/combat_grid/CombatGridComponent.cs" id="1_d8uld"]
+
+[node name="CombatGridComponent" type="Node3D" node_paths=PackedStringArray("GridPoints")]
+script = ExtResource("1_d8uld")
+GridPoints = []

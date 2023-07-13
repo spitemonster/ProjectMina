@@ -33,6 +33,8 @@ public partial class PlayerHUD : Control
 			_interactionComponent.InteractionStateChanged += UpdateReticleInteractionState;
 		}
 
+		Debug.Assert(_interactionComponent != null, "no interaction component");
+
 		if (_healthComponent != null && _healthBar != null)
 		{
 			_maxHealth = _healthComponent.MaxHealth;
@@ -43,6 +45,9 @@ public partial class PlayerHUD : Control
 				_healthBar.Value = Mathf.Round((newHealth / _maxHealth) * 100) / 100;
 			};
 		}
+
+		Debug.Assert(_healthComponent != null, "no health component");
+		Debug.Assert(_healthBar != null, "no health bar");
 	}
 
 	private void UpdateReticleInteractionState(InteractionComponent.InteractionType newState)

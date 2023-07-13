@@ -19,65 +19,62 @@ public enum AIBehavior
 [GlobalClass]
 public partial class AICharacter : CharacterBase
 {
-
+	[Export]
+	protected AnimationPlayer _animPlayer;
+	[Export]
+	protected MeleeWeapon TempWeapon;
+	[Export]
+	protected MovementComponent _movementComponent;
+	[Export]
+	protected AIBrainComponent _brainComponent;
 	[Export]
 	protected NavigationAgent3D _navigationAgent;
 
-	[Export]
-	protected PatrolPath _patrolPath;
-
-	private int _currentPatrolPointIndex = 0;
+	public override void Attack()
+	{
+		base.Attack();
+		_animPlayer.Play("Attack");
+	}
 
 	public override void _Ready()
 	{
-		CallDeferred("InitMovement");
-	}
-
-	private void InitMovement()
-	{
-		if (_navigationAgent != null && _patrolPath != null)
+		if (TempWeapon != null)
 		{
-			_navigationAgent.TargetPosition = _patrolPath.GetPatrolPointPosition(0);
-			_navigationAgent.VelocityComputed += SetMovementVelocity;
+			TempWeapon.Equip(this);
 		}
-	}
 
-	private void SetMovementVelocity(Vector3 safeVelocity)
-	{
-		Velocity = safeVelocity;
-		LookAt(_navigationAgent.GetNextPathPosition());
-		Vector3 currentRotation = GlobalRotation;
-		currentRotation.X = 0;
-		currentRotation.Z = 0;
-		GlobalRotation = currentRotation;
-		MoveAndSlide();
+		_navigationAgent.VelocityComputed += SetVelocity;
+
+		Debug.Assert(TempWeapon != null, "No temp weapon");
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (_navigationAgent != null)
+		if (_brainComponent.CurrentFocus != null)
 		{
-			if (_navigationAgent.IsNavigationFinished())
-			{
-				if (_currentPatrolPointIndex == _patrolPath.GetPatrolPointsCount() - 1)
-				{
-					_currentPatrolPointIndex = 0;
+			GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(_brainComponent.CurrentFocus.GlobalPosition, Vector3.Up), 8.0f * (float)delta);
 
-				}
-				else
-				{
-					_currentPatrolPointIndex += 1;
-				}
+			Vector3 currentRotation = GlobalRotation;
+			currentRotation.X = 0;
+			currentRotation.Z = 0;
+			GlobalRotation = currentRotation;
 
-				_navigationAgent.TargetPosition = _patrolPath.GetPatrolPointPosition(_currentPatrolPointIndex);
-			}
-
-
-			Vector3 nextNavPosition = _navigationAgent.GetNextPathPosition();
-
-			_navigationAgent.Velocity = (nextNavPosition - GlobalPosition).Normalized() * 2.0f;
+			Vector3 globalLookVector = _brainComponent.CurrentFocus.GlobalPosition - GlobalPosition;
+			Vector3 localLookVector = GlobalTransform.Basis.Inverse() * globalLookVector;
+			Vector2 testVector = new Vector2(localLookVector.X, -localLookVector.Z).Normalized();
+			_navigationAgent.Velocity = _movementComponent.CalculateMovementVelocity(testVector);
 		}
+	}
 
+	private void SetVelocity(Vector3 safeVelocity)
+	{
+		float dist = (_navigationAgent.TargetPosition - GlobalPosition).Length() - 1.0f;
+		float brakingDist = .5f;
+		float mult = Mathf.Clamp(dist / brakingDist, 0.0f, 1.0f);
 
+		mult = mult < .3f ? 0.0f : mult;
+
+		Velocity = safeVelocity * mult;
+		MoveAndSlide();
 	}
 }
