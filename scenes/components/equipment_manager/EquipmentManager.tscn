@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cf510k02wbxs4"]
+
+[ext_resource type="Script" path="res://scenes/components/equipment_manager/EquipmentManager.cs" id="1_3f50l"]
+
+[node name="EquipmentManager" type="Node"]
+script = ExtResource("1_3f50l")

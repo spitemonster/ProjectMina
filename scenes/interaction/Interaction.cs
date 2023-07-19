@@ -5,7 +5,6 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class Interaction : Node
 {
-
 	[Signal]
 	public delegate void UsedEventHandler(CharacterBase interactingCharacter);
 

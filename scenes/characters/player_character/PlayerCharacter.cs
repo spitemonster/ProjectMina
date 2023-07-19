@@ -6,6 +6,9 @@ namespace ProjectMina;
 public partial class PlayerCharacter : CharacterBase
 {
 
+	[Export]
+	protected RangedWeapon gun;
+
 	[ExportGroup("CharacterBase")]
 	[Export]
 	protected double _movementSpeed = 5.0;
@@ -24,6 +27,9 @@ public partial class PlayerCharacter : CharacterBase
 
 	[Export]
 	protected InteractionComponent _interactionComponent;
+	[Export]
+	protected EquipmentManager _equipmentManager;
+
 	[Export]
 	protected Node3D _head;
 	[Export]
@@ -78,6 +84,21 @@ public partial class PlayerCharacter : CharacterBase
 			_inputManager.Sprint += CharacterMovement.ToggleSprint;
 			_inputManager.Jump += CharacterMovement.Jump;
 			_inputManager.Stealth += ToggleStealth;
+			_inputManager.Interact += (isAlt) =>
+			{
+				if (_interactionComponent.CanInteract)
+				{
+					_interactionComponent.Interact(isAlt);
+				}
+			};
+
+			_inputManager.Use += (modifierPressed) =>
+			{
+				if (_equipmentManager.EquippedItem != null)
+				{
+					_equipmentManager.EquippedItem.GetNode<Interaction>("Interaction")?.Use(this);
+				}
+			};
 		}
 
 		if (_soundComponent != null)

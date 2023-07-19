@@ -4,11 +4,19 @@
 [ext_resource type="PackedScene" uid="uid://p7v7yqiyokub" path="res://scenes/interaction/Interaction.tscn" id="2_c2tnx"]
 [ext_resource type="PackedScene" uid="uid://b1jgxjyarpcn8" path="res://scenes/equipment/Equipment.tscn" id="3_ok625"]
 
-[node name="WeaponBase" type="Node3D" node_paths=PackedStringArray("InteractionComponent", "EquipmentComponent")]
+[node name="WeaponBase" type="RigidBody3D" node_paths=PackedStringArray("InteractionComponent", "EquipmentComponent")]
 script = ExtResource("1_7mbeb")
 InteractionComponent = NodePath("Interaction")
 EquipmentComponent = NodePath("Equipment")
 
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+
 [node name="Interaction" parent="." instance=ExtResource("2_c2tnx")]
 
 [node name="Equipment" parent="." instance=ExtResource("3_ok625")]
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]

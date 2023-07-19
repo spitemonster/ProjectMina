@@ -17,6 +17,11 @@ public partial class CharacterBase : CharacterBody3D
 	public HealthComponent CharacterHealthComponent { get; protected set; }
 	public Vector3 ForwardVector { get; private set; }
 
+	public override void _Ready()
+	{
+		CharacterHealthComponent.HealthDepleted += Die;
+	}
+
 	public override void _PhysicsProcess(double delta)
 	{
 		ForwardVector = -GlobalTransform.Basis.Z;
@@ -33,5 +38,10 @@ public partial class CharacterBase : CharacterBody3D
 	{
 		EmitSignal(SignalName.FinishedAttack);
 		return false;
+	}
+
+	public virtual void Die()
+	{
+		QueueFree();
 	}
 }

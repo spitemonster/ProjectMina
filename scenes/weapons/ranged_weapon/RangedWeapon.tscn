@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3 uid="uid://hoyi6yec8avu"]
+
+[ext_resource type="PackedScene" uid="uid://ck5n3ly0vk3iu" path="res://scenes/weapons/weapon_base/WeaponBase.tscn" id="1_4rmb4"]
+[ext_resource type="Script" path="res://scenes/weapons/ranged_weapon/RangedWeapon.cs" id="2_hjxwo"]
+[ext_resource type="PackedScene" uid="uid://c7gmwy2wj3kun" path="res://scenes/weapons/ranged_weapon/ProjectileBase.tscn" id="3_r5s6e"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rlgvg"]
+size = Vector3(0.15, 0.15, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pt4hu"]
+albedo_color = Color(0.0588235, 0.0588235, 0.160784, 1)
+metallic = 0.65
+
+[sub_resource type="BoxMesh" id="BoxMesh_nlep7"]
+material = SubResource("StandardMaterial3D_pt4hu")
+size = Vector3(0.14, 0.14, 1)
+
+[node name="RangedWeapon" node_paths=PackedStringArray("ProjectileSpawn") instance=ExtResource("1_4rmb4")]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("2_hjxwo")
+_fireDelay = 0.4
+Projectile = ExtResource("3_r5s6e")
+ProjectileSpawn = NodePath("MeshInstance3D/ProjectileSpawn")
+weaponType = 1
+
+[node name="CollisionShape3D" parent="." index="0"]
+shape = SubResource("BoxShape3D_rlgvg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="2"]
+mesh = SubResource("BoxMesh_nlep7")
+
+[node name="ProjectileSpawn" type="Marker3D" parent="MeshInstance3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.531847)
+
+[node name="Equipment" parent="." index="3"]
+Type = 0
+
+[node name="CollisionShape3D" parent="Area3D" index="0"]
+shape = SubResource("BoxShape3D_rlgvg")

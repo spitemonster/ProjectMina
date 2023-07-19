@@ -20,6 +20,8 @@ public partial class InteractionComponent : Node
 	public bool CanInteract { get => _canInteract; }
 	public bool IsGrabbing { get => _grabbedItem != null; }
 
+	public Node3D FocusedItem { get => _focusedItem; }
+
 	[Signal]
 	public delegate void FocusedEventHandler(Node3D item);
 	[Signal]
@@ -45,6 +47,8 @@ public partial class InteractionComponent : Node
 	protected float _grabStrength = 20.0f;
 	[Export]
 	protected float _grabRotationStrength = 2.0f;
+	[Export]
+	protected EquipmentManager equipmentManager;
 
 	private bool _canInteract;
 	private bool _canEquip;
@@ -68,16 +72,9 @@ public partial class InteractionComponent : Node
 		Debug.Assert(_interactionCollision != null, "no interaction collision");
 		Debug.Assert(_grabJoint != null, "no grab joint");
 		Debug.Assert(_grabAnchor != null, "no grab anchor");
-
-		if (GetNode("/root/InputManager") is InputManager i)
-		{
-			_inputManager = i;
-
-			_inputManager.Interact += Interact;
-		}
 	}
 
-	private void Interact(bool isAlt)
+	public void Interact(bool isAlt)
 	{
 		switch (_interactionState)
 		{
@@ -86,6 +83,9 @@ public partial class InteractionComponent : Node
 				break;
 			case InteractionType.Use:
 				Use(_focusedItem);
+				break;
+			case InteractionType.Equip:
+				equipmentManager.EquipItem(_focusedItem);
 				break;
 		}
 	}
@@ -135,18 +135,21 @@ public partial class InteractionComponent : Node
 		}
 	}
 
-	private static InteractionType CheckCanFocus(Node3D targetItem)
+	private InteractionType CheckCanFocus(Node3D targetItem)
 	{
 		if (targetItem.HasNode("Equipment"))
 		{
+			_canInteract = true;
 			return InteractionType.Equip;
 		}
 		else if (targetItem.HasNode("Interaction"))
 		{
+			_canInteract = true;
 			return InteractionType.Use;
 		}
 		else if (targetItem is RigidBody3D)
 		{
+			_canInteract = true;
 			return InteractionType.Grab;
 		}
 		else
@@ -168,7 +171,11 @@ public partial class InteractionComponent : Node
 
 	private void Use(Node3D targetItem)
 	{
-		if (targetItem.GetNode("Interaction") is Interaction i)
+		if (equipmentManager.EquippedItem != null)
+		{
+			equipmentManager.EquippedItem.GetNode<Interaction>("Interaction")?.Use(GetOwner<CharacterBase>());
+		}
+		else if (targetItem.GetNode("Interaction") is Interaction i)
 		{
 			i.Use(GetOwner<CharacterBase>());
 		}

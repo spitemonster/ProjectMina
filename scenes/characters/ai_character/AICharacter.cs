@@ -38,18 +38,26 @@ public partial class AICharacter : CharacterBase
 
 	public override void _Ready()
 	{
-		if (TempWeapon != null)
-		{
-			TempWeapon.Equip(this);
-		}
+		base._Ready();
 
+		Debug.Assert(_brainComponent != null, "no brain component");
+		Debug.Assert(_navigationAgent != null, "No navigation agent");
+		Debug.Assert(TempWeapon != null, "No temp weapon");
+		Debug.Assert(_movementComponent != null, "No movement component");
+
+		TempWeapon?.Equip(this);
 		_navigationAgent.VelocityComputed += SetVelocity;
 
-		Debug.Assert(TempWeapon != null, "No temp weapon");
+		CharacterHealthComponent.HealthChanged += (double newHealth, bool wasDamage) =>
+		{
+			Dev.UI.PushDevNotification("AI character health changed: " + newHealth);
+		};
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
+		base._PhysicsProcess(delta);
+
 		if (_brainComponent.CurrentFocus != null)
 		{
 			GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(_brainComponent.CurrentFocus.GlobalPosition, Vector3.Up), 8.0f * (float)delta);
