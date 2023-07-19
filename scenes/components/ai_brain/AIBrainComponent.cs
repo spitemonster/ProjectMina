@@ -56,7 +56,6 @@ public partial class AIBrainComponent : Node
 
 		_navigationAgent.TargetReached += () =>
 		{
-			GD.Print("should attack");
 			_owner.Attack();
 		};
 

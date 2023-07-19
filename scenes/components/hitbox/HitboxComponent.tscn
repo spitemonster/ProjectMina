@@ -3,4 +3,6 @@
 [ext_resource type="Script" path="res://scenes/components/hitbox/HitboxComponent.cs" id="1_yibl0"]
 
 [node name="HitboxComponent" type="Area3D"]
+collision_layer = 0
+collision_mask = 4
 script = ExtResource("1_yibl0")

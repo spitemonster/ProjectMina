@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://c45weam7tjqmw"]
+[gd_scene load_steps=13 format=3 uid="uid://c45weam7tjqmw"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b5t2"]
 [ext_resource type="Script" path="res://scenes/characters/player_character/PlayerCharacter.cs" id="2_7uq42"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://uywniyg1yd8x" path="res://scenes/components/combat_grid/CombatGridComponent.tscn" id="6_uw203"]
 [ext_resource type="PackedScene" uid="uid://hqdj2ivnbab7" path="res://scenes/components/combat_grid/CombatGridPoint.tscn" id="7_1kmqq"]
 [ext_resource type="PackedScene" uid="uid://b3rq16aalq4c2" path="res://scenes/components/movement/MovementComponent.tscn" id="8_8i55q"]
+[ext_resource type="PackedScene" uid="uid://cf510k02wbxs4" path="res://scenes/components/equipment_manager/EquipmentManager.tscn" id="9_uaq73"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u7t72"]
 radius = 0.025
@@ -20,7 +21,7 @@ height = 0.2
 bottom_radius = 0.3
 height = 0.2
 
-[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "CharacterMovement", "_interactionComponent", "_head", "_soundComponent", "CombatGrid") instance=ExtResource("1_5b5t2")]
+[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "CharacterMovement", "_interactionComponent", "_equipmentManager", "_head", "_soundComponent", "CombatGrid") instance=ExtResource("1_5b5t2")]
 collision_layer = 6
 collision_mask = 5
 script = ExtResource("2_7uq42")
@@ -31,6 +32,7 @@ _gravityMultiplier = 1.5
 PrimaryCamera = NodePath("CharacterBody/Hips/Head/PrimaryCamera")
 CharacterMovement = NodePath("MovementComponent")
 _interactionComponent = NodePath("InteractionComponent")
+_equipmentManager = NodePath("EquipmentManager")
 _head = NodePath("CharacterBody/Hips/Head")
 _jumpForce = 5.5
 _inputSensitivity = 0.0025
@@ -52,6 +54,7 @@ transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 
 [node name="InteractionCollision" type="Area3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="0"]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 collision_layer = 15
+collision_mask = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody/Hips/Head/PrimaryCamera/InteractionCollision" index="0"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.75)
@@ -68,6 +71,9 @@ linear_limit_z/enabled = false
 
 [node name="StaticBody3D" type="StaticBody3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="Marker3D" type="Marker3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.412145, -0.249516, -0.347039)
 
 [node name="CombatGridComponent" parent="CharacterBody" index="1" node_paths=PackedStringArray("GridPoints") instance=ExtResource("6_uw203")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -0.498571)
@@ -90,13 +96,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
 visible = false
 shape = SubResource("CylinderShape3D_fewu7")
 
-[node name="InteractionComponent" type="Node" parent="." index="2" node_paths=PackedStringArray("_interactionCollision", "_grabPosition", "_grabJoint", "_grabAnchor")]
+[node name="InteractionComponent" type="Node" parent="." index="2" node_paths=PackedStringArray("_interactionCollision", "_grabPosition", "_grabJoint", "_grabAnchor", "equipmentManager")]
 script = ExtResource("3_3gtcp")
 _interactionCollision = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/InteractionCollision")
 _grabPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabPosition")
 _grabJoint = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabJoint")
 _grabAnchor = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/StaticBody3D")
 _grabRotationStrength = 8.0
+equipmentManager = NodePath("../EquipmentManager")
 
 [node name="PlayerHUD" parent="." index="3" node_paths=PackedStringArray("_interactionComponent", "_healthComponent") instance=ExtResource("4_161ca")]
 reticleDefaultColor = Color(1, 1, 1, 1)
@@ -121,3 +128,6 @@ AccelerationForce = 0.1
 BrakingForce = 0.1
 JumpForce = 5.0
 GravityMultiplier = 1.3
+
+[node name="EquipmentManager" parent="." index="8" node_paths=PackedStringArray("equipmentPosition") instance=ExtResource("9_uaq73")]
+equipmentPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/Marker3D")

@@ -66,7 +66,7 @@ public partial class AIMovementComponent : Node
 		_owner.MoveAndSlide();
 	}
 
-	private void InitMovement()
+private void InitMovement()
 	{
 		if (_navigationAgent != null)
 		{

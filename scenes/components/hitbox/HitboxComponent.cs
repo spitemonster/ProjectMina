@@ -4,6 +4,16 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class HitboxComponent : Area3D
 {
+	[Export]
+	public double Damage = 10.0;
+
+	public Godot.Collections.Array<Node3D> Exclude = new();
+
+	[Signal]
+	public delegate void HitCharacterEventHandler(CharacterBase character);
+	[Signal]
+	public delegate void HitNodeEventHandler(Node3D node);
+
 	public bool CanHit
 	{
 		get { return _canHit; }
@@ -18,7 +28,7 @@ public partial class HitboxComponent : Area3D
 	}
 
 	private Godot.Collections.Array<Node3D> _hitNodes = new();
-	private Godot.Collections.Array<Node3D> exclude;
+
 	private CharacterBase _owner;
 	private bool _canHit = false;
 
@@ -34,17 +44,26 @@ public partial class HitboxComponent : Area3D
 
 	private void CheckHit(Node3D body)
 	{
-		if (_hitNodes.Contains(body) || body == _owner || !CanHit)
+		// if we already hit the body, the body should be ignored
+		if (_hitNodes.Contains(body) || Exclude.Contains(body))
 		{
 			return;
 		}
-		Dev.UI.PushDevNotification("AI character hit player with sword!");
+
+		// this feels like something else should happen
+		if (!CanHit)
+		{
+			return;
+		}
 
 		_hitNodes.Add(body);
 
-		if (body is PlayerCharacter p)
+		if (body is CharacterBase c && c != _owner)
 		{
-			p.CharacterHealthComponent.ChangeHealth(10.0, true);
+			c.CharacterHealthComponent.ChangeHealth(Damage, true);
+			EmitSignal(SignalName.HitCharacter, c);
 		}
+
+		EmitSignal(SignalName.HitNode, body);
 	}
 }

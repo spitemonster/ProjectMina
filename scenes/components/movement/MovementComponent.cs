@@ -69,7 +69,6 @@ public partial class MovementComponent : Node
 
 	public void Jump()
 	{
-		GD.Print("should jump");
 		Vector3 currentVelocity = _owner.Velocity;
 		currentVelocity.Y = JumpForce;
 		_owner.Velocity = currentVelocity;

@@ -38,4 +38,11 @@ public partial class MeleeWeapon : WeaponBase
 			_hitbox.SetOwner(equippingCharacter);
 		}
 	}
+
+	public override void _Ready()
+	{
+		base._Ready();
+
+		weaponType = WeaponType.Melee;
+	}
 }
