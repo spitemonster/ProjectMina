@@ -19,7 +19,6 @@ public partial class Equipment : Node
 
 	public void Equip(CharacterBase equippingCharacter)
 	{
-		GD.Print("equipped from equipment thing");
 		EmitSignal(SignalName.Equipped, equippingCharacter);
 	}
 }

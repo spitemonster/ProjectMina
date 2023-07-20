@@ -175,23 +175,28 @@ public partial class PlayerCharacter : CharacterBase
 			}
 		}
 
+		// aim trace
+		if (_equipmentManager != null)
+		{
+			PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
+			Godot.Collections.Array<Rid> x = new() { GetRid() };
+			HitResult traceResult = Trace.Line(spaceState, PrimaryCamera.GlobalPosition, PrimaryCamera.GlobalPosition + PrimaryCamera.GlobalTransform.Basis.Z * -1000.0f, x);
+
+			if (traceResult != null && traceResult.HitPosition != new Vector3())
+			{
+				_equipmentManager.AimPosition = traceResult.HitPosition;
+			}
+			else
+			{
+				_equipmentManager.AimPosition = PrimaryCamera.GlobalPosition + PrimaryCamera.GlobalTransform.Basis.Z * -1000.0f;
+			}
+		}
+
 		Vector2 inputDirection = InputManager.GetInputDirection();
 		Velocity = CharacterMovement.CalculateMovementVelocity(inputDirection);
 
 		_ = MoveAndSlide();
 	}
-
-	// protected void Jump()
-	// {
-	// 	if (IsOnFloor())
-	// 	{
-	// 		Vector3 currentVelocity = Velocity;
-	// 		currentVelocity.Y += (float)_jumpForce;
-
-	// 		Velocity = currentVelocity;
-	// 	}
-	// }
-
 
 	private void HandleMouseMove(Vector2 mouseRelative)
 	{

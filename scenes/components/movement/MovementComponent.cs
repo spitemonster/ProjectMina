@@ -21,7 +21,7 @@ public partial class MovementComponent : Node
 	[Signal]
 	public delegate void FellEventHandler();
 	[Signal]
-	public delegate void LandedEventHandler(float fallDuration);
+	public delegate void LandedEventHandler(float fallDuration, Vector3 position);
 
 	[Export]
 	protected float MovementSpeed = 1.0f;
@@ -168,7 +168,7 @@ public partial class MovementComponent : Node
 		{
 			_falling = false;
 			_fallTimer.Stop();
-			EmitSignal(SignalName.Landed, _currentFallDuration);
+			EmitSignal(SignalName.Landed, _currentFallDuration, _owner.GlobalPosition);
 			_currentFallDuration = 0.0;
 		}
 	}

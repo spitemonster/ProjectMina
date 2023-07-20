@@ -14,7 +14,6 @@ public partial class ProjectileBase : RigidBody3D
 	{
 		_hitbox.CanHit = true;
 		_hitbox.Exclude = Exclude;
-		GD.Print(Exclude);
 
 		_hitbox.HitCharacter += (character) =>
 		{
@@ -27,10 +26,8 @@ public partial class ProjectileBase : RigidBody3D
 
 		BodyEntered += (node) =>
 		{
-			// GD.Print(node.Name, "body entered!");
 			if (!Exclude.Contains((Node3D)node))
 			{
-
 				QueueFree();
 			}
 		};
