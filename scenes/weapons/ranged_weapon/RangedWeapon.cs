@@ -65,7 +65,7 @@ public partial class RangedWeapon : WeaponBase
 		}
 
 		ProjectileBase currentProjectile = GetProjectile();
-		currentProjectile.ApplyImpulse(-GlobalTransform.Basis.Z * 20.0f);
+		currentProjectile.ApplyImpulse(-GlobalTransform.Basis.Z * 100.0f);
 		CanFire = false;
 		_fireTimer.Start();
 		EmitSignal(SignalName.Fired);
@@ -79,7 +79,6 @@ public partial class RangedWeapon : WeaponBase
 
 	protected ProjectileBase GetProjectile()
 	{
-		GD.Print("getting projectile, exclude: ", Exclude);
 		ProjectileBase currentProjectile = _projectileScene.Instantiate<ProjectileBase>();
 		GetTree().Root.AddChild(currentProjectile);
 		currentProjectile.GlobalTransform = ProjectileSpawn.GlobalTransform;
