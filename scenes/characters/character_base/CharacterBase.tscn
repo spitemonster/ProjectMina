@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://deagggwvcpss3" path="res://scenes/components/health/HealthComponent.tscn" id="2_kt7d1"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d1qpq"]
+radius = 0.3
 
 [node name="CharacterBase" type="CharacterBody3D" node_paths=PackedStringArray("CharacterBody", "CharacterHealthComponent")]
 collision_layer = 5

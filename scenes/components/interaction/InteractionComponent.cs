@@ -63,13 +63,35 @@ public partial class InteractionComponent : Node
 	{
 		base._Ready();
 
-		if (_interactionCollision != null && _grabJoint != null && _grabAnchor != null)
+		PlayerCharacter playerCharacter = GetOwner<PlayerCharacter>();
+
+		if (playerCharacter != null)
 		{
-			_interactionCollision.BodyEntered += CheckInteraction;
-			_interactionCollision.BodyExited += CheckLoseFocus;
+			playerCharacter.PlayerFocusChanged += (newFocus) =>
+			{
+
+				if (newFocus == null)
+				{
+					if (_focusedItem != null)
+					{
+						LoseFocus();
+						return;
+					}
+				}
+				else
+				{
+					CheckInteraction(newFocus);
+				}
+			};
 		}
 
-		Debug.Assert(_interactionCollision != null, "no interaction collision");
+		// if (_interactionCollision != null && _grabJoint != null && _grabAnchor != null)
+		// {
+		// 	_interactionCollision.BodyEntered += CheckInteraction;
+		// 	_interactionCollision.BodyExited += CheckLoseFocus;
+		// }
+
+		// Debug.Assert(_interactionCollision != null, "no interaction collision");
 		Debug.Assert(_grabJoint != null, "no grab joint");
 		Debug.Assert(_grabAnchor != null, "no grab anchor");
 	}
@@ -162,11 +184,17 @@ public partial class InteractionComponent : Node
 	{
 		if (_focusedItem == targetItem)
 		{
-			_focusedItem = null;
-			_interactionState = InteractionType.None;
-			EmitSignal(SignalName.InteractionStateChanged, (int)_interactionState);
-			EmitSignal(SignalName.LostFocus, targetItem);
+			LoseFocus();
 		}
+	}
+
+	private void LoseFocus()
+	{
+		EmitSignal(SignalName.LostFocus, _focusedItem);
+		_focusedItem = null;
+		_interactionState = InteractionType.None;
+		EmitSignal(SignalName.InteractionStateChanged, (int)_interactionState);
+
 	}
 
 	private void Use(Node3D targetItem)

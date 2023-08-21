@@ -47,6 +47,7 @@ public partial class AIBrainComponent : Node
 			{
 				if (character is PlayerCharacter p && _currentFocus == null)
 				{
+					GD.Print("player entered line of sight");
 					_currentFocus = p;
 					currentGridPoint = p.CombatGrid.GetPoint();
 					currentGridPoint.OccupyPoint(GetOwner<CharacterBase>());

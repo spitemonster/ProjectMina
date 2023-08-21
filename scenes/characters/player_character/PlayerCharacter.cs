@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 
 namespace ProjectMina;
 
@@ -8,6 +9,9 @@ public partial class PlayerCharacter : CharacterBase
 
 	[Export]
 	protected RangedWeapon gun;
+
+	[Signal]
+	public delegate void PlayerFocusChangedEventHandler(Node3D newFocus);
 
 	[ExportGroup("CharacterBase")]
 	[Export]
@@ -37,13 +41,15 @@ public partial class PlayerCharacter : CharacterBase
 	[Export]
 	protected double _inputSensitivity = .0025;
 
+	[Export]
+	protected ShapeCast3D FocusCast;
+
 	[ExportGroup("Grabbing")]
 	[Export]
 	protected double _carryGrabSpeedMultiplier = 1.0f;
 	[Export]
 	protected double _carryMovementSpeedMultiplier = 0.5f;
 
-	public bool IsSprinting { get; protected set; }
 	private InputManager _inputManager;
 	private double _gravity;
 
@@ -67,6 +73,11 @@ public partial class PlayerCharacter : CharacterBase
 	private bool _isStealthMode = false;
 	private float _defaultCapsuleHeight;
 	private Vector3 _defaultCapsulePosition;
+
+
+	private Node3D _currentPlayerFocus;
+	// private FocusInfo _currentPlayerFocus;
+	// private object _currentPlayerFocusCollider;
 
 	public override void _Ready()
 	{
@@ -119,6 +130,8 @@ public partial class PlayerCharacter : CharacterBase
 			_footstepTimer.Start();
 		}
 
+		FocusCast.AddException(this);
+
 		Debug.Assert(_soundComponent != null, "no sound component");
 
 		// get our default capsule settings for crouching
@@ -129,6 +142,11 @@ public partial class PlayerCharacter : CharacterBase
 
 	public override void _PhysicsProcess(double delta)
 	{
+
+		if (FocusCast != null)
+		{
+			CheckPlayerFocus();
+		}
 
 		if (!IsOnFloor())
 		{
@@ -175,27 +193,94 @@ public partial class PlayerCharacter : CharacterBase
 			}
 		}
 
-		// aim trace
-		if (_equipmentManager != null)
-		{
-			PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
-			Godot.Collections.Array<Rid> x = new() { GetRid() };
-			HitResult traceResult = Trace.Line(spaceState, PrimaryCamera.GlobalPosition, PrimaryCamera.GlobalPosition + PrimaryCamera.GlobalTransform.Basis.Z * -1000.0f, x);
-
-			if (traceResult != null && traceResult.HitPosition != new Vector3())
-			{
-				_equipmentManager.AimPosition = traceResult.HitPosition;
-			}
-			else
-			{
-				_equipmentManager.AimPosition = PrimaryCamera.GlobalPosition + PrimaryCamera.GlobalTransform.Basis.Z * -1000.0f;
-			}
-		}
 
 		Vector2 inputDirection = InputManager.GetInputDirection();
-		Velocity = CharacterMovement.CalculateMovementVelocity(inputDirection);
+		Velocity = CharacterMovement.CalculateMovementVelocity(inputDirection, delta);
 
 		_ = MoveAndSlide();
+	}
+
+	public override void _Process(double delta)
+	{
+		base._Process(delta);
+	}
+
+	private void CheckPlayerFocus()
+	{
+		if (!FocusCast.IsColliding() || FocusCast.CollisionResult.Count == 0)
+		{
+			if (_currentPlayerFocus != null)
+			{
+				GD.Print("Losing focus because no collision or collision result count == 0");
+				LoseFocus();
+			}
+
+			return;
+		}
+
+		Array<Node3D> ColliderResults = new();
+
+		for (int i = 0; i < FocusCast.CollisionResult.Count; i++)
+		{
+			ColliderResults.Add((Node3D)FocusCast.GetCollider(i));
+		}
+
+		if (_currentPlayerFocus == null)
+		{
+			foreach (Node3D node in ColliderResults)
+			{
+				if (CheckCanFocus(node))
+				{
+					SetFocus(node);
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (ColliderResults.Contains(_currentPlayerFocus))
+			{
+				return;
+			}
+
+			LoseFocus();
+		}
+	}
+
+	private bool CheckCanFocus(Node3D targetObject)
+	{
+		GD.Print(targetObject.Name);
+		float distanceToTargetObject = (PrimaryCamera.GlobalPosition - targetObject.GlobalPosition).Length();
+
+		if (targetObject == this || targetObject == null)
+		{
+			return false;
+		}
+
+		GD.Print(targetObject.Name + " " + targetObject.HasNode("Interaction"));
+
+		if ((targetObject.HasNode("Interaction") || targetObject is RigidBody3D) && distanceToTargetObject < 1.5)
+		{
+			GD.Print("had interaction node or is a rigidbody");
+			return true;
+		}
+		GD.Print("nope!");
+
+		return false;
+	}
+
+	private void SetFocus(Node3D targetObject)
+	{
+		_currentPlayerFocus = targetObject;
+		EmitSignal(SignalName.PlayerFocusChanged, _currentPlayerFocus);
+		GD.Print("Set Focus: ", _currentPlayerFocus.Name);
+	}
+
+	private void LoseFocus()
+	{
+		_currentPlayerFocus = null;
+		EmitSignal(SignalName.PlayerFocusChanged, _currentPlayerFocus);
+		GD.Print("Lose Focus!");
 	}
 
 	private void HandleMouseMove(Vector2 mouseRelative)

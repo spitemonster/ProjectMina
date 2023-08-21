@@ -12,7 +12,7 @@ config_version=5
 
 config/name="ProjectMina"
 run/main_scene="res://scenes/MainScene.tscn"
-config/features=PackedStringArray("4.1", "C#", "Forward Plus")
+config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 run/flush_stdout_on_print=true
 run/max_fps=60
 boot_splash/bg_color=Color(0.054902, 0.054902, 0.054902, 1)
@@ -48,7 +48,11 @@ project/assembly_name="ProjectMina"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/beehave/plugin.cfg", "res://addons/csgtomeshinstance/plugin.cfg", "res://addons/debug_drawing/plugin.cfg")
+enabled=PackedStringArray("res://addons/csgtomeshinstance/plugin.cfg", "res://addons/debug_drawing/plugin.cfg")
+
+[filesystem]
+
+import/fbx/enabled=false
 
 [input]
 
@@ -159,9 +163,16 @@ stealth={
 
 [physics]
 
+3d/run_on_separate_thread=true
 common/physics_ticks_per_second=120
 
 [rendering]
 
+driver/threads/thread_model=2
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
+lights_and_shadows/directional_shadow/16_bits=false
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=3
 anti_aliasing/quality/msaa_3d=1
 anti_aliasing/quality/screen_space_aa=1
+occlusion_culling/use_occlusion_culling=true
+lights_and_shadows/positional_shadow/atlas_16_bits=false

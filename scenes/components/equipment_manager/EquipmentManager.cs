@@ -66,11 +66,10 @@ public partial class EquipmentManager : Node
 	{
 		if (EquippedItem != null && equipmentPosition != null)
 		{
-			equipmentPosition.GlobalTransform = equipmentPosition.GlobalTransform.InterpolateWith(equipmentPosition.GlobalTransform.LookingAt(AimPosition, Vector3.Up), .3f);
-			Vector3 currentRotation = equipmentPosition.GlobalRotation;
+			// Vector3 currentRotation = equipmentPosition.GlobalRotation;
 			// currentRotation.X = 0;
-			currentRotation.Z = 0;
-			equipmentPosition.GlobalRotation = currentRotation;
+			// currentRotation.Z = 0;
+			// equipmentPosition.GlobalRotation = currentRotation;
 			EquippedItem.GlobalTransform = equipmentPosition.GlobalTransform;
 		}
 	}
