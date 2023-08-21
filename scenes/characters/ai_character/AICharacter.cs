@@ -29,11 +29,13 @@ public partial class AICharacter : CharacterBase
 	protected AIBrainComponent _brainComponent;
 	[Export]
 	protected NavigationAgent3D _navigationAgent;
+	[Export]
+	protected AnimationTree _animationTree;
 
 	public override void Attack()
 	{
 		base.Attack();
-		_animPlayer.Play("Attack");
+		// _animPlayer.Play("Attack");
 	}
 
 	public override void _Ready()
@@ -42,10 +44,8 @@ public partial class AICharacter : CharacterBase
 
 		Debug.Assert(_brainComponent != null, "no brain component");
 		Debug.Assert(_navigationAgent != null, "No navigation agent");
-		Debug.Assert(TempWeapon != null, "No temp weapon");
 		Debug.Assert(_movementComponent != null, "No movement component");
 
-		TempWeapon?.Equip(this);
 		_navigationAgent.VelocityComputed += SetVelocity;
 
 		CharacterHealthComponent.HealthChanged += (double newHealth, bool wasDamage) =>
@@ -58,31 +58,65 @@ public partial class AICharacter : CharacterBase
 	{
 		base._PhysicsProcess(delta);
 
-		if (_brainComponent.CurrentFocus != null)
+		Vector3 LookVector;
+
+		if (IsOnFloor())
 		{
-			GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(_brainComponent.CurrentFocus.GlobalPosition, Vector3.Up), 8.0f * (float)delta);
+			if (!_navigationAgent.AvoidanceEnabled)
+			{
+				_navigationAgent.AvoidanceEnabled = true;
+			}
 
-			Vector3 currentRotation = GlobalRotation;
-			currentRotation.X = 0;
-			currentRotation.Z = 0;
-			GlobalRotation = currentRotation;
+			if (_brainComponent.CurrentFocus != null)
+			{
+				_navigationAgent.TargetPosition = _brainComponent.CurrentFocus.GlobalPosition;
+				GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(_brainComponent.CurrentFocus.GlobalPosition, Vector3.Up), 8.0f * (float)delta);
 
-			Vector3 globalLookVector = _brainComponent.CurrentFocus.GlobalPosition - GlobalPosition;
-			Vector3 localLookVector = GlobalTransform.Basis.Inverse() * globalLookVector;
-			Vector2 testVector = new Vector2(localLookVector.X, -localLookVector.Z).Normalized();
-			_navigationAgent.Velocity = _movementComponent.CalculateMovementVelocity(testVector);
+				Vector3 currentRotation = GlobalRotation;
+				currentRotation.X = 0;
+				currentRotation.Z = 0;
+				GlobalRotation = currentRotation;
+
+				Vector3 globalLookVector = _navigationAgent.GetNextPathPosition() - GlobalPosition;
+				Vector3 localLookVector = GlobalTransform.Basis.Inverse() * globalLookVector;
+				Vector2 testVector = new Vector2(localLookVector.X, -localLookVector.Z).Normalized();
+				Vector3 v = _movementComponent.CalculateMovementVelocity(testVector, delta);
+
+				_navigationAgent.Velocity = v;
+
+				if (_animationTree != null)
+				{
+
+					_animationTree.Set("parameters/locomotion/blend_position", _movementComponent.IsSprinting ? 1.0f : 0.0f);
+					_animationTree.Set("parameters/Transition/transition_request", _movementComponent.IsMoving ? "moving" : "idle");
+				}
+			}
+			else
+			{
+				_animationTree.Set("parameters/locomotion/blend_position", 0.0f);
+				_animationTree.Set("parameters/Transition/transition_request", "idle");
+			}
+		}
+		else
+		{
+			if (_navigationAgent.AvoidanceEnabled)
+			{
+				_navigationAgent.AvoidanceEnabled = false;
+			}
+			Velocity = _movementComponent.CalculateMovementVelocity(Vector2.Zero, delta);
+			MoveAndSlide();
 		}
 	}
 
 	private void SetVelocity(Vector3 safeVelocity)
 	{
-		float dist = (_navigationAgent.TargetPosition - GlobalPosition).Length() - 1.0f;
-		float brakingDist = .5f;
-		float mult = Mathf.Clamp(dist / brakingDist, 0.0f, 1.0f);
+		// float dist = (_navigationAgent.TargetPosition - GlobalPosition).Length() - 1.0f;
+		// float brakingDist = .5f;
+		// float mult = Mathf.Clamp(dist / brakingDist, 0.0f, 1.0f);
 
-		mult = mult < .3f ? 0.0f : mult;
+		// mult = mult < .3f ? 0.0f : mult;
 
-		Velocity = safeVelocity * mult;
+		Velocity = safeVelocity;
 		MoveAndSlide();
 	}
 }

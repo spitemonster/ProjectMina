@@ -92,6 +92,8 @@ _data = {
 }
 
 [node name="AICharacter" node_paths=PackedStringArray("_animPlayer", "TempWeapon", "_movementComponent", "_brainComponent", "_navigationAgent") instance=ExtResource("1_1wkun")]
+collision_layer = 0
+collision_mask = 0
 script = ExtResource("1_dtey8")
 _animPlayer = NodePath("AnimationPlayer")
 TempWeapon = NodePath("CharacterBody/MeleeWeapon")

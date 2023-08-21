@@ -43,7 +43,7 @@ public partial class AISightComponent : Node3D
 		Debug.Assert(_sightCollision != null, "no sight collision");
 	}
 
-	public override void _Process(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		if (CharactersInSightRadius.Count > 0 && CharactersInSightRadius[_visibilityCheckIndex] is CharacterBase visibilityCheckTarget)
 		{
@@ -100,7 +100,15 @@ public partial class AISightComponent : Node3D
 
 		// insert some kind of check to see if we even care to watch this character
 		PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
-		HitResult traceResult = Trace.Line(spaceState, GlobalPosition, visibilityCheckTarget.CharacterBody.GlobalPosition, exclude);
+		CollisionShape3D targetCharacterBody = visibilityCheckTarget.CharacterBody;
+
+		if (targetCharacterBody == null)
+		{
+			GD.Print("target character body is null");
+			GD.Print(visibilityCheckTarget);
+		}
+
+		HitResult traceResult = Trace.Line(spaceState, GlobalPosition, targetCharacterBody.GlobalPosition, exclude);
 
 		if (traceResult != null && traceResult.Collider == visibilityCheckTarget)
 		{

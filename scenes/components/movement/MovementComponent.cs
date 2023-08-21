@@ -22,6 +22,10 @@ public partial class MovementComponent : Node
 	public delegate void FellEventHandler();
 	[Signal]
 	public delegate void LandedEventHandler(float fallDuration, Vector3 position);
+	public bool IsSprinting { get => _sprinting; }
+	public bool IsMoving { get => _moving; }
+
+	public Vector2 DesiredMovementDirection { get; private set; }
 
 	[Export]
 	protected float MovementSpeed = 1.0f;
@@ -45,8 +49,9 @@ public partial class MovementComponent : Node
 	private double _currentFallDuration = 0.0;
 	private bool _sprinting = false;
 	private bool _sneaking = false;
+	private bool _moving = false;
 
-	public Vector3 CalculateMovementVelocity(Vector2 inputVector)
+	public Vector3 CalculateMovementVelocity(Vector2 inputVector, double delta)
 	{
 
 		Vector3 direction = _owner.GlobalTransform.Basis * new Vector3(-inputVector.X, 0, -inputVector.Y);
@@ -62,6 +67,11 @@ public partial class MovementComponent : Node
 		{
 			currentVelocity.X = Mathf.MoveToward(currentVelocity.X, 0.0f, BrakingForce);
 			currentVelocity.Z = Mathf.MoveToward(currentVelocity.Z, 0.0f, BrakingForce);
+		}
+
+		if (!_owner.IsOnFloor())
+		{
+			currentVelocity.Y -= (float)(_gravity * GravityMultiplier * delta);
 		}
 
 		return currentVelocity;
@@ -113,11 +123,23 @@ public partial class MovementComponent : Node
 		};
 	}
 
-	public override void _Process(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		if (_owner == null)
 		{
 			return;
+		}
+
+
+		if (_moving && _owner.Velocity.Length() < 0.1)
+		{
+			_moving = false;
+			EmitSignal(SignalName.MovementEnded);
+		}
+		else if (!_moving && _owner.Velocity.Length() > 0.1)
+		{
+			_moving = true;
+			EmitSignal(SignalName.MovementStarted);
 		}
 
 		// check if owner is on the floor
@@ -127,7 +149,6 @@ public partial class MovementComponent : Node
 			HandleFall();
 			Vector3 currentVelocity = _owner.Velocity;
 			currentVelocity.Y -= (float)(_gravity * GravityMultiplier * delta);
-			_owner.Velocity = currentVelocity;
 		}
 		else
 		{

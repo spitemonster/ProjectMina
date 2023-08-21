@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dthkgruo86yys" path="res://scenes/interaction/Door.tscn" id="4_prh6m"]
 [ext_resource type="PackedScene" uid="uid://hoyi6yec8avu" path="res://scenes/weapons/ranged_weapon/RangedWeapon.tscn" id="5_6qhhn"]
 [ext_resource type="PackedScene" uid="uid://bycj2qoglbpn1" path="res://scenes/utility/ai/PatrolPath.tscn" id="6_dh556"]
-[ext_resource type="PackedScene" uid="uid://biapqvhr7l52k" path="res://scenes/characters/ai_character/AICharacter.tscn" id="6_ywfgk"]
+[ext_resource type="PackedScene" uid="uid://6mn1c1k3x6w5" path="res://_dev/EnemyAnimationTest.tscn" id="8_vna87"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_evmys"]
 vertices = PackedVector3Array(-31.5, 8.5, 31.5, -31, 8.5, 31.5, -31.25, 8.5, 23.75, -31.5, 8.5, 23.5, -31.5, 8.5, -15.75, -31.5, 8.5, -8, -31.25, 8.5, -8, -31.25, 8.5, -15.75, -31.5, 8.5, 23.5, -31.25, 8.5, 23.75, -31.25, 8.5, 15.75, -31.5, 8.5, 15.75, -31.5, 8.5, -8, -31.5, 8.5, 0, -31.25, 8.5, 0, -31.25, 8.5, -8, -31.25, 8.5, -23.75, -31, 8.5, -31.5, -31.5, 8.5, -31.5, -31.5, 8.5, -23.75, -31.25, 8.5, 7.75, -31.25, 8.5, 0, -31.5, 8.5, 0, -31.5, 8.5, 7.75, -31.5, 8.5, 7.75, -31.5, 8.5, 15.75, -31.25, 8.5, 15.75, -31.25, 8.5, 7.75, -31.25, 8.5, -15.75, -31.25, 8.5, -23.75, -31.5, 8.5, -23.75, -31.5, 8.5, -15.75, -22.75, -6, -30.25, -30.25, -6, -30.25, -30.25, -6, -22.75, -22.75, -6, -30.25, -30.25, -6, -22.75, -30.25, -6, -15.25, -15, -6, -30.25, -22.75, -6, -30.25, -30.25, -6, -15.25, -30.25, -6, -7.75, -30.25, -6, 0, -1, -6, 0, -0.75, -6, -1, -7.5, -6, -30.25, -15, -6, -30.25, -30.25, -6, -7.75, -0.75, -6, -1, 0.25, -6, -1, 0.25, -6, -30.25, -7.5, -6, -30.25, 30.5, -6, -22.75, 30.5, -6, -30.25, 22.75, -6, -30.25, 30.5, -6, -15.25, 30.5, -6, -22.75, 22.75, -6, -30.25, 30.5, -6, -15.25, 22.75, -6, -30.25, 15.25, -6, -30.25, 30.5, -6, -7.75, 0.25, -6, -30.25, 0.25, -6, -1, 1.5, -6, -0.75, 7.75, -6, -30.25, 1.5, -6, -0.75, 1.75, -6, 0, 30.5, -6, 0, 30.5, -6, -7.75, 15.25, -6, -30.25, 7.75, -6, -30.25, -0.5, -6, 4.75, 0.5, -6, 4.5, 0.25, -6, 1.75, -0.75, -6, 1.5, -30.25, -6, 6, 0, -6, 5.75, -0.5, -6, 5.5, -0.5, -6, 5.5, -0.5, -6, 4.75, -0.75, -6, 1.5, -1, -6, 0, -30.25, -6, 0, -30.25, -6, 6, 0.25, -6, 1.75, 0.5, -6, 4.5, 1.5, -6, 4.5, 1.75, -6, 0.5, 30.5, -6, 0, 1.75, -6, 0, 1.75, -6, 0.5, 1.75, -6, 0.5, 1.5, -6, 4.5, 1.75, -6, 5.25, 30.5, -6, 5.25, 30.5, -6, 0, 23, -6, 30.5, 30.5, -6, 30.5, 30.5, -6, 24, 23, -6, 30.5, 30.5, -6, 24, 30.5, -6, 17.75, 15.5, -6, 30.5, 23, -6, 30.5, 30.5, -6, 17.75, 30.5, -6, 11.5, 1.75, -6, 5.25, 8, -6, 30.5, 15.5, -6, 30.5, 30.5, -6, 11.5, 30.5, -6, 5.25, 1.5, -6, 5.75, 0.5, -6, 5.75, 0.5, -6, 30.5, 1.75, -6, 5.25, 1.5, -6, 5.75, 0.5, -6, 30.5, 8, -6, 30.5, -30.25, -6, 24.25, -30.25, -6, 30.5, -22.75, -6, 30.5, -30.25, -6, 18.25, -30.25, -6, 24.25, -22.75, -6, 30.5, -30.25, -6, 18.25, -22.75, -6, 30.5, -15, -6, 30.5, -30.25, -6, 12, -30.25, -6, 6, -30.25, -6, 12, -15, -6, 30.5, -7.25, -6, 30.5, 0, -6, 5.75, 0.5, -6, 30.5, 0.5, -6, 5.75, 0, -6, 5.75, -7.25, -6, 30.5)
@@ -22,6 +22,7 @@ navigation_mesh = SubResource("NavigationMesh_evmys")
 
 [node name="Crate7" parent="NavigationRegion3D" index="1" instance=ExtResource("2_eoajq")]
 transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 1.88554, -5.97338, 10.8741)
+collision_layer = 2
 
 [node name="Crate2" parent="NavigationRegion3D" index="2" instance=ExtResource("2_eoajq")]
 transform = Transform3D(0.934863, -0.198719, -0.294181, -8.83191e-15, 0.828657, -0.559757, 0.355009, 0.523296, 0.77468, -0.955956, -3.08259, 0.583176)
@@ -40,9 +41,10 @@ transform = Transform3D(-0.107457, -0.629956, -0.769161, -0.956609, 0.27626, -0.
 
 [node name="PlayerStart" parent="NavigationRegion3D" index="7"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.47643, 14.7012)
+transform = Transform3D(1, 0, 1.74846e-07, 0, 1, 0, -1.74846e-07, 0, 1, -22.9321, -6.47643, 14.7012)
 
 [node name="Map" parent="NavigationRegion3D" index="8" instance=ExtResource("2_jromu")]
+collision_mask = 0
 
 [node name="Door" parent="NavigationRegion3D" index="9" instance=ExtResource("4_prh6m")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.52567, 5.13899)
@@ -66,5 +68,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.14882, 0, 0)
 [node name="Marker3D3" type="Marker3D" parent="PatrolPath" index="2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.49183)
 
-[node name="AICharacter" parent="." index="4" instance=ExtResource("6_ywfgk")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.36191, 2.9265)
+[node name="AICharacter2" parent="." index="4" instance=ExtResource("8_vna87")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.4442, -0.365451, 8.10292)
