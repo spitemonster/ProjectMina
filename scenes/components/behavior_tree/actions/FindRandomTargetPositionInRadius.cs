@@ -15,8 +15,20 @@ public partial class FindRandomTargetPositionInRadius : BehaviorTree.Action
 
 	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
-		Vector3 characterPosition = character.GlobalPosition;
 
+
+		await Task.Run(() =>
+		{
+			CallDeferred("FindPosition", character, blackboard);
+		});
+
+		Succeed();
+		return Status;
+	}
+
+	private void FindPosition(AICharacter character, BlackboardComponent blackboard)
+	{
+		Vector3 characterPosition = character.GlobalPosition;
 		Vector3 newPosition = characterPosition;
 
 		float X = characterPosition.X + rng.RandfRange(-12.5f, 12.5f);
@@ -32,9 +44,6 @@ public partial class FindRandomTargetPositionInRadius : BehaviorTree.Action
 
 		_newTarget = pos;
 		blackboard.SetValue("target_position", _newTarget);
-
-		Succeed();
-		return Status;
 	}
 
 }

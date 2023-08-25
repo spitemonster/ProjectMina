@@ -7,9 +7,14 @@ namespace ProjectMina.BehaviorTree;
 [GlobalClass, Icon("res://scenes/components/behavior_tree/core/icons/contrast-icon.svg")]
 public partial class Condition : Action
 {
-	public async Task<ActionStatus> Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
-		return ActionStatus.SUCCEEDED;
+		await Task.Run(() =>
+		{
+			Succeed();
+		});
+
+		return Status;
 	}
 
 	public override string[] _GetConfigurationWarnings()

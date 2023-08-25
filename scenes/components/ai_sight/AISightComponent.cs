@@ -38,7 +38,7 @@ public partial class AISightComponent : Node3D
 			_sightCollision.BodyExited += CheckRemoveBody;
 
 			CallDeferred("CheckInitialOverlaps");
-			exclude.Add(GetOwner<CharacterBase>().GetRid());
+			exclude.Add(GetOwner<CharacterBody3D>().GetRid());
 		}
 
 		Debug.Assert(_sightCollision != null, "no sight collision");
