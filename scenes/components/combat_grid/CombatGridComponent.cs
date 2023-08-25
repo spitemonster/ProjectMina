@@ -1,7 +1,7 @@
 using Godot;
 
 namespace ProjectMina;
-[Tool]
+
 [GlobalClass]
 public partial class CombatGridComponent : Node3D
 {

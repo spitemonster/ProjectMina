@@ -5,7 +5,7 @@ namespace ProjectMina.BehaviorTree;
 
 [Tool]
 [GlobalClass]
-public partial class FindRandomTargetPositionInRadius : BehaviorTree.Action
+public partial class FindRandomTargetPositionInRadius : Action
 {
 	[Export] public float Radius { get; protected set; } = 10.0f;
 
@@ -22,6 +22,7 @@ public partial class FindRandomTargetPositionInRadius : BehaviorTree.Action
 			CallDeferred("FindPosition", character, blackboard);
 		});
 
+		GD.Print("target position found: ", _newTarget);
 		Succeed();
 		return Status;
 	}
@@ -44,6 +45,7 @@ public partial class FindRandomTargetPositionInRadius : BehaviorTree.Action
 
 		_newTarget = pos;
 		blackboard.SetValue("target_position", _newTarget);
+		blackboard.SetValue("target_position_reached", false);
 	}
 
 }

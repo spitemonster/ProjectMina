@@ -38,4 +38,4 @@ shape = SubResource("ConvexPolygonShape3D_crahu")
 [node name="Gizmo" parent="." instance=ExtResource("5_wlyjh")]
 
 [node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
-radius = 1.0
+radius = 0.7

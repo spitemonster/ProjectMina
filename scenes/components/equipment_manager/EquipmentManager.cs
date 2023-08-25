@@ -2,7 +2,6 @@ using Godot;
 
 namespace ProjectMina;
 
-[Tool]
 [GlobalClass]
 public partial class EquipmentManager : Node
 {

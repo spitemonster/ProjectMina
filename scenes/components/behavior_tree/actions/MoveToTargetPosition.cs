@@ -18,7 +18,7 @@ public partial class MoveToTargetPosition : Action
 		}
 
 		await ToSignal(character.NavigationAgent, NavigationAgent3D.SignalName.TargetReached);
-
+		GD.Print("reached destination");
 		Succeed();
 		return Status;
 	}

@@ -3,7 +3,6 @@ using Godot.Collections;
 
 namespace ProjectMina;
 
-[Tool]
 [GlobalClass]
 public partial class PlayerCharacter : CharacterBase
 {
