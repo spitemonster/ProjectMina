@@ -7,18 +7,14 @@ namespace ProjectMina.BehaviorTree;
 [GlobalClass]
 public partial class Selector : Composite
 {
-
 	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
-		GD.Print("selector ticking");
 		foreach (Action child in GetChildren())
 		{
 			if (child == null)
 			{
 				continue;
 			}
-
-			GD.Print("ticking child: " + child.Name);
 
 			Task<ActionStatus> tickAction = child.Tick(character, blackboard);
 
@@ -29,6 +25,7 @@ public partial class Selector : Composite
 
 			if (child.Status == ActionStatus.SUCCEEDED)
 			{
+				GD.Print("child ticked!");
 				Succeed();
 				return Status;
 			}

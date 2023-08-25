@@ -69,9 +69,9 @@ public partial class AICharacter : CharacterBase
 				NavigationAgent.AvoidanceEnabled = true;
 			}
 
-			if (NavigationAgent.TargetPosition != new Vector3(0.0f, 0.0f, 0.0f))
+			if (_brainComponent.GetTargetPosition() != default)
 			{
-				GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(NavigationAgent.GetNextPathPosition(), Vector3.Up), 8.0f * (float)delta);
+				GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(_brainComponent.GetTargetPosition(), Vector3.Up), 8.0f * (float)delta);
 
 				Vector3 currentRotation = GlobalRotation;
 				currentRotation.X = 0;
@@ -85,15 +85,14 @@ public partial class AICharacter : CharacterBase
 
 				NavigationAgent.Velocity = v;
 
-				if (_animationTree != null)
-				{
-					_animationTree.Set("parameters/locomotion/blend_position", MovementComponent.IsSprinting ? 1.0f : 0.0f);
-					_animationTree.Set("parameters/Transition/transition_request", MovementComponent.IsMoving ? "moving" : "idle");
-				}
+				// if (_animationTree != null)
+				// {
+				// 	_animationTree.Set("parameters/locomotion/blend_position", MovementComponent.IsSprinting ? 1.0f : 0.0f);
+				// 	_animationTree.Set("parameters/Transition/transition_request", MovementComponent.IsMoving ? "moving" : "idle");
+				// }
+
+
 			}
-
-
-
 		}
 		else
 		{

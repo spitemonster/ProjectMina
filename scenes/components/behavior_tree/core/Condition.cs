@@ -1,3 +1,4 @@
+// condition nodes are intended to run code that tests if its child should run. typically this is used for blackboard lookups
 using Godot;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ public partial class Condition : Action
 
 		if (GetChildCount() != 1)
 		{
-			warnings.Add("Conditional Nodes are expected to have only one child.");
+			warnings.Add("Conditional Nodes are expected to have precisely child.");
 		}
 
 		string[] baseWarnings = base._GetConfigurationWarnings();

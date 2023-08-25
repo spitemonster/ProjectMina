@@ -1,24 +1,18 @@
 using Godot;
+using ProjectMina.BehaviorTree;
 namespace ProjectMina;
 
 [GlobalClass]
 public partial class AIBrainComponent : Node
 {
 	public Vector2 MovementDirection { get; protected set; }
-	public Node3D CurrentFocus { get => _currentFocus; }
-
-	[Signal] public delegate void FocusedEventHandler(Node3D newFocus);
-	[Signal] public delegate void LostFocusEventHandler();
 
 	[Export] protected AISightComponent _sightComponent;
-
 	[Export] protected AIHearingComponent _hearingComponent;
-
 	[Export] protected NavigationAgent3D _navigationAgent;
-
-	[Export] protected BehaviorTree.BehaviorTreeComponent _behaviorTree;
-
+	[Export] protected BehaviorTreeComponent _behaviorTree;
 	[Export] protected BlackboardComponent _blackboard;
+	[Export] protected AttentionComponent _attentionComponent;
 
 	[Export]
 	public float TickRate
@@ -29,62 +23,93 @@ public partial class AIBrainComponent : Node
 
 	private float _tickRate = 0.1f;
 	private Timer _tickTimer;
-	private Node3D _currentFocus;
 	private CombatGridPoint currentGridPoint;
 	private AICharacter _owner;
 
-	public void Focus(Node3D newFocus)
+	public Node3D GetCurrentFocus()
 	{
-		if (newFocus == _currentFocus)
+		NodePath currentFocusPath = (NodePath)_blackboard.GetValue("current_focus");
+
+		if (currentFocusPath == new NodePath() || currentFocusPath == null)
 		{
-			return;
+			return null;
 		}
 
-		_currentFocus = newFocus;
-		EmitSignal(SignalName.Focused, _currentFocus);
+		if (GetNode(currentFocusPath) is Node3D node)
+		{
+			return node;
+		}
+		else
+		{
+			return null;
+		}
 	}
 
-	public void LoseFocus()
+	public Vector3 GetTargetPosition()
 	{
-		_currentFocus = null;
-		EmitSignal(SignalName.LostFocus);
+		return (Vector3)_blackboard.GetValue("target_position");
 	}
 
 	public override void _Ready()
 	{
+		_owner = GetOwner<AICharacter>();
 		_tickTimer = new()
 		{
 			WaitTime = _tickRate,
 			Autostart = true,
 			OneShot = false
 		};
+		_tickTimer.Timeout += Tick;
+		AddChild(_tickTimer);
 
-		_owner = GetOwner<AICharacter>();
+		System.Diagnostics.Debug.Assert(_attentionComponent != null, "no attention component");
+		System.Diagnostics.Debug.Assert(_sightComponent != null, "no ai sight component");
+		System.Diagnostics.Debug.Assert(_hearingComponent != null, "no ai hearing component");
+		System.Diagnostics.Debug.Assert(_navigationAgent != null, "no navigation component");
+		System.Diagnostics.Debug.Assert(_behaviorTree != null, "no behavior tree component");
+		System.Diagnostics.Debug.Assert(_blackboard != null, "no blackboard component");
+		System.Diagnostics.Debug.Assert(_owner != null, "owner is not ai character");
+		System.Diagnostics.Debug.Assert(_tickTimer != null, "tick timer is null");
 
-		if (_sightComponent != null)
+		_sightComponent.CharacterEnteredSightRadius += (character) =>
 		{
-			_sightComponent.CharacterEnteredLineOfSight += (character) =>
+			if (character is PlayerCharacter p)
 			{
-				GD.Print("character entered sight area");
+				// SeeEnemy(p);
+			}
+		};
 
-				if (character is PlayerCharacter p && _currentFocus == null)
-				{
-					GD.Print("character is player character");
-
-				}
-			};
-		}
+		_sightComponent.CharacterExitedSightRadius += (character) =>
+		{
+			if (character.Equals(GetCurrentFocus()))
+			{
+				_owner.LoseFocus();
+			}
+		};
 
 		_owner.MovementComponent.MovementStateChanged += (MovementComponent.MovementState newState) =>
 		{
-			_blackboard?.SetValue("movement_state", (int)newState);
+			_blackboard.SetValue("movement_state", (int)newState);
 		};
 
-		Debug.Assert(_sightComponent != null, "no ai sight component");
+		_owner.NavigationAgent.TargetReached += () =>
+		{
+			_blackboard.SetValue("target_position_reached", true);
+		};
 
-		_tickTimer.Timeout += Tick;
+		_attentionComponent.FocusChanged += (Node3D newFocus, Node3D previousFocus) =>
+		{
+			if (_blackboard.SetValue("current_focus", newFocus?.GetPath()))
+			{
+				GD.Print("successfully changed focus!");
+			}
 
-		AddChild(_tickTimer);
+			if (newFocus == null)
+			{
+				GD.Print("lost focus!");
+			}
+		};
+
 	}
 
 	private void Tick()
@@ -94,5 +119,10 @@ public partial class AIBrainComponent : Node
 			Debug.Assert(false, "ai brain missing critical components");
 			return;
 		}
+	}
+
+	private void SeeEnemy(CharacterBase targetCharacter)
+	{
+		_owner.SetFocus(targetCharacter);
 	}
 }

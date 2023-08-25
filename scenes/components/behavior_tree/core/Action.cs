@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Godot;
-
+using Godot.Collections;
 namespace ProjectMina.BehaviorTree;
 
 [Tool]
@@ -16,12 +16,22 @@ public abstract partial class Action : Node
 	[Signal] public delegate void ActionCompletedEventHandler(ActionStatus ActionStatus);
 	[Signal] public delegate void ActionStatusChangedEventHandler(ActionStatus newStatus);
 
+	protected Array<Action> _childActions = new();
+
 	public ActionStatus Status { get; private set; }
 
 	[Export] public bool IsActive { get; private set; } = true;
 
 	public override void _Ready()
 	{
+		foreach (Node c in GetChildren())
+		{
+			if (c is Action a)
+			{
+				_childActions.Add(a);
+			}
+		}
+
 		if (IsActive)
 		{
 			Succeed();
@@ -58,13 +68,7 @@ public abstract partial class Action : Node
 	}
 
 	// override this function 
-	protected virtual async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
-	{
-		return await Task.Run(() =>
-		{
-			return ActionStatus.SUCCEEDED;
-		});
-	}
+	protected abstract Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard);
 
 	protected void SetStatus(ActionStatus newStatus)
 	{
@@ -95,11 +99,10 @@ public abstract partial class Action : Node
 
 	public override string[] _GetConfigurationWarnings()
 	{
-		Godot.Collections.Array<string> warnings = new();
+		Array<string> warnings = new();
 
 		foreach (var child in GetChildren())
 		{
-
 			if (!(child is Action))
 			{
 				warnings.Add(child.Name + " was expected to be of or inherit type Action.");

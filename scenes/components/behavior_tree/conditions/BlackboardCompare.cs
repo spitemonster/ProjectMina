@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using System.Threading.Tasks;
 
 namespace ProjectMina.BehaviorTree;
@@ -30,17 +31,22 @@ public partial class BlackboardCompare : Condition
 		val = _ParseExpression(Value);
 	}
 
-	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
-		await Task.Run(() =>
+		if (EvaluateComparison(blackboard))
 		{
-			CallDeferred("EvaluateComparison", blackboard);
-		});
+			Succeed();
+			_childActions[0].Tick(character, blackboard);
+		}
+		else
+		{
+			Fail();
+		}
 
-		return Status;
+		return Task.FromResult(Status);
 	}
 
-	private void EvaluateComparison(BlackboardComponent blackboard)
+	private bool EvaluateComparison(BlackboardComponent blackboard)
 	{
 		Variant compareValue = val.Execute(new(), val);
 		Variant blackboardValue = blackboard.GetValue(BlackboardKey);
@@ -64,14 +70,7 @@ public partial class BlackboardCompare : Condition
 				break;
 		}
 
-		if (result)
-		{
-			Succeed();
-		}
-		else
-		{
-			Fail();
-		}
+		return result;
 	}
 
 	private Expression _ParseExpression(string source)
@@ -85,5 +84,30 @@ public partial class BlackboardCompare : Condition
 		}
 
 		return exp;
+	}
+
+	public override string[] _GetConfigurationWarnings()
+	{
+		Array<string> warnings = new();
+
+		if (GetChildCount() != 1)
+		{
+			warnings.Add("Comparison node expected to have precisely one child.");
+		}
+
+		string[] baseWarnings = base._GetConfigurationWarnings();
+		if (baseWarnings != null && baseWarnings.Length > 0)
+		{
+			warnings.AddRange(baseWarnings);
+		}
+
+		string[] errs = new string[warnings.Count];
+
+		for (int i = 0; i < warnings.Count; i++)
+		{
+			errs.SetValue(warnings[i], i);
+		}
+
+		return errs;
 	}
 }

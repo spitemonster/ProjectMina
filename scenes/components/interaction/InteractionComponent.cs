@@ -2,7 +2,6 @@ using Godot;
 
 namespace ProjectMina;
 
-[Tool]
 [GlobalClass]
 public partial class InteractionComponent : Node
 {
@@ -64,7 +63,7 @@ public partial class InteractionComponent : Node
 
 		PlayerCharacter playerCharacter = GetOwner<PlayerCharacter>();
 
-		if (playerCharacter != null)
+		if (playerCharacter != null && playerCharacter.AttentionComponent != null)
 		{
 			playerCharacter.AttentionComponent.FocusChanged += (newFocus, previousFocus) =>
 			{

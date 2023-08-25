@@ -1,7 +1,7 @@
 using Godot;
 using Godot.Collections;
 namespace ProjectMina;
-[Tool]
+
 [GlobalClass]
 public partial class AISightComponent : Node3D
 {
@@ -38,7 +38,7 @@ public partial class AISightComponent : Node3D
 			_sightCollision.BodyExited += CheckRemoveBody;
 
 			CallDeferred("CheckInitialOverlaps");
-			exclude.Add(GetOwner<CharacterBody3D>().GetRid());
+			exclude.Add(GetOwner<CharacterBase>().GetRid());
 		}
 
 		Debug.Assert(_sightCollision != null, "no sight collision");
@@ -73,10 +73,12 @@ public partial class AISightComponent : Node3D
 	{
 		if (body is CharacterBase c && CharactersInSightRadius.Contains(c))
 		{
+			EmitSignal(SignalName.CharacterExitedSightRadius, c);
 			CharactersInSightRadius.Remove(c);
 
 			if (VisibleCharacters.Contains(c))
 			{
+				EmitSignal(SignalName.CharacterExitedLineOfSight);
 				VisibleCharacters.Remove(c);
 			}
 		}
