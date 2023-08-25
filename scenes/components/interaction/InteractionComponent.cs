@@ -66,7 +66,7 @@ public partial class InteractionComponent : Node
 
 		if (playerCharacter != null)
 		{
-			playerCharacter.FocusChanged += (newFocus) =>
+			playerCharacter.AttentionComponent.FocusChanged += (newFocus, previousFocus) =>
 			{
 
 				if (newFocus == null)
