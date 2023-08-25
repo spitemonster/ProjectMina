@@ -1,6 +1,8 @@
 using Godot;
 
 namespace ProjectMina;
+
+[Tool]
 [GlobalClass]
 public partial class SoundComponent : Node3D
 {

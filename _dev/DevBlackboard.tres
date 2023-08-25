@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BlackboardAsset" load_steps=2 format=3 uid="uid://v5hgid8722vl"]
+
+[ext_resource type="Script" path="res://scenes/components/behavior_tree/core/blackboard/BlackboardAsset.cs" id="1_00urv"]
+
+[resource]
+script = ExtResource("1_00urv")
+Entries = {
+"has_name": false,
+"target_position": Vector3(0, 0, 0)
+}

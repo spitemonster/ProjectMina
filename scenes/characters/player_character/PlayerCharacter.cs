@@ -3,6 +3,7 @@ using Godot.Collections;
 
 namespace ProjectMina;
 
+[Tool]
 [GlobalClass]
 public partial class PlayerCharacter : CharacterBase
 {
@@ -211,7 +212,6 @@ public partial class PlayerCharacter : CharacterBase
 		{
 			if (_currentPlayerFocus != null)
 			{
-				GD.Print("Losing focus because no collision or collision result count == 0");
 				LoseFocus();
 			}
 
@@ -249,7 +249,6 @@ public partial class PlayerCharacter : CharacterBase
 
 	private bool CheckCanFocus(Node3D targetObject)
 	{
-		GD.Print(targetObject.Name);
 		float distanceToTargetObject = (PrimaryCamera.GlobalPosition - targetObject.GlobalPosition).Length();
 
 		if (targetObject == this || targetObject == null)
@@ -257,14 +256,12 @@ public partial class PlayerCharacter : CharacterBase
 			return false;
 		}
 
-		GD.Print(targetObject.Name + " " + targetObject.HasNode("Interaction"));
-
 		if ((targetObject.HasNode("Interaction") || targetObject is RigidBody3D) && distanceToTargetObject < 1.5)
 		{
-			GD.Print("had interaction node or is a rigidbody");
+
 			return true;
 		}
-		GD.Print("nope!");
+
 
 		return false;
 	}
@@ -273,14 +270,12 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		_currentPlayerFocus = targetObject;
 		EmitSignal(SignalName.PlayerFocusChanged, _currentPlayerFocus);
-		GD.Print("Set Focus: ", _currentPlayerFocus.Name);
 	}
 
 	private void LoseFocus()
 	{
 		_currentPlayerFocus = null;
 		EmitSignal(SignalName.PlayerFocusChanged, _currentPlayerFocus);
-		GD.Print("Lose Focus!");
 	}
 
 	private void HandleMouseMove(Vector2 mouseRelative)

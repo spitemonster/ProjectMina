@@ -19,25 +19,26 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0227094, 0, 0)
 navigation_mesh = SubResource("NavigationMesh_evmys")
 
 [node name="Crate" parent="NavigationRegion3D" index="0" instance=ExtResource("2_eoajq")]
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, -5, 0.158869)
 
 [node name="Crate7" parent="NavigationRegion3D" index="1" instance=ExtResource("2_eoajq")]
-transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 1.88554, -5.97338, 10.8741)
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 1.88554, -5.97338, 11.033)
 collision_layer = 2
 
 [node name="Crate2" parent="NavigationRegion3D" index="2" instance=ExtResource("2_eoajq")]
-transform = Transform3D(0.934863, -0.198719, -0.294181, -8.83191e-15, 0.828657, -0.559757, 0.355009, 0.523296, 0.77468, -0.955956, -3.08259, 0.583176)
+transform = Transform3D(0.934863, -0.198719, -0.294181, -8.83191e-15, 0.828657, -0.559757, 0.355009, 0.523296, 0.77468, -0.955956, -3.08259, 0.742069)
 
 [node name="Crate3" parent="NavigationRegion3D" index="3" instance=ExtResource("2_eoajq")]
-transform = Transform3D(-0.996701, 0.0454276, 0.0672503, -8.83191e-15, 0.828657, -0.559757, -0.0811559, -0.557911, -0.825923, 0, -1.96965, -0.806001)
+transform = Transform3D(-0.996701, 0.0454276, 0.0672503, -8.83191e-15, 0.828657, -0.559757, -0.0811559, -0.557911, -0.825923, 0, -1.96965, -0.647131)
 
 [node name="Crate4" parent="NavigationRegion3D" index="4" instance=ExtResource("2_eoajq")]
-transform = Transform3D(0.0267591, -0.0914735, 0.995448, 0.959776, 0.280767, 0, -0.279489, 0.955407, 0.0953071, 3.01157, 0.0836678, -3.48551)
+transform = Transform3D(0.0267591, -0.0914735, 0.995448, 0.959776, 0.280767, 0, -0.279489, 0.955407, 0.0953071, 3.01157, 0.0836678, -3.32663)
 
 [node name="Crate5" parent="NavigationRegion3D" index="5" instance=ExtResource("2_eoajq")]
-transform = Transform3D(0.378409, 0.439796, 0.814485, 0.897259, 0.041934, -0.439509, -0.227449, 0.897118, -0.378743, 3.39112, -0.29549, -1.33084)
+transform = Transform3D(0.378409, 0.439796, 0.814485, 0.897259, 0.041934, -0.439509, -0.227449, 0.897118, -0.378743, 3.39112, -0.29549, -1.17203)
 
 [node name="Crate6" parent="NavigationRegion3D" index="6" instance=ExtResource("2_eoajq")]
-transform = Transform3D(-0.107457, -0.629956, -0.769161, -0.956609, 0.27626, -0.0926162, 0.270832, 0.725835, -0.632308, 1.93204, 0.934491, -0.667111)
+transform = Transform3D(-0.107457, -0.629956, -0.769161, -0.956609, 0.27626, -0.0926162, 0.270832, 0.725835, -0.632308, 1.93204, 0.934491, -0.508232)
 
 [node name="PlayerStart" parent="NavigationRegion3D" index="7"]
 unique_name_in_owner = true
@@ -69,4 +70,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.14882, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.49183)
 
 [node name="AICharacter2" parent="." index="4" instance=ExtResource("8_vna87")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.4442, -0.365451, 8.10292)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.27542, -6.40584, 8.10292)
