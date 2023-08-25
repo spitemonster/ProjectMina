@@ -1,9 +1,8 @@
-using System;
-using System.Net.Http.Headers;
 using Godot;
 
 namespace ProjectMina;
 
+[Tool]
 [GlobalClass]
 public partial class InteractionComponent : Node
 {

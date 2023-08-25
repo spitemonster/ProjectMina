@@ -5,6 +5,15 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class MovementComponent : Node
 {
+	public enum MovementState
+	{
+		NONE,
+		WALKING,
+		SPRINTING,
+		FALLING,
+		JUMPING,
+		SNEAKING
+	}
 
 	[Signal]
 	public delegate void MovementStartedEventHandler();
@@ -22,8 +31,11 @@ public partial class MovementComponent : Node
 	public delegate void FellEventHandler();
 	[Signal]
 	public delegate void LandedEventHandler(float fallDuration, Vector3 position);
+	[Signal] public delegate void MovementStateChangedEventHandler(MovementState newState);
 	public bool IsSprinting { get => _sprinting; }
 	public bool IsMoving { get => _moving; }
+
+	public MovementState CharacterMovementState;
 
 	public Vector2 DesiredMovementDirection { get; private set; }
 
@@ -82,6 +94,7 @@ public partial class MovementComponent : Node
 		Vector3 currentVelocity = _owner.Velocity;
 		currentVelocity.Y = JumpForce;
 		_owner.Velocity = currentVelocity;
+		SetMovementState(MovementState.JUMPING);
 	}
 
 	public void ToggleSprint()
@@ -90,6 +103,7 @@ public partial class MovementComponent : Node
 
 		if (_sprinting)
 		{
+			SetMovementState(MovementState.SPRINTING);
 			_sneaking = false;
 		}
 	}
@@ -100,6 +114,7 @@ public partial class MovementComponent : Node
 
 		if (_sneaking)
 		{
+			SetMovementState(MovementState.SNEAKING);
 			_sprinting = false;
 		}
 	}
@@ -130,20 +145,22 @@ public partial class MovementComponent : Node
 			return;
 		}
 
-
-		if (_moving && _owner.Velocity.Length() < 0.1)
+		if (_moving && _owner.Velocity.Length() < 0.025)
 		{
 			_moving = false;
+			_sprinting = false;
 			EmitSignal(SignalName.MovementEnded);
+			SetMovementState(MovementState.NONE);
 		}
 		else if (!_moving && _owner.Velocity.Length() > 0.1)
 		{
 			_moving = true;
 			EmitSignal(SignalName.MovementStarted);
+			SetMovementState(MovementState.WALKING);
 		}
 
-		// check if owner is on the floor
-		if (!_owner.IsOnFloor())
+		// check if owner is on the floor and the character isn't on the upswing
+		if (!_owner.IsOnFloor() && _owner.Velocity.Y < 0)
 		{
 			// if not, run fall logic
 			HandleFall();
@@ -180,6 +197,7 @@ public partial class MovementComponent : Node
 			_falling = true;
 			_fallTimer.Start();
 			EmitSignal(SignalName.Fell);
+			SetMovementState(MovementState.FALLING);
 		}
 	}
 
@@ -191,6 +209,19 @@ public partial class MovementComponent : Node
 			_fallTimer.Stop();
 			EmitSignal(SignalName.Landed, _currentFallDuration, _owner.GlobalPosition);
 			_currentFallDuration = 0.0;
+			SetMovementState(MovementState.NONE);
 		}
+	}
+
+	private void SetMovementState(MovementState newState)
+	{
+		if (newState == CharacterMovementState)
+		{
+			return;
+		}
+
+		CharacterMovementState = newState;
+
+		EmitSignal(SignalName.MovementStateChanged, (int)newState);
 	}
 }

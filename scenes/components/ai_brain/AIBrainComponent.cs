@@ -1,21 +1,25 @@
 using Godot;
-
 namespace ProjectMina;
 
+[Tool]
 [GlobalClass]
 public partial class AIBrainComponent : Node
 {
 	public Vector2 MovementDirection { get; protected set; }
 	public Node3D CurrentFocus { get => _currentFocus; }
 
-	[Export]
-	protected AISightComponent _sightComponent;
+	[Signal] public delegate void FocusedEventHandler(Node3D newFocus);
+	[Signal] public delegate void LostFocusEventHandler();
 
-	[Export]
-	protected AIHearingComponent _hearingComponent;
+	[Export] protected AISightComponent _sightComponent;
 
-	[Export]
-	protected NavigationAgent3D _navigationAgent;
+	[Export] protected AIHearingComponent _hearingComponent;
+
+	[Export] protected NavigationAgent3D _navigationAgent;
+
+	[Export] protected BehaviorTree.BehaviorTreeComponent _behaviorTree;
+
+	[Export] protected BlackboardComponent _blackboard;
 
 	[Export]
 	public float TickRate
@@ -29,6 +33,23 @@ public partial class AIBrainComponent : Node
 	private Node3D _currentFocus;
 	private CombatGridPoint currentGridPoint;
 	private AICharacter _owner;
+
+	public void Focus(Node3D newFocus)
+	{
+		if (newFocus == _currentFocus)
+		{
+			return;
+		}
+
+		_currentFocus = newFocus;
+		EmitSignal(SignalName.Focused, _currentFocus);
+	}
+
+	public void LoseFocus()
+	{
+		_currentFocus = null;
+		EmitSignal(SignalName.LostFocus);
+	}
 
 	public override void _Ready()
 	{
@@ -45,19 +66,19 @@ public partial class AIBrainComponent : Node
 		{
 			_sightComponent.CharacterEnteredLineOfSight += (character) =>
 			{
+				GD.Print("character entered sight area");
+
 				if (character is PlayerCharacter p && _currentFocus == null)
 				{
-					GD.Print("player entered line of sight");
-					_currentFocus = p;
-					currentGridPoint = p.CombatGrid.GetPoint();
-					currentGridPoint.OccupyPoint(GetOwner<CharacterBase>());
+					GD.Print("character is player character");
+
 				}
 			};
 		}
 
-		_navigationAgent.TargetReached += () =>
+		_owner.MovementComponent.MovementStateChanged += (MovementComponent.MovementState newState) =>
 		{
-			_owner.Attack();
+			_blackboard?.SetValue("movement_state", (int)newState);
 		};
 
 		Debug.Assert(_sightComponent != null, "no ai sight component");
@@ -73,22 +94,6 @@ public partial class AIBrainComponent : Node
 		{
 			Debug.Assert(false, "ai brain missing critical components");
 			return;
-		}
-
-		if (_currentFocus == null)
-		{
-			return;
-		}
-
-		if (_currentFocus is PlayerCharacter p)
-		{
-			_navigationAgent.TargetPosition = p.GlobalPosition;
-			// calculate movement direction and convert to vector 2
-			Vector3 targetDirection = (_owner.GlobalPosition - _navigationAgent.GetNextPathPosition()).Normalized();
-			float VecX = targetDirection.X;
-			float VecY = targetDirection.Z;
-
-			MovementDirection = new(VecX, VecY);
 		}
 	}
 }

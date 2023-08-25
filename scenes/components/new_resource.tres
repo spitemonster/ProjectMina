@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="BlackboardResource" load_steps=2 format=3 uid="uid://cn0087seeujfc"]
+
+[ext_resource type="Script" path="res://scenes/components/behavior_tree/BlackboardResource.cs" id="1_mpjyp"]
+
+[resource]
+script = ExtResource("1_mpjyp")

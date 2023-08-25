@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 namespace ProjectMina;
+[Tool]
 [GlobalClass]
 public partial class AISightComponent : Node3D
 {
@@ -104,8 +105,7 @@ public partial class AISightComponent : Node3D
 
 		if (targetCharacterBody == null)
 		{
-			GD.Print("target character body is null");
-			GD.Print(visibilityCheckTarget);
+
 		}
 
 		HitResult traceResult = Trace.Line(spaceState, GlobalPosition, targetCharacterBody.GlobalPosition, exclude);

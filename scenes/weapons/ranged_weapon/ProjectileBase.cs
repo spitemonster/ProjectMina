@@ -50,7 +50,7 @@ public partial class ProjectileBase : RigidBody3D
 		{
 			if (!Exclude.Contains((Node3D)node))
 			{
-				GD.Print(node.Name);
+				// GD.Print(node.Name);
 				// if (impactParticle != null)
 				// {
 				// 	impactParticle.GlobalPosition = GlobalPosition;

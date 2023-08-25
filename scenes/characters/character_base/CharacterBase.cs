@@ -2,6 +2,7 @@ using Godot;
 
 namespace ProjectMina;
 
+[Tool]
 [GlobalClass]
 public partial class CharacterBase : CharacterBody3D
 {
