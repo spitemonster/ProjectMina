@@ -11,9 +11,6 @@ public partial class PlayerCharacter : CharacterBase
 	[Export]
 	protected RangedWeapon gun;
 
-	[Signal]
-	public delegate void PlayerFocusChangedEventHandler(Node3D newFocus);
-
 	[ExportGroup("CharacterBase")]
 	[Export]
 	protected double _movementSpeed = 5.0;
@@ -75,9 +72,7 @@ public partial class PlayerCharacter : CharacterBase
 	private float _defaultCapsuleHeight;
 	private Vector3 _defaultCapsulePosition;
 
-
-	private Node3D _currentPlayerFocus;
-	// private FocusInfo _currentPlayerFocus;
+	// private FocusInfo currentFocus;
 	// private object _currentPlayerFocusCollider;
 
 	public override void _Ready()
@@ -210,7 +205,7 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		if (!FocusCast.IsColliding() || FocusCast.CollisionResult.Count == 0)
 		{
-			if (_currentPlayerFocus != null)
+			if (currentFocus != null)
 			{
 				LoseFocus();
 			}
@@ -225,7 +220,7 @@ public partial class PlayerCharacter : CharacterBase
 			ColliderResults.Add((Node3D)FocusCast.GetCollider(i));
 		}
 
-		if (_currentPlayerFocus == null)
+		if (currentFocus == null)
 		{
 			foreach (Node3D node in ColliderResults)
 			{
@@ -238,7 +233,7 @@ public partial class PlayerCharacter : CharacterBase
 		}
 		else
 		{
-			if (ColliderResults.Contains(_currentPlayerFocus))
+			if (ColliderResults.Contains(currentFocus))
 			{
 				return;
 			}
@@ -264,18 +259,6 @@ public partial class PlayerCharacter : CharacterBase
 
 
 		return false;
-	}
-
-	private void SetFocus(Node3D targetObject)
-	{
-		_currentPlayerFocus = targetObject;
-		EmitSignal(SignalName.PlayerFocusChanged, _currentPlayerFocus);
-	}
-
-	private void LoseFocus()
-	{
-		_currentPlayerFocus = null;
-		EmitSignal(SignalName.PlayerFocusChanged, _currentPlayerFocus);
 	}
 
 	private void HandleMouseMove(Vector2 mouseRelative)

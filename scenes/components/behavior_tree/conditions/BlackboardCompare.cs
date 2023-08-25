@@ -32,16 +32,24 @@ public partial class BlackboardCompare : Condition
 
 	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
+		await Task.Run(() =>
+		{
+			CallDeferred("EvaluateComparison", blackboard);
+		});
+
+		return Status;
+	}
+
+	private void EvaluateComparison(BlackboardComponent blackboard)
+	{
 		Variant compareValue = val.Execute(new(), val);
 		Variant blackboardValue = blackboard.GetValue(BlackboardKey);
+		bool result = false;
 
 		if (val.HasExecuteFailed())
 		{
 			Fail();
-			return Status;
 		}
-
-		bool result = false;
 
 		switch (Comparison)
 		{
@@ -50,6 +58,9 @@ public partial class BlackboardCompare : Condition
 				break;
 			case Operators.NOT_EQUAL:
 				result = !blackboardValue.Equals(compareValue);
+				break;
+			default:
+				result = false;
 				break;
 		}
 
@@ -61,8 +72,6 @@ public partial class BlackboardCompare : Condition
 		{
 			Fail();
 		}
-
-		return Status;
 	}
 
 	private Expression _ParseExpression(string source)

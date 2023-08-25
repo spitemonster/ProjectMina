@@ -1,7 +1,6 @@
 using Godot;
 namespace ProjectMina;
 
-[Tool]
 [GlobalClass]
 public partial class AIBrainComponent : Node
 {

@@ -6,10 +6,10 @@ namespace ProjectMina.BehaviorTree;
 [GlobalClass]
 public partial class SayName : Action
 {
-	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
 		GD.Print("Hello!");
 		Succeed();
-		return Status;
+		return Task.FromResult(Status);
 	}
 }
