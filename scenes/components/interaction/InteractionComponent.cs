@@ -63,9 +63,9 @@ public partial class InteractionComponent : Node
 
 		PlayerCharacter playerCharacter = GetOwner<PlayerCharacter>();
 
-		if (playerCharacter != null && playerCharacter.AttentionComponent != null)
+		if (playerCharacter != null && playerCharacter.CharacterAttention != null)
 		{
-			playerCharacter.AttentionComponent.FocusChanged += (newFocus, previousFocus) =>
+			playerCharacter.CharacterAttention.FocusChanged += (newFocus, previousFocus) =>
 			{
 
 				if (newFocus == null)

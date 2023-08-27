@@ -40,13 +40,13 @@ public partial class CombatGridPoint : Node3D
 	{
 		Occupied = true;
 		OccupyingCharacter = character;
-		OccupyingCharacter.CharacterHealthComponent.HealthDepleted += FreePoint;
+		OccupyingCharacter.CharacterHealth.HealthDepleted += FreePoint;
 	}
 
 	private void FreePoint()
 	{
 		Occupied = false;
-		OccupyingCharacter.CharacterHealthComponent.HealthDepleted -= FreePoint;
+		OccupyingCharacter.CharacterHealth.HealthDepleted -= FreePoint;
 		OccupyingCharacter = null;
 	}
 }

@@ -10,31 +10,16 @@ public partial class PlayerCharacter : CharacterBase
 	[Export]
 	protected RangedWeapon gun;
 
-	[ExportGroup("CharacterBase")]
-	[Export]
-	protected double _movementSpeed = 5.0;
-	[Export]
-	protected double _sprintMultiplier = 1.5;
-	[Export]
-	protected double _brakingForce = 0.3;
-	[Export]
-	protected double _gravityMultiplier = 1.0;
-
 	[ExportGroup("PlayerCharacter")]
 	[Export]
 	public Camera3D PrimaryCamera { get; protected set; }
-	[Export]
-	protected MovementComponent CharacterMovement { get; set; }
 
 	[Export]
 	protected InteractionComponent _interactionComponent;
 	[Export]
 	protected EquipmentManager _equipmentManager;
-
 	[Export]
 	protected Node3D _head;
-	[Export]
-	protected double _jumpForce = 5.0;
 	[Export]
 	protected double _inputSensitivity = .0025;
 
@@ -44,12 +29,8 @@ public partial class PlayerCharacter : CharacterBase
 	[ExportGroup("Grabbing")]
 	[Export]
 	protected double _carryGrabSpeedMultiplier = 1.0f;
-	[Export]
-	protected double _carryMovementSpeedMultiplier = 0.5f;
 
 	private InputManager _inputManager;
-	private double _gravity;
-
 
 	[ExportGroup("Stealth")]
 	[Export]
@@ -59,26 +40,20 @@ public partial class PlayerCharacter : CharacterBase
 	[Export]
 	protected SoundComponent _soundComponent;
 
-	protected Timer _footstepTimer;
-
 	[ExportGroup("Combat")]
 	[Export]
 	public CombatGridComponent CombatGrid { get; protected set; }
-
 
 	public Node3D _currentFloor;
 	private bool _isStealthMode = false;
 	private float _defaultCapsuleHeight;
 	private Vector3 _defaultCapsulePosition;
 
-	// private FocusInfo currentFocus;
+	// private FocusInfo CharacterAttention.CurrentFocus;
 	// private object _currentPlayerFocusCollider;
 
 	public override void _Ready()
 	{
-		// get gravity project settings
-		_gravity = (double)ProjectSettings.GetSetting("physics/3d/default_gravity");
-
 		// setup player in global data
 		Global.Data.Player = this;
 
@@ -107,27 +82,7 @@ public partial class PlayerCharacter : CharacterBase
 			};
 		}
 
-		if (_soundComponent != null)
-		{
-			_footstepTimer = new()
-			{
-				WaitTime = .7f,
-				Autostart = true,
-				OneShot = false
-			};
-
-			_footstepTimer.Timeout += () =>
-			{
-				_soundComponent.EmitSound();
-			};
-
-			AddChild(_footstepTimer);
-			_footstepTimer.Start();
-		}
-
 		FocusCast.AddException(this);
-
-		Debug.Assert(_soundComponent != null, "no sound component");
 
 		// get our default capsule settings for crouching
 		CapsuleShape3D bodyCapsule = (CapsuleShape3D)CharacterBody.Shape;
@@ -204,7 +159,7 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		if (!FocusCast.IsColliding() || FocusCast.CollisionResult.Count == 0)
 		{
-			if (currentFocus != null)
+			if (CharacterAttention.CurrentFocus != null)
 			{
 				LoseFocus();
 			}
@@ -219,7 +174,7 @@ public partial class PlayerCharacter : CharacterBase
 			ColliderResults.Add((Node3D)FocusCast.GetCollider(i));
 		}
 
-		if (currentFocus == null)
+		if (CharacterAttention.CurrentFocus == null)
 		{
 			foreach (Node3D node in ColliderResults)
 			{
@@ -232,7 +187,7 @@ public partial class PlayerCharacter : CharacterBase
 		}
 		else
 		{
-			if (ColliderResults.Contains(currentFocus))
+			if (ColliderResults.Contains(CharacterAttention.CurrentFocus))
 			{
 				return;
 			}

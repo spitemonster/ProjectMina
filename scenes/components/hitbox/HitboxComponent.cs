@@ -62,7 +62,7 @@ public partial class HitboxComponent : Area3D
 
 		if (body is CharacterBase c && c != _owner)
 		{
-			c.CharacterHealthComponent.ChangeHealth(Damage, true);
+			c.CharacterHealth.ChangeHealth(Damage, true);
 			EmitSignal(SignalName.HitCharacter, c);
 		}
 
