@@ -39,7 +39,7 @@ public partial class FindRandomTargetPositionInRadius : Action
 		newPosition.Z = Z;
 		newPosition.Y = characterPosition.Y;
 
-		Vector3 pos = NavigationServer3D.MapGetClosestPoint(character.NavigationAgent.GetNavigationMap(), newPosition);
+		Vector3 pos = NavigationServer3D.MapGetClosestPoint(character.Brain.NavigationAgent.GetNavigationMap(), newPosition);
 
 		DebugDraw.Box(pos, new Vector3(1.0f, 1.0f, 1.0f), Colors.Red, 5);
 

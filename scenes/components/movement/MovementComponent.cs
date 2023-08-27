@@ -65,8 +65,9 @@ public partial class MovementComponent : Node
 
 	public Vector3 CalculateMovementVelocity(Vector2 inputVector, double delta)
 	{
-
-		Vector3 direction = _owner.GlobalTransform.Basis * new Vector3(-inputVector.X, 0, -inputVector.Y);
+		// GD.Print(_owner);
+		Vector3 direction = (_owner.GlobalTransform.Basis * new Vector3(-inputVector.X, 0, -inputVector.Y)).Normalized();
+		DebugDraw.Line(_owner.GlobalPosition, _owner.GlobalPosition + direction * 5.0f, Colors.Red, 0);
 		Vector3 currentVelocity = _owner.Velocity;
 		float movementSpeed = CalculateMovementSpeed();
 
@@ -99,7 +100,7 @@ public partial class MovementComponent : Node
 
 	public void ToggleSprint()
 	{
-		_sprinting = !_sprinting;
+		_sprinting = !_sprinting && _moving;
 
 		if (_sprinting)
 		{

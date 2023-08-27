@@ -6,8 +6,12 @@
 script = ExtResource("1_00urv")
 Entries = {
 "current_focus": NodePath(""),
+"current_health": 0.0,
 "enemy_visible": false,
-"has_name": false,
+"last_received_damage": 0,
+"max_health": 0.0,
+"seen_characters": [],
 "target_position": Vector3(0, 0, 0),
-"target_position_reached": false
+"target_position_reached": false,
+"visible_characters": []
 }

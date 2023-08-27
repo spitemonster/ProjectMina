@@ -14,6 +14,8 @@ public partial class BlackboardComponent : Node
 
 	private Dictionary<string, Variant> _blackboard = new();
 
+	[Export] private bool _debug = false;
+
 	public override void _EnterTree()
 	{
 		if (Blackboard != null && Blackboard is BlackboardAsset bb && bb.Entries.Count > 0)
@@ -34,15 +36,23 @@ public partial class BlackboardComponent : Node
 		return true;
 	}
 
-	public bool TypeEqual(string key, Variant compare) {
+	public bool TypeEqual(string key, Variant compare)
+	{
 		Variant v = GetValue(key);
-		
+
 		return !((bool)v == false || GetValueType(key) != compare.GetType());
 	}
 
 	public bool HasValue(string key)
 	{
-		return _blackboard.ContainsKey(key);
+		bool hasValue = _blackboard.ContainsKey(key);
+
+		if (_debug)
+		{
+			System.Diagnostics.Debug.Assert(hasValue, "Attempted to access value with key: " + key + " but key does not exist");
+		}
+
+		return hasValue;
 	}
 
 	public Variant GetValue(string key)

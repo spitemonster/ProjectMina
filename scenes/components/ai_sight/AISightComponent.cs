@@ -2,6 +2,10 @@ using Godot;
 using Godot.Collections;
 namespace ProjectMina;
 
+/// <summary>
+/// 	Test!
+/// </summary>
+
 [GlobalClass]
 public partial class AISightComponent : Node3D
 {
@@ -13,48 +17,48 @@ public partial class AISightComponent : Node3D
 	}
 
 	public Array<CharacterBase> CharactersInSightRadius { get; private set; } = new();
-	public Array<CharacterBase> VisibleCharacters { get; private set; } = new();
+	public Array<CharacterBase> SeenCharacters { get; private set; } = new();
 
-	[Signal]
-	public delegate void CharacterEnteredSightRadiusEventHandler(CharacterBase character);
-	[Signal]
-	public delegate void CharacterExitedSightRadiusEventHandler(CharacterBase character);
-	[Signal]
-	public delegate void CharacterEnteredLineOfSightEventHandler(CharacterBase character);
-	[Signal]
-	public delegate void CharacterExitedLineOfSightEventHandler(CharacterBase character);
+	[Signal] public delegate void CharacterEnteredSightRadiusEventHandler(CharacterBase character);
+	[Signal] public delegate void CharacterExitedSightRadiusEventHandler(CharacterBase character);
+	[Signal] public delegate void CharacterEnteredLineOfSightEventHandler(CharacterBase character);
+	[Signal] public delegate void CharacterExitedLineOfSightEventHandler(CharacterBase character);
+	[Export] protected Area3D _sightCollision;
 
-	[Export]
-	protected Area3D _sightCollision;
-
+	[Export] private bool debug = false;
 	private Array<Rid> exclude = new();
 	private int _visibilityCheckIndex;
 
 	public override void _Ready()
 	{
-		if (_sightCollision != null)
+		if (debug)
 		{
-			_sightCollision.BodyEntered += CheckShouldObserveBody;
-			_sightCollision.BodyExited += CheckRemoveBody;
-
-			CallDeferred("CheckInitialOverlaps");
-			exclude.Add(GetOwner<CharacterBase>().GetRid());
+			System.Diagnostics.Debug.Assert(_sightCollision != null, "no sight collision");
 		}
 
-		Debug.Assert(_sightCollision != null, "no sight collision");
+		_sightCollision.BodyEntered += CheckShouldObserveBody;
+		_sightCollision.BodyExited += CheckRemoveBody;
+		exclude.Add(GetOwner<CharacterBase>().GetRid());
+
+		CallDeferred("CheckInitialOverlaps");
+
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (CharactersInSightRadius.Count > 0 && CharactersInSightRadius[_visibilityCheckIndex] is CharacterBase visibilityCheckTarget)
+		foreach (CharacterBase c in CharactersInSightRadius)
 		{
-			CheckCharacterVisibility(visibilityCheckTarget);
-			CalculateCharacterVisibility(visibilityCheckTarget);
+			CheckCharacterLineOfSight(c);
 		}
-		else if (_visibilityCheckIndex > 0)
-		{
-			_visibilityCheckIndex = 0;
-		}
+		// if (CharactersInSightRadius.Count > 0 && CharactersInSightRadius[_visibilityCheckIndex] is CharacterBase visibilityCheckTarget)
+		// {
+		// 	CheckCharacterVisibility(visibilityCheckTarget);
+		// 	CalculateCharacterVisibility(visibilityCheckTarget);
+		// }
+		// else if (_visibilityCheckIndex > 0)
+		// {
+		// 	_visibilityCheckIndex = 0;
+		// }
 	}
 
 	private float CalculateCharacterVisibility(CharacterBase character)
@@ -71,16 +75,10 @@ public partial class AISightComponent : Node3D
 
 	private void CheckRemoveBody(Node3D body)
 	{
-		if (body is CharacterBase c && CharactersInSightRadius.Contains(c))
+		if (body is CharacterBase c)
 		{
-			EmitSignal(SignalName.CharacterExitedSightRadius, c);
-			CharactersInSightRadius.Remove(c);
-
-			if (VisibleCharacters.Contains(c))
-			{
-				EmitSignal(SignalName.CharacterExitedLineOfSight);
-				VisibleCharacters.Remove(c);
-			}
+			TryRemoveCharacterFromSightRadius(c);
+			TryRemoveSeenCharacter(c);
 		}
 	}
 
@@ -92,41 +90,36 @@ public partial class AISightComponent : Node3D
 		{
 			if (body is CharacterBase c)
 			{
-				CharactersInSightRadius.Add(c);
-				EmitSignal(SignalName.CharacterEnteredSightRadius, c);
+				TryAddCharacterToSightRadius(c);
 			}
 		}
 	}
 
-	private void CheckCharacterVisibility(CharacterBase visibilityCheckTarget)
+	private void CheckCharacterLineOfSight(CharacterBase visibilityCheckTarget)
 	{
-
 		// insert some kind of check to see if we even care to watch this character
 		PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
 		CollisionShape3D targetCharacterBody = visibilityCheckTarget.CharacterBody;
 
-		if (targetCharacterBody == null)
+		if (debug)
 		{
-
+			DebugDraw.Line(GlobalPosition, targetCharacterBody.GlobalPosition, Colors.Red);
 		}
 
 		HitResult traceResult = Trace.Line(spaceState, GlobalPosition, targetCharacterBody.GlobalPosition, exclude);
 
-		if (traceResult != null && traceResult.Collider == visibilityCheckTarget)
+		if (traceResult != null && traceResult.Collider.Equals(visibilityCheckTarget))
 		{
-			if (!VisibleCharacters.Contains(visibilityCheckTarget))
+			if (debug)
 			{
-				VisibleCharacters.Add(visibilityCheckTarget);
-				EmitSignal(SignalName.CharacterEnteredLineOfSight, visibilityCheckTarget);
+				DebugDraw.Sphere(targetCharacterBody.GlobalTransform, .5f, Colors.Red);
 			}
+
+			TryAddSeenCharacter(visibilityCheckTarget);
 		}
 		else
 		{
-			if (VisibleCharacters.Contains(visibilityCheckTarget))
-			{
-				VisibleCharacters.Remove(visibilityCheckTarget);
-				EmitSignal(SignalName.CharacterExitedLineOfSight, visibilityCheckTarget);
-			}
+			TryRemoveSeenCharacter(visibilityCheckTarget);
 		}
 
 		if (_visibilityCheckIndex == CharactersInSightRadius.Count - 1)
@@ -143,11 +136,80 @@ public partial class AISightComponent : Node3D
 	{
 		if (body != null && body is CharacterBase c)
 		{
-			if (!CharactersInSightRadius.Contains(c))
-			{
-				CharactersInSightRadius.Add(c);
-				EmitSignal(SignalName.CharacterEnteredSightRadius, c);
-			}
+			TryAddCharacterToSightRadius(c);
 		}
+	}
+
+	private bool TryAddCharacterToSightRadius(CharacterBase character)
+	{
+		if (CharactersInSightRadius.Contains(character))
+		{
+			return false;
+		}
+
+		CharactersInSightRadius.Add(character);
+		EmitSignal(SignalName.CharacterEnteredSightRadius, character);
+
+		if (debug)
+		{
+			GD.Print(character.Name + " entered sight radius of " + GetOwner<Node>().Name);
+			DebugDraw.Sphere(character.GlobalTransform, 1, Colors.Red, 3f);
+		}
+		return true;
+	}
+
+	private bool TryRemoveCharacterFromSightRadius(CharacterBase character)
+	{
+
+		if (!CharactersInSightRadius.Contains(character))
+		{
+			return false;
+		}
+
+		CharactersInSightRadius.Remove(character);
+		EmitSignal(SignalName.CharacterExitedSightRadius, character);
+
+		if (debug)
+		{
+			GD.Print(character.Name + " exited sight radius of " + GetOwner<Node>().Name);
+			DebugDraw.Sphere(character.GlobalTransform, 1, Colors.Red, 3f);
+		}
+
+		return true;
+	}
+
+	private bool TryAddSeenCharacter(CharacterBase character)
+	{
+
+		if (SeenCharacters.Contains(character))
+		{
+			return false;
+		}
+
+		SeenCharacters.Add(character);
+		EmitSignal(SignalName.CharacterEnteredLineOfSight, character);
+
+		if (debug)
+		{
+			GD.Print(character.Name + " entered line of sight of " + GetOwner<Node>().Name);
+		}
+		return true;
+	}
+
+	private bool TryRemoveSeenCharacter(CharacterBase character)
+	{
+		if (!SeenCharacters.Contains(character))
+		{
+			return false;
+		}
+
+		SeenCharacters.Remove(character);
+		EmitSignal(SignalName.CharacterExitedLineOfSight, character);
+
+		if (debug)
+		{
+			GD.Print(character.Name + " exited line of sight of " + GetOwner<Node>().Name);
+		}
+		return true;
 	}
 }
