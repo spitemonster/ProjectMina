@@ -3,7 +3,7 @@ using Godot;
 namespace ProjectMina;
 
 [GlobalClass]
-public partial class EquipmentManager : Node
+public partial class EquipmentManager : ComponentBase
 {
 	public Vector3 AimPosition;
 	public Node3D EquippedItem { get; private set; }
@@ -64,6 +64,8 @@ public partial class EquipmentManager : Node
 
 	public override void _PhysicsProcess(double delta)
 	{
+		base._PhysicsProcess(delta);
+
 		if (EquippedItem != null && equipmentPosition != null)
 		{
 			// Vector3 currentRotation = equipmentPosition.GlobalRotation;

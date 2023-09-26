@@ -38,9 +38,9 @@ public partial class AICharacter : CharacterBase
 
 		Brain.NavigationAgent.DebugEnabled = true;
 
-		Debug.Assert(Brain != null, "no brain component");
-		Debug.Assert(Brain.NavigationAgent != null, "No navigation agent");
-		Debug.Assert(MovementComponent != null, "No movement component");
+		System.Diagnostics.Debug.Assert(Brain != null, "no brain component");
+		System.Diagnostics.Debug.Assert(Brain.NavigationAgent != null, "No navigation agent");
+		System.Diagnostics.Debug.Assert(MovementComponent != null, "No movement component");
 
 		Brain.NavigationAgent.VelocityComputed += SetVelocity;
 
@@ -48,6 +48,11 @@ public partial class AICharacter : CharacterBase
 		{
 			Dev.UI.PushDevNotification("AI character health changed: " + newHealth);
 		};
+
+		// MovementComponent.MovementStarted += () =>
+		// {
+		// 	MovementComponent.ToggleSprint();
+		// };
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -69,32 +74,51 @@ public partial class AICharacter : CharacterBase
 
 			if (Brain.GetCurrentFocus() is Node3D n)
 			{
-				GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(n.GlobalPosition, Vector3.Up), 8.0f * (float)delta);
-
-				Vector3 currentRotation = GlobalRotation;
-				currentRotation.X = 0;
-				currentRotation.Z = 0;
-				GlobalRotation = currentRotation;
+				LookAt(n.GlobalPosition, Vector3.Up);
 			}
-
-
 
 			if (Brain.GetTargetPosition() != default)
 			{
+				// Vector3 pos = Global.Data.Player.GlobalPosition;
+				// Vector3 dir = (pos - GlobalPosition).Normalized();
+				// // LookAt(Global.Data.Player.GlobalPosition, Vector3.Up);
 
-				GD.Print(Brain.GetTargetPosition());
-				Vector3 globalLookVector = Brain.NavigationAgent.GetNextPathPosition() - GlobalPosition;
-				Vector3 localLookVector = GlobalTransform.Basis.Inverse() * globalLookVector;
-				Vector2 testVector = new Vector2(localLookVector.X, -localLookVector.Z).Normalized();
+				// float DesiredRotationY = Mathf.Atan2(-dir.X, -dir.Z);
 
+				// Vector3 targetRotation = GlobalRotation;
+				// targetRotation.Y = Mathf.LerpAngle(GlobalRotation.Y, DesiredRotationY, (float)delta * 3);
 
-				Vector3 v = MovementComponent.CalculateMovementVelocity(testVector, delta);
-				Brain.NavigationAgent.Velocity = v;
+				// GlobalRotation = targetRotation;
+
+				Vector3 globalLookVector = (Brain.NavigationAgent.GetNextPathPosition() - GlobalPosition).Normalized();
+				Vector2 controlVector = new Vector2(-globalLookVector.X, -globalLookVector.Z).Normalized();
+
+				// Vector3 actualRotation = ForwardVector.Normalized();
+
+				// DebugDraw.Line(Chest.GlobalPosition, Chest.GlobalPosition + new Vector3(-controlVector.X, 0f, -controlVector.Y) * 2f, Colors.Green);
+				// DebugDraw.Line(Chest.GlobalPosition, Chest.GlobalPosition + new Vector3(-actualRotation.X, 0f, actualRotation.Z) * 1.5f, Colors.Yellow);
+
+				// Vector2 controlVector2D = new Vector2(-controlVector.X, -controlVector.Y);
+				// Vector2 actualVector2D = new Vector2(actualRotation.X, actualRotation.Z);
+				// float angleRadians = controlVector2D.AngleTo(actualVector2D);
+				// float angleDegrees = Mathf.RadToDeg(angleRadians);
+
+				// GD.Print(-angleDegrees);
+
+				Vector3 v = MovementComponent.CalculateMovementVelocity(controlVector, delta);
+				// Brain.NavigationAgent.Velocity = v;
+				Velocity = v;
+				MoveAndSlide();
+
+				// _animationTree.Set("parameters/TestRename/blend_position", new Vector2(-angleDegrees, 0f));
+				// _animationTree.Set("parameters/Transition/transition_request", MovementComponent.IsMoving ? "moving" : "idle");
 
 				if (_animationTree != null)
 				{
-					_animationTree.Set("parameters/locomotion/blend_position", MovementComponent.IsSprinting ? 1.0f : 0.0f);
-					_animationTree.Set("parameters/Transition/transition_request", MovementComponent.IsMoving ? "moving" : "idle");
+					// GD.Print(Mathf.RadToDeg(y.AngleTo(x)));
+
+					// _animationTree.Set("parameters/direction", angleDegrees);
+
 				}
 			}
 
@@ -128,6 +152,8 @@ public partial class AICharacter : CharacterBase
 			Velocity = MovementComponent.CalculateMovementVelocity(Vector2.Zero, delta);
 			MoveAndSlide();
 		}
+
+		ForwardVector = -GlobalTransform.Basis.Z;
 	}
 
 	private void SetVelocity(Vector3 safeVelocity)

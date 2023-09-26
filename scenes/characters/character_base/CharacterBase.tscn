@@ -6,13 +6,12 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d1qpq"]
 radius = 0.3
+height = 1.6
 
-[node name="CharacterBase" type="CharacterBody3D" node_paths=PackedStringArray("CharacterBody", "CharacterHealthComponent", "AttentionComponent")]
+[node name="CharacterBase" type="CharacterBody3D" node_paths=PackedStringArray("CharacterBody")]
 collision_layer = 5
 script = ExtResource("1_5qytg")
 CharacterBody = NodePath("CharacterBody")
-CharacterHealthComponent = NodePath("HealthComponent")
-AttentionComponent = NodePath("AttentionComponent")
 
 [node name="CharacterBody" type="CollisionShape3D" parent="."]
 unique_name_in_owner = true

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 namespace ProjectMina.BehaviorTree;
 
 [Tool]
-[GlobalClass, Icon("res://scenes/components/behavior_tree/core/icons/chart-icon.svg")]
-public partial class BehaviorTreeComponent : Node
+[GlobalClass, Icon("res://_dev/icons/icon--chart.svg")]
+public partial class BehaviorTreeComponent : ComponentBase
 {
 
 	public bool Started { get; private set; } = false;
@@ -19,7 +19,8 @@ public partial class BehaviorTreeComponent : Node
 
 	public override void _Ready()
 	{
-		SetProcess(false);
+		base._Ready();
+
 		_character = GetOwner<CharacterBody3D>() as AICharacter;
 		_root = GetChild<Action>(0);
 
@@ -38,6 +39,7 @@ public partial class BehaviorTreeComponent : Node
 
 	public override async void _Process(double delta)
 	{
+		base._Process(delta);
 		if (!IsActive || _root == null || _character == null || _blackboard == null)
 		{
 			SetProcess(false);

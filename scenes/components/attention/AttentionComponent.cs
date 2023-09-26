@@ -1,7 +1,10 @@
 using Godot;
 
-[GlobalClass]
-public partial class AttentionComponent : Node
+namespace ProjectMina;
+
+[Tool]
+[GlobalClass, Icon("res://_dev/icons/icon--magnifier.svg")]
+public partial class AttentionComponent : ComponentBase
 {
 	[Signal] public delegate void FocusChangedEventHandler(Node3D newFocus, Node3D previousFocus);
 	[Signal] public delegate void FocusGainedEventHandler(Node3D newFocus);
@@ -39,5 +42,10 @@ public partial class AttentionComponent : Node
 		SetFocus(null);
 		EmitSignal(SignalName.FocusLost);
 		return true;
+	}
+
+	public override void _Ready()
+	{
+		base._Ready();
 	}
 }

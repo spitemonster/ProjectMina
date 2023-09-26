@@ -22,6 +22,8 @@ public abstract partial class Action : Node
 
 	[Export] public bool IsActive { get; private set; } = true;
 
+	[Export] protected bool _debug;
+
 	public override void _Ready()
 	{
 		foreach (Node c in GetChildren())

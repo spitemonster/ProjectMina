@@ -1,12 +1,14 @@
 using System;
 using Godot;
 using ProjectMina.BehaviorTree;
-namespace ProjectMina;
 
+namespace ProjectMina;
 /// <summary>
 /// 	Functions as the AI stand in for a player. Controls a CharacterBase Pawn in the world, makes decisions based on its knowledge and sensory data and directs its pawn to action.
 /// </summary>
-[GlobalClass]
+
+[Tool]
+[GlobalClass, Icon("res://_dev/icons/icon--brain.svg")]
 public partial class AIBrainComponent : ControllerComponent
 {
 	[Export] public NavigationAgent3D NavigationAgent { get; protected set; }
@@ -20,8 +22,6 @@ public partial class AIBrainComponent : ControllerComponent
 	public Vector2 MovementDirection { get; protected set; }
 
 	private CombatGridPoint currentGridPoint;
-
-	[Export] private bool _debug = false;
 	private bool _avoidanceEnabledDefault = false;
 
 	public Node3D GetCurrentFocus()
@@ -36,8 +36,8 @@ public partial class AIBrainComponent : ControllerComponent
 
 	public override void _Ready()
 	{
-		Pawn = GetOwner<CharacterBase>();
-
+		base._Ready();
+		// all these components are required for the ai brain to function, so pitch a fit right a way
 		if (_debug)
 		{
 			System.Diagnostics.Debug.Assert(AttentionComponent != null, "no attention component");
@@ -46,18 +46,32 @@ public partial class AIBrainComponent : ControllerComponent
 			System.Diagnostics.Debug.Assert(NavigationAgent != null, "no navigation component");
 			System.Diagnostics.Debug.Assert(BehaviorTree != null, "no behavior tree component");
 			System.Diagnostics.Debug.Assert(Blackboard != null, "no blackboard component");
+		}
+
+		// none of this needs to run in the editor and it DEFINITELY does not need to tick in the editor
+		if (Engine.IsEditorHint())
+		{
+			SetProcess(false);
+			SetPhysicsProcess(false);
+			return;
+		}
+
+		Pawn = GetOwner<CharacterBase>();
+
+		if (_debug)
+		{
 			System.Diagnostics.Debug.Assert(Pawn != null, "No controlled character");
 		}
 
-		Blackboard.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
+		Blackboard?.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
 
 		Pawn.CharacterHealth.HealthChanged += (double newHealth, bool wasDamage) =>
 		{
-			Blackboard.SetValue("current_health", newHealth);
+			Blackboard?.SetValue("current_health", newHealth);
 
 			if (wasDamage)
 			{
-				Blackboard.SetValue("last_received_damage", DateTime.Now.ToBinary());
+				Blackboard?.SetValue("last_received_damage", DateTime.Now.ToBinary());
 			}
 		};
 
@@ -73,7 +87,7 @@ public partial class AIBrainComponent : ControllerComponent
 		{
 			if (GetCurrentFocus() == null)
 			{
-				AttentionComponent.SetFocus(character);
+				AttentionComponent?.SetFocus(character);
 			}
 		};
 
@@ -86,23 +100,25 @@ public partial class AIBrainComponent : ControllerComponent
 		{
 			if (character.Equals(GetCurrentFocus()))
 			{
-				AttentionComponent.LoseFocus();
+				AttentionComponent?.LoseFocus();
 			}
 		};
 
 		Pawn.CharacterMovement.MovementStateChanged += (MovementComponent.MovementState newState) =>
 		{
-			Blackboard.SetValue("movement_state", (int)newState);
+			Blackboard?.SetValue("movement_state", (int)newState);
 		};
 
 		NavigationAgent.TargetReached += () =>
 		{
-			Blackboard.SetValue("target_position_reached", true);
+			Blackboard?.SetValue("target_position_reached", true);
 		};
 
 		AttentionComponent.FocusChanged += (Node3D newFocus, Node3D previousFocus) =>
 		{
-			if (Blackboard.SetValue("current_focus", newFocus?.GetPath()))
+			bool addToBlackboard = Blackboard?.SetValue("current_focus", newFocus?.GetPath()) ?? false;
+
+			if (addToBlackboard)
 			{
 				GD.Print("successfully changed focus: ", newFocus?.Name);
 			}
@@ -117,13 +133,15 @@ public partial class AIBrainComponent : ControllerComponent
 
 	public override void _Process(double delta)
 	{
+		base._Process(delta);
+
 		Godot.Collections.Array<NodePath> visibleCharacters = new();
 		foreach (Node3D n in SightComponent.CharactersInSightRadius)
 		{
 			visibleCharacters.Add(n.GetPath());
 		}
 
-		Blackboard.SetValue("visible_characters", visibleCharacters);
+		Blackboard?.SetValue("visible_characters", visibleCharacters);
 
 		Godot.Collections.Array<NodePath> seenCharacters = new();
 
@@ -132,13 +150,13 @@ public partial class AIBrainComponent : ControllerComponent
 			seenCharacters.Add(n.GetPath());
 		}
 
-		Blackboard.SetValue("seen_characters", seenCharacters);
+		Blackboard?.SetValue("seen_characters", seenCharacters);
 
-		if (GetCurrentFocus() != null)
-		{
-			Blackboard.SetValue("target_position", GetCurrentFocus().GlobalPosition);
-			NavigationAgent.TargetPosition = GetCurrentFocus().GlobalPosition;
-		}
+		// if (GetCurrentFocus() != null)
+		// {
+		// 	Blackboard?.SetValue("target_position", GetCurrentFocus().GlobalPosition);
+		// 	NavigationAgent.TargetPosition = GetCurrentFocus().GlobalPosition;
+		// }
 	}
 
 	private void SeeEnemy(CharacterBase targetCharacter)

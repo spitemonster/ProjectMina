@@ -5,18 +5,14 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class InputManager : Node
 {
-	[Signal]
-	public delegate void MouseMoveEventHandler(Vector2 mouseDelta);
-	[Signal]
-	public delegate void UseEventHandler(bool isAlt);
-	[Signal]
-	public delegate void InteractEventHandler(bool isAlt);
-	[Signal]
-	public delegate void SprintEventHandler();
-	[Signal]
-	public delegate void JumpEventHandler();
-	[Signal]
-	public delegate void StealthEventHandler();
+	[Signal] public delegate void MouseMoveEventHandler(Vector2 mouseDelta);
+	[Signal] public delegate void UseEventHandler(bool isAlt);
+	[Signal] public delegate void EndUseEventHandler();
+	[Signal] public delegate void InteractEventHandler(bool isAlt);
+	[Signal] public delegate void SprintEventHandler();
+	[Signal] public delegate void JumpEventHandler();
+	[Signal] public delegate void StealthEventHandler();
+	[Signal] public delegate void ReloadEventHandler();
 
 	private Timer _leftMouseTimer;
 	private bool _leftMouseClicked = false;
@@ -27,8 +23,7 @@ public partial class InputManager : Node
 	private bool _rightMouseDoubleClicked;
 	private bool _modifierPressed;
 
-	[Export]
-	protected double _doubleClickWaitTime = .09;
+	[Export] protected double _doubleClickWaitTime = .09;
 
 	private LabelValueRow _modMonitor;
 
@@ -64,6 +59,12 @@ public partial class InputManager : Node
 			return;
 		}
 
+		if (e.IsActionReleased("use"))
+		{
+			EmitSignal(SignalName.EndUse);
+			return;
+		}
+
 		if (e.IsActionPressed("interact"))
 		{
 			EmitSignal(SignalName.Interact, _modifierPressed);
@@ -85,6 +86,12 @@ public partial class InputManager : Node
 		if (e.IsActionPressed("stealth"))
 		{
 			EmitSignal(SignalName.Stealth);
+			return;
+		}
+
+		if (e.IsActionPressed("reload"))
+		{
+			EmitSignal(SignalName.Reload);
 			return;
 		}
 

@@ -10,6 +10,13 @@
 [ext_resource type="PackedScene" uid="uid://b3rq16aalq4c2" path="res://scenes/components/movement/MovementComponent.tscn" id="8_8i55q"]
 [ext_resource type="PackedScene" uid="uid://cf510k02wbxs4" path="res://scenes/components/equipment_manager/EquipmentManager.tscn" id="9_uaq73"]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u7t72"]
+radius = 0.025
+height = 1.5
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ywvxe"]
+radius = 0.05
+
 [sub_resource type="CylinderMesh" id="CylinderMesh_lnesk"]
 top_radius = 0.3
 bottom_radius = 0.2
@@ -21,14 +28,7 @@ points = PackedVector3Array(-0.295156, 0.0595238, -0.0952232, 0.304742, 0.059523
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_fewu7"]
 height = 0.2
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u7t72"]
-radius = 0.025
-height = 1.5
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_ywvxe"]
-radius = 0.025
-
-[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "_interactionComponent", "_equipmentManager", "_head", "FocusCast", "_soundComponent", "CombatGrid", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterSound") instance=ExtResource("1_5b5t2")]
+[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "_interactionComponent", "_equipmentManager", "_head", "FocusCast", "_soundComponent", "CombatGrid", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterSound", "Eyes", "Chest") instance=ExtResource("1_5b5t2")]
 collision_layer = 6
 collision_mask = 5
 script = ExtResource("2_7uq42")
@@ -48,54 +48,24 @@ CharacterAttention = NodePath("AttentionComponent")
 CharacterMovement = NodePath("MovementComponent")
 CharacterInteraction = NodePath("InteractionComponent")
 CharacterSound = NodePath("SoundComponent")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0464694, 0)
-mesh = SubResource("CylinderMesh_lnesk")
-skeleton = NodePath("../CollisionShape3D")
-
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="." index="2"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0464694, 0)
-shape = SubResource("ConvexPolygonShape3D_ef883")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="3"]
-process_mode = 4
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-shape = SubResource("CylinderShape3D_fewu7")
-disabled = true
-
-[node name="InteractionComponent" type="Node" parent="." index="4" node_paths=PackedStringArray("_interactionCollision", "_grabPosition", "_grabJoint", "_grabAnchor", "equipmentManager")]
-script = ExtResource("3_3gtcp")
-_interactionCollision = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/InteractionCollision")
-_grabPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabPosition")
-_grabJoint = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabJoint")
-_grabAnchor = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/StaticBody3D")
-_grabRotationStrength = 8.0
-equipmentManager = NodePath("../EquipmentManager")
-
-[node name="PlayerHUD" parent="." index="5" node_paths=PackedStringArray("_interactionComponent", "_healthComponent") instance=ExtResource("4_161ca")]
-reticleDefaultColor = Color(1, 1, 1, 1)
-reticleUseColor = Color(0, 0, 1, 1)
-reticleGrabColor = Color(1, 1, 0, 1)
-reticleEquipColor = Color(0, 1, 0, 1)
-_interactionComponent = NodePath("../InteractionComponent")
-_healthComponent = NodePath("../HealthComponent")
+Eyes = NodePath("CharacterBody/Hips/Head/Eyes")
+Chest = NodePath("Chest")
 
 [node name="Hips" type="Node3D" parent="CharacterBody" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
 [node name="Head" type="Node3D" parent="CharacterBody/Hips" index="0"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.023665, 0)
 
 [node name="PrimaryCamera" type="Camera3D" parent="CharacterBody/Hips/Head" index="0"]
 
-[node name="InteractionCollision" type="Area3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="0"]
+[node name="FocusCollision" type="Area3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="0"]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 visible = false
 collision_layer = 0
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody/Hips/Head/PrimaryCamera/InteractionCollision" index="0"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody/Hips/Head/PrimaryCamera/FocusCollision" index="0"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.75)
 shape = SubResource("CapsuleShape3D_u7t72")
 
@@ -119,9 +89,12 @@ unique_name_in_owner = true
 shape = SubResource("SphereShape3D_ywvxe")
 target_position = Vector3(0, 0, -50)
 max_results = 4
-collision_mask = 255
+collision_mask = 132
 collide_with_areas = true
 debug_shape_custom_color = Color(1, 0, 0, 1)
+
+[node name="Eyes" type="Marker3D" parent="CharacterBody/Hips/Head" index="1"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
 [node name="CombatGridComponent" parent="CharacterBody" index="1" node_paths=PackedStringArray("GridPoints") instance=ExtResource("6_uw203")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -0.498571)
@@ -138,6 +111,38 @@ _collisionArea = NodePath("../CombatGridPoint/Area3D")
 [node name="CombatGridPoint" parent="CharacterBody/CombatGridComponent" index="2" instance=ExtResource("7_1kmqq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
 
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0464694, 0)
+mesh = SubResource("CylinderMesh_lnesk")
+skeleton = NodePath("../CollisionShape3D")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0464694, 0)
+shape = SubResource("ConvexPolygonShape3D_ef883")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="3"]
+process_mode = 4
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+shape = SubResource("CylinderShape3D_fewu7")
+disabled = true
+
+[node name="InteractionComponent" type="Node" parent="." index="4" node_paths=PackedStringArray("_interactionCollision", "_grabPosition", "_grabJoint", "_grabAnchor", "equipmentManager")]
+script = ExtResource("3_3gtcp")
+_interactionCollision = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/FocusCollision")
+_grabPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabPosition")
+_grabJoint = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabJoint")
+_grabAnchor = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/StaticBody3D")
+_grabRotationStrength = 8.0
+equipmentManager = NodePath("../EquipmentManager")
+
+[node name="PlayerHUD" parent="." index="5" node_paths=PackedStringArray("_interactionComponent", "_healthComponent") instance=ExtResource("4_161ca")]
+reticleDefaultColor = Color(1, 1, 1, 1)
+reticleUseColor = Color(0, 0, 1, 1)
+reticleGrabColor = Color(1, 1, 0, 1)
+reticleEquipColor = Color(0, 1, 0, 1)
+_interactionComponent = NodePath("../InteractionComponent")
+_healthComponent = NodePath("../HealthComponent")
+
 [node name="SoundComponent" parent="." index="7" instance=ExtResource("5_a402o")]
 visible = false
 
@@ -150,3 +155,6 @@ GravityMultiplier = 1.3
 
 [node name="EquipmentManager" parent="." index="9" node_paths=PackedStringArray("equipmentPosition") instance=ExtResource("9_uaq73")]
 equipmentPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/Marker3D")
+
+[node name="Chest" type="Marker3D" parent="." index="11"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.19106, 0)

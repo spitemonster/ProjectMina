@@ -1,10 +1,10 @@
 using Godot;
-
+using Godot.Collections;
 namespace ProjectMina;
 
 [Tool]
 [GlobalClass]
-public partial class AIMovementComponent : Node
+public partial class AIMovementComponent : ComponentBase
 {
 	[Signal]
 	public delegate void TargetReachedEventHandler();
@@ -13,12 +13,11 @@ public partial class AIMovementComponent : Node
 	protected NavigationAgent3D _navigationAgent;
 
 	private AICharacter _owner;
-	private Godot.Collections.Array<Rid> _exclude = new();
+	private Array<Rid> _exclude = new();
 	private Vector3 _lookPosition;
 
 	public void SetTargetPosition(Vector3 newPosition, bool force = false)
 	{
-		// NavigationServer3D.MapGet
 		Vector3 pos = NavigationServer3D.MapGetClosestPoint(_navigationAgent.GetNavigationMap(), newPosition);
 		_navigationAgent.TargetPosition = newPosition;
 	}
@@ -30,6 +29,8 @@ public partial class AIMovementComponent : Node
 
 	public override void _Ready()
 	{
+		base._Ready();
+
 		_owner = GetOwner<AICharacter>();
 		_exclude.Add(_owner.GetRid());
 
@@ -38,6 +39,8 @@ public partial class AIMovementComponent : Node
 
 	public override void _PhysicsProcess(double delta)
 	{
+		base._PhysicsProcess(delta);
+
 		if (_navigationAgent == null)
 		{
 			return;

@@ -1,20 +1,17 @@
 using Godot;
-
+using Godot.Collections;
 namespace ProjectMina;
 
 [Tool]
 [GlobalClass]
-public partial class HitboxComponent : Area3D
+public partial class HitboxComponent : ComponentBase
 {
-	[Export]
-	public double Damage = 10.0;
+	[Export] public double Damage = 10.0;
 
-	public Godot.Collections.Array<Node3D> Exclude = new();
+	public Array<Node3D> Exclude = new();
 
-	[Signal]
-	public delegate void HitCharacterEventHandler(CharacterBase character);
-	[Signal]
-	public delegate void HitNodeEventHandler(Node3D node);
+	[Signal] public delegate void HitCharacterEventHandler(CharacterBase character);
+	[Signal] public delegate void HitNodeEventHandler(Node3D node);
 
 	public bool CanHit
 	{
@@ -29,8 +26,7 @@ public partial class HitboxComponent : Area3D
 		}
 	}
 
-	private Godot.Collections.Array<Node3D> _hitNodes = new();
-
+	private Array<Node3D> _hitNodes = new();
 	private CharacterBase _owner;
 	private bool _canHit = false;
 
@@ -41,7 +37,13 @@ public partial class HitboxComponent : Area3D
 
 	public override void _Ready()
 	{
-		BodyEntered += CheckHit;
+		base._Ready();
+		if (!_active)
+		{
+			return;
+		}
+
+		// BodyEntered += CheckHit;
 	}
 
 	private void CheckHit(Node3D body)

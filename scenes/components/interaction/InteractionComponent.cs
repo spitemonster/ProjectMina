@@ -3,7 +3,7 @@ using Godot;
 namespace ProjectMina;
 
 [GlobalClass]
-public partial class InteractionComponent : Node
+public partial class InteractionComponent : ComponentBase
 {
 	public enum InteractionType
 	{
@@ -61,6 +61,11 @@ public partial class InteractionComponent : Node
 	{
 		base._Ready();
 
+		if (!_active || Engine.IsEditorHint())
+		{
+			return;
+		}
+
 		PlayerCharacter playerCharacter = GetOwner<PlayerCharacter>();
 
 		if (playerCharacter != null && playerCharacter.CharacterAttention != null)
@@ -83,13 +88,6 @@ public partial class InteractionComponent : Node
 			};
 		}
 
-		// if (_interactionCollision != null && _grabJoint != null && _grabAnchor != null)
-		// {
-		// 	_interactionCollision.BodyEntered += CheckInteraction;
-		// 	_interactionCollision.BodyExited += CheckLoseFocus;
-		// }
-
-		// Debug.Assert(_interactionCollision != null, "no interaction collision");
 		Debug.Assert(_grabJoint != null, "no grab joint");
 		Debug.Assert(_grabAnchor != null, "no grab anchor");
 	}

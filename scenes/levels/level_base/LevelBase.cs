@@ -6,6 +6,8 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class LevelBase : Node3D
 {
+	[Export] protected NavigationRegion3D NavigationRegion;
+
 	private Marker3D _playerStart;
 
 	public override void _Ready()
@@ -16,4 +18,16 @@ public partial class LevelBase : Node3D
 			Global.Data.Player.GlobalPosition = _playerStart.GlobalPosition;
 		}
 	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+		base._PhysicsProcess(delta);
+
+		if (NavigationRegion != null)
+		{
+			// NavigationRegion.BakeNavigationMesh(true);
+		}
+	}
+
+	public NavigationRegion3D GetNavigationRegion() => NavigationRegion;
 }

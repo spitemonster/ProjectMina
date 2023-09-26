@@ -80,6 +80,22 @@ public partial class PlayerCharacter : CharacterBase
 					_equipmentManager.EquippedItem.GetNode<Interaction>("Interaction")?.Use(this);
 				}
 			};
+
+			_inputManager.EndUse += () =>
+			{
+				if (_equipmentManager.EquippedItem != null)
+				{
+					_equipmentManager.EquippedItem.GetNode<Interaction>("Interaction")?.EndUse(this);
+				}
+			};
+
+			_inputManager.Reload += () =>
+			{
+				if (_equipmentManager.EquippedItem != null && _equipmentManager.EquippedItemType == Equipment.EquipmentType.Weapon && _equipmentManager.EquippedItem is RangedWeapon w)
+				{
+					w.Reload();
+				}
+			};
 		}
 
 		FocusCast.AddException(this);
@@ -171,7 +187,10 @@ public partial class PlayerCharacter : CharacterBase
 
 		for (int i = 0; i < FocusCast.CollisionResult.Count; i++)
 		{
-			ColliderResults.Add((Node3D)FocusCast.GetCollider(i));
+			if (FocusCast.GetCollider(i) is Node3D n)
+			{
+				ColliderResults.Add(n);
+			}
 		}
 
 		if (CharacterAttention.CurrentFocus == null)
@@ -194,6 +213,8 @@ public partial class PlayerCharacter : CharacterBase
 
 			LoseFocus();
 		}
+
+		GD.Print(GetFocus());
 	}
 
 	private bool CheckCanFocus(Node3D targetObject)
@@ -205,7 +226,7 @@ public partial class PlayerCharacter : CharacterBase
 			return false;
 		}
 
-		if ((targetObject.HasNode("Interaction") || targetObject is RigidBody3D) && distanceToTargetObject < 1.5)
+		if ((targetObject.HasNode("Interaction") || targetObject is RigidBody3D) && distanceToTargetObject < 2.0)
 		{
 
 			return true;

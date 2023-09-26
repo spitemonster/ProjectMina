@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace ProjectMina.BehaviorTree;
 
 [Tool]
-[GlobalClass, Icon("res://scenes/components/behavior_tree/core/icons/contrast-icon.svg")]
+[GlobalClass, Icon("res://_dev/icons/icon--contrast.svg")]
 public partial class Condition : Action
 {
 	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)

@@ -3,7 +3,7 @@ using Godot;
 namespace ProjectMina;
 
 [GlobalClass]
-public partial class MovementComponent : Node
+public partial class MovementComponent : ComponentBase
 {
 	public enum MovementState
 	{
@@ -122,6 +122,7 @@ public partial class MovementComponent : Node
 
 	public override void _Ready()
 	{
+		base._Ready();
 		_owner = GetOwner<CharacterBase>();
 		// get gravity project settings
 		_gravity = (float)ProjectSettings.GetSetting("physics/3d/default_gravity");
@@ -141,6 +142,8 @@ public partial class MovementComponent : Node
 
 	public override void _PhysicsProcess(double delta)
 	{
+		base._PhysicsProcess(delta);
+
 		if (_owner == null)
 		{
 			return;

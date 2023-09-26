@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbbq2480x0xv2"
-path="res://.godot/imported/board-icon.svg-143f49146a15217e925f73ea7e59794c.ctex"
+uid="uid://ccfvvmldogy34"
+path="res://.godot/imported/icon--contrast.svg-cfef4582a16cfbac9b1f4fe094f0e794.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/components/behavior_tree/core/icons/board-icon.svg"
-dest_files=["res://.godot/imported/board-icon.svg-143f49146a15217e925f73ea7e59794c.ctex"]
+source_file="res://_dev/icons/icon--contrast.svg"
+dest_files=["res://.godot/imported/icon--contrast.svg-cfef4582a16cfbac9b1f4fe094f0e794.ctex"]
 
 [params]
 

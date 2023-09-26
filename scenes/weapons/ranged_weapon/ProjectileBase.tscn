@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://c7gmwy2wj3kun"]
+[gd_scene load_steps=7 format=3 uid="uid://c7gmwy2wj3kun"]
 
 [ext_resource type="PackedScene" uid="uid://ipr08g28lljf" path="res://scenes/components/hitbox/HitboxComponent.tscn" id="1_47ftj"]
 [ext_resource type="Script" path="res://scenes/weapons/ranged_weapon/ProjectileBase.cs" id="1_m77oo"]
@@ -8,7 +8,13 @@
 radius = 0.015
 height = 0.2
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_47dlr"]
+emission_enabled = true
+emission = Color(1, 0.364706, 0, 1)
+emission_energy_multiplier = 16.0
+
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_wqffv"]
+material = SubResource("StandardMaterial3D_47dlr")
 radius = 0.015
 height = 0.1
 
@@ -21,6 +27,7 @@ can_sleep = false
 script = ExtResource("1_m77oo")
 _hitbox = NodePath("HitboxComponent")
 ImpactParticle = ExtResource("2_yfp80")
+ProjectileSpeed = 500.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)

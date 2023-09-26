@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brain" width="64" height="64"
+	viewBox="0 0 64 64" stroke-width="5.33" stroke="currentColor" fill="none" stroke-linecap="round"
+	stroke-linejoin="round">
+	<path stroke="#C38EF1" d="M41.167 34.667a9.333 9.333 0 0 0 -9.333 9.333v2.6667a9.333 9.333 0 0 0 18.667 0v-4.8" />
+	<path stroke="#C38EF1" d="M22.833 34.667a9.333 9.333 0 0 1 9.333 9.333v2.6667a9.333 9.333 0 0 1 -18.667 0v-4.8" />
+	<path stroke="#C38EF1" d="M46.5 42.667a9.333 9.333 0 0 0 0 -18.667" />
+	<path stroke="#C38EF1" d="M50.667 24.8v-7.467a9.333 9.333 0 0 0 -18.667 0" />
+	<path stroke="#C38EF1" d="M17.5 42.667a9.333 9.333 0 0 1 0 -18.667" />
+	<path stroke="#C38EF1" d="M13.333 24.8v-7.467a9.333 9.333 0 0 1 18.667 0v26.667" />
+</svg>

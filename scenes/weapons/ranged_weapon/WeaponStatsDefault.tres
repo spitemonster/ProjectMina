@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RangedWeaponStats" load_steps=5 format=3 uid="uid://bxqspgvs16qch"]
+
+[ext_resource type="PackedScene" uid="uid://c7gmwy2wj3kun" path="res://scenes/weapons/ranged_weapon/ProjectileBase.tscn" id="1_1v2n4"]
+[ext_resource type="Script" path="res://scenes/weapons/ranged_weapon/RangedWeaponStats.cs" id="1_3skur"]
+[ext_resource type="AudioStream" uid="uid://cqhlia0l4s2kx" path="res://_dev/assets/sounds/gunshot_default_1.wav" id="1_u4t51"]
+[ext_resource type="AudioStream" uid="uid://dlusobn481h4x" path="res://_dev/assets/sounds/reload_default_1.wav" id="3_p4scb"]
+
+[resource]
+script = ExtResource("1_3skur")
+FireRate = 20.0
+Automatic = true
+MaxAmmo = 100
+Projectile = ExtResource("1_1v2n4")
+ReloadDuration = 0.5
+FireSounds = Array[AudioStreamWAV]([ExtResource("1_u4t51")])
+ReloadSounds = Array[AudioStreamWAV]([ExtResource("3_p4scb")])

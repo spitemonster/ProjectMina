@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://hoyi6yec8avu"]
+[gd_scene load_steps=8 format=3 uid="uid://hoyi6yec8avu"]
 
 [ext_resource type="PackedScene" uid="uid://ck5n3ly0vk3iu" path="res://scenes/weapons/weapon_base/WeaponBase.tscn" id="1_4rmb4"]
 [ext_resource type="Script" path="res://scenes/weapons/ranged_weapon/RangedWeapon.cs" id="2_hjxwo"]
-[ext_resource type="PackedScene" uid="uid://c7gmwy2wj3kun" path="res://scenes/weapons/ranged_weapon/ProjectileBase.tscn" id="3_r5s6e"]
+[ext_resource type="Resource" uid="uid://bxqspgvs16qch" path="res://scenes/weapons/ranged_weapon/WeaponStatsDefault.tres" id="3_dd4i3"]
+[ext_resource type="Script" path="res://scenes/components/sound_queue/SoundQueue3D.cs" id="4_isukg"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rlgvg"]
 size = Vector3(0.15, 0.15, 1)
@@ -15,13 +16,14 @@ metallic = 0.65
 material = SubResource("StandardMaterial3D_pt4hu")
 size = Vector3(0.14, 0.14, 1)
 
-[node name="RangedWeapon" node_paths=PackedStringArray("ProjectileSpawn") instance=ExtResource("1_4rmb4")]
-collision_layer = 2
+[node name="RangedWeapon" node_paths=PackedStringArray("ProjectileSpawn", "FireSoundPlayer", "SoundQueue") instance=ExtResource("1_4rmb4")]
+collision_layer = 130
 collision_mask = 3
 script = ExtResource("2_hjxwo")
-_fireDelay = 0.4
-Projectile = ExtResource("3_r5s6e")
+WeaponStats = ExtResource("3_dd4i3")
 ProjectileSpawn = NodePath("MeshInstance3D/ProjectileSpawn")
+FireSoundPlayer = NodePath("FireSound")
+SoundQueue = NodePath("SoundQueue3D")
 weaponType = 1
 
 [node name="CollisionShape3D" parent="." index="0"]
@@ -38,3 +40,11 @@ Type = 0
 
 [node name="CollisionShape3D" parent="Area3D" index="0"]
 shape = SubResource("BoxShape3D_rlgvg")
+
+[node name="FireSound" type="AudioStreamPlayer3D" parent="." index="5"]
+
+[node name="SoundQueue3D" type="Node3D" parent="." index="6"]
+script = ExtResource("4_isukg")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="SoundQueue3D" index="0"]
+max_polyphony = 4

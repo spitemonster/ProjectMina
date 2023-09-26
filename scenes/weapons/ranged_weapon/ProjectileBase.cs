@@ -7,14 +7,13 @@ public partial class ProjectileBase : RigidBody3D
 {
 	public Godot.Collections.Array<Node3D> Exclude = new();
 
-	[Export]
-	public HitboxComponent _hitbox;
+	[Export] public HitboxComponent _hitbox;
 
-	[Export]
-	protected float Lifetime = 3.0f;
+	[Export] protected float Lifetime = 3.0f;
 
-	[Export]
-	protected Resource ImpactParticle;
+	[Export] protected Resource ImpactParticle;
+
+	[Export] public double ProjectileSpeed { get; protected set; } = 150.0;
 
 	private ParticleSystem impactParticle;
 

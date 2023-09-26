@@ -4,8 +4,8 @@ using Godot.Collections;
 namespace ProjectMina;
 
 [Tool]
-[GlobalClass, Icon("res://scenes/components/behavior_tree/core/icons/board-icon.svg")]
-public partial class BlackboardComponent : Node
+[GlobalClass, Icon("res://_dev/icons/icon--board.svg")]
+public partial class BlackboardComponent : ComponentBase
 {
 	[Signal] public delegate void ValueChangedEventHandler(string key, Variant newValue);
 	[Export] public Resource Blackboard;
@@ -13,16 +13,6 @@ public partial class BlackboardComponent : Node
 	public Array<string> Keys = new();
 
 	private Dictionary<string, Variant> _blackboard = new();
-
-	[Export] private bool _debug = false;
-
-	public override void _EnterTree()
-	{
-		if (Blackboard != null && Blackboard is BlackboardAsset bb && bb.Entries.Count > 0)
-		{
-			_blackboard = bb.Entries.Duplicate();
-		}
-	}
 
 	public bool ValueEqual(string key, Variant compare)
 	{
@@ -98,6 +88,19 @@ public partial class BlackboardComponent : Node
 		_blackboard[key] = default;
 		EmitSignal(SignalName.ValueChanged, key, _blackboard[key]);
 		return true;
+	}
+
+	public override void _EnterTree()
+	{
+		if (Blackboard != null && Blackboard is BlackboardAsset bb && bb.Entries.Count > 0)
+		{
+			_blackboard = bb.Entries.Duplicate();
+		}
+	}
+
+	public override void _Ready()
+	{
+		base._Ready();
 	}
 
 	public override string[] _GetConfigurationWarnings()

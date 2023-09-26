@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 
 namespace ProjectMina;
 
@@ -12,25 +13,28 @@ public partial class CharacterBase : CharacterBody3D
 	[Signal] public delegate void FinishedAttackEventHandler();
 
 	// publicly accessible components
-	[Export] public CollisionShape3D CharacterBody { get; protected set; }
+	[Export] public CollisionShape3D CharacterBody { get; set; }
 	[Export] public HealthComponent CharacterHealth { get; protected set; }
 	[Export] public AttentionComponent CharacterAttention { get; protected set; }
 	[Export] public MovementComponent CharacterMovement { get; protected set; }
 	[Export] public InteractionComponent CharacterInteraction { get; protected set; }
 	[Export] public SoundComponent CharacterSound { get; protected set; }
-
-	// used by AI for looking at player character depending on their state
 	[Export] public Marker3D Eyes { get; protected set; }
 	[Export] public Marker3D Chest { get; protected set; }
 
-	public MovementComponent testComponent;
+	[Export] protected double RotationRate = 6.0;
 
 	[Export] private bool _debug = false;
 
-	public Vector3 ForwardVector { get; private set; }
+	public Vector3 ForwardVector { get; protected set; }
 
 	public override void _Ready()
 	{
+		if (Engine.IsEditorHint())
+		{
+			return;
+		}
+
 		CharacterHealth.HealthDepleted += Die;
 	}
 
@@ -85,9 +89,63 @@ public partial class CharacterBase : CharacterBody3D
 		QueueFree();
 	}
 
-	public CharacterBase()
+	public override string[] _GetConfigurationWarnings()
 	{
-		testComponent = new();
-		AddChild(testComponent);
+		base._GetConfigurationWarnings();
+		Array<string> warnings = new();
+
+		if (Eyes == null)
+		{
+			warnings.Add("Character Eyes property must not be empty.");
+		}
+
+		if (Chest == null)
+		{
+			warnings.Add("Character Chest property must not be empty.");
+		}
+
+		string[] baseWarnings = base._GetConfigurationWarnings();
+		if (baseWarnings != null && baseWarnings.Length > 0)
+		{
+			warnings.AddRange(baseWarnings);
+		}
+
+		string[] errs = new string[warnings.Count];
+
+		for (int i = 0; i < warnings.Count; i++)
+		{
+			errs.SetValue(warnings[i], i);
+		}
+
+		return errs;
 	}
+
+	// /// <summary>
+	// /// wrapper for rotatetoface, getting target node's position
+	// /// </summary>
+	// protected virtual void LookAt(Node3D targetNode, double delta)
+	// {
+	// 	RotateToFace(targetNode.GlobalPosition, delta);
+	// }
+
+	// /// <summary>
+	// /// wrapper for rotatetoface
+	// /// </summary>
+	// protected virtual void LookAt(Vector3 targetVector, double delta)
+	// {
+	// 	RotateToFace(targetVector, delta);
+	// }
+
+	// /// <summary>
+	// /// rotates character to face target position, strictly on the Y axis
+	// /// </summary>
+	// /// <param name="targetVector">target look position</param>
+	// /// <param name="delta">delta time</param>
+	// protected virtual void RotateToFace(Vector3 targetVector, double delta)
+	// {
+	// 	Vector3 direction = (targetVector - GlobalPosition).Normalized();
+	// 	Vector3 newRotation = GlobalRotation;
+	// 	newRotation.Y = Mathf.LerpAngle(GlobalRotationDegrees.Y, Mathf.RadToDeg(Mathf.Atan2(direction.X, -direction.Z)), 1);
+	// 	GlobalRotation = newRotation;
+	// }
 }

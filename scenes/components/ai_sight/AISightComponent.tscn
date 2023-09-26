@@ -1,36 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://8d7kh7v3msbl"]
+[gd_scene load_steps=2 format=3 uid="uid://8d7kh7v3msbl"]
 
 [ext_resource type="Script" path="res://scenes/components/ai_sight/AISightComponent.cs" id="1_nkvkb"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m8kk8"]
-transparency = 1
-cull_mode = 2
-shading_mode = 0
-albedo_color = Color(1, 0, 0, 0.12549)
-proximity_fade_enabled = true
-
-[sub_resource type="SphereMesh" id="SphereMesh_tswdt"]
-material = SubResource("StandardMaterial3D_m8kk8")
-radius = 14.0
-height = 28.0
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_k1u6c"]
-radius = 14.0
-
 [node name="AISightComponent" type="Node3D" node_paths=PackedStringArray("_sightCollision")]
 script = ExtResource("1_nkvkb")
-_sightCollision = NodePath("SightCollision")
-
-[node name="SightCollision" type="Area3D" parent="."]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.98269)
-collision_layer = 0
-collision_mask = 4
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="SightCollision"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12)
-mesh = SubResource("SphereMesh_tswdt")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SightCollision"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12)
-shape = SubResource("SphereShape3D_k1u6c")
+_sightCollision = NodePath("")

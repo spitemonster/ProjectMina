@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://pvgeehhaa3r4"
-path="res://.godot/imported/chart-icon.svg-6646f4f9960ad52bf3afbe64186cf1ef.ctex"
+uid="uid://bfs3cmo7oakmd"
+path="res://.godot/imported/icon--brain.svg-1da0ff4245fb245c342f9c7682f14d97.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://scenes/components/behavior_tree/core/icons/chart-icon.svg"
-dest_files=["res://.godot/imported/chart-icon.svg-6646f4f9960ad52bf3afbe64186cf1ef.ctex"]
+source_file="res://_dev/icons/icon--brain.svg"
+dest_files=["res://.godot/imported/icon--brain.svg-1da0ff4245fb245c342f9c7682f14d97.ctex"]
 
 [params]
 

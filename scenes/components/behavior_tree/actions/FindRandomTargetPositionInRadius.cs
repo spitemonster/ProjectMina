@@ -15,14 +15,12 @@ public partial class FindRandomTargetPositionInRadius : Action
 
 	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
-
+		GD.Print("finding new position");
 
 		await Task.Run(() =>
 		{
 			CallDeferred("FindPosition", character, blackboard);
 		});
-
-		GD.Print("target position found: ", _newTarget);
 		Succeed();
 		return Status;
 	}
@@ -40,8 +38,6 @@ public partial class FindRandomTargetPositionInRadius : Action
 		newPosition.Y = characterPosition.Y;
 
 		Vector3 pos = NavigationServer3D.MapGetClosestPoint(character.Brain.NavigationAgent.GetNavigationMap(), newPosition);
-
-		DebugDraw.Box(pos, new Vector3(1.0f, 1.0f, 1.0f), Colors.Red, 5);
 
 		_newTarget = pos;
 		blackboard.SetValue("target_position", _newTarget);

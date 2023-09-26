@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://e73bpqmuhvor"]
+
+[ext_resource type="PackedScene" uid="uid://c37sghih0u831" path="res://scenes/levels/level_base/LevelBase.tscn" id="1_ykc5e"]
+[ext_resource type="PackedScene" uid="uid://cmjhf16ocrx1k" path="res://_dev/LevelBox.tscn" id="2_faflm"]
+[ext_resource type="PackedScene" uid="uid://hoyi6yec8avu" path="res://scenes/weapons/ranged_weapon/RangedWeapon.tscn" id="3_nfedo"]
+
+[node name="FiringRange" node_paths=PackedStringArray("NavigationRegion") instance=ExtResource("1_ykc5e")]
+NavigationRegion = NodePath("NavigationRegion3D")
+
+[node name="PlayerStart" parent="NavigationRegion3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.67352)
+
+[node name="LevelBox" parent="NavigationRegion3D" index="1" instance=ExtResource("2_faflm")]
+
+[node name="RangedWeapon" parent="." index="3" instance=ExtResource("3_nfedo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -7.47646)

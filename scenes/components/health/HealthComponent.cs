@@ -4,21 +4,17 @@ namespace ProjectMina;
 
 [Tool]
 [GlobalClass]
-public partial class HealthComponent : Node
+public partial class HealthComponent : ComponentBase
 {
 	public double MaxHealth => _maxHealth;
 
-	[Export]
-	public double _maxHealth = 100.0;
+	[Export] public double _maxHealth = 100.0;
 
-	[Signal]
-	public delegate void HealthChangedEventHandler(double newHealth, bool wasDamage);
+	[Signal] public delegate void HealthChangedEventHandler(double newHealth, bool wasDamage);
 
-	[Signal]
-	public delegate void HealthMaxedEventHandler();
+	[Signal] public delegate void HealthMaxedEventHandler();
 
-	[Signal]
-	public delegate void HealthDepletedEventHandler();
+	[Signal] public delegate void HealthDepletedEventHandler();
 
 	protected double _currentHealth;
 
@@ -31,7 +27,6 @@ public partial class HealthComponent : Node
 	// force overwrites the health entirely
 	public void ChangeHealth(double amount, bool isDamage = false, double force = -1.0)
 	{
-
 		amount = Mathf.Abs(amount);
 		_currentHealth = (force > 0.0) ? force : _currentHealth + (isDamage ? -amount : amount);
 		_currentHealth = Mathf.Max(0.0, Mathf.Min(_currentHealth, _maxHealth));
