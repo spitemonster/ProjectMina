@@ -41,13 +41,14 @@ public partial class PlayerCharacter : CharacterBase
 	protected SoundComponent _soundComponent;
 
 	[ExportGroup("Combat")]
-	[Export]
-	public CombatGridComponent CombatGrid { get; protected set; }
+	[Export] public CombatGridComponent CombatGrid { get; protected set; }
 
 	public Node3D _currentFloor;
 	private bool _isStealthMode = false;
 	private float _defaultCapsuleHeight;
 	private Vector3 _defaultCapsulePosition;
+
+	private Godot.Collections.Array<Rid> x = new();
 
 	// private FocusInfo CharacterAttention.CurrentFocus;
 	// private object _currentPlayerFocusCollider;
@@ -56,6 +57,8 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		// setup player in global data
 		Global.Data.Player = this;
+
+		x.Add(GetRid());
 
 		// ensure there is an input manager before binding events to it
 		if (GetNode("/root/InputManager") is InputManager m)
@@ -114,6 +117,18 @@ public partial class PlayerCharacter : CharacterBase
 			CheckPlayerFocus();
 		}
 
+		if (_equipmentManager.EquippedItem is RangedWeapon w && _equipmentManager.EquippedItemType == Equipment.EquipmentType.Weapon)
+		{
+			Vector3 traceStart = PrimaryCamera.GlobalPosition;
+			Vector3 traceEnd = PrimaryCamera.GlobalPosition + PrimaryCamera.GlobalTransform.Basis.Z * -100.0f;
+			HitResult aimTraceResult = Trace.Line(GetWorld3D().DirectSpaceState, traceStart, traceEnd, x);
+			Vector3 aimPosition = aimTraceResult != null ? aimTraceResult.HitPosition : traceEnd;
+
+			// DebugDraw.Sphere(aimPosition, .25f, Colors.Red, .5f);
+
+			w.Aim(aimPosition);
+		}
+
 		if (!IsOnFloor())
 		{
 			if (_currentFloor is RigidBody3D r)
@@ -125,9 +140,9 @@ public partial class PlayerCharacter : CharacterBase
 		else
 		{
 			// if the player is on the floor, update the _currentFloor value because we're using it down the line
-			PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
-			Godot.Collections.Array<Rid> x = new() { GetRid() };
-			HitResult traceResult = Trace.Line(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
+			// PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
+			// Godot.Collections.Array<Rid> x = new() { GetRid() };
+			HitResult traceResult = Trace.Line(GetWorld3D().DirectSpaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
 
 			if (traceResult != null && traceResult.Collider is Node3D n)
 			{
@@ -153,8 +168,8 @@ public partial class PlayerCharacter : CharacterBase
 
 				if (angleFactor > 0.75)
 				{
-					r.ApplyCentralImpulse(-collision3D.GetNormal() * 20.0f * angleFactor);
-					r.ApplyImpulse(-collision3D.GetNormal() * 2.0f * angleFactor, collision3D.GetPosition());
+					r.ApplyCentralImpulse(-collision3D.GetNormal() * 2.0f * angleFactor);
+					// r.ApplyImpulse(-collision3D.GetNormal() * 2.0f * angleFactor, collision3D.GetPosition());
 				}
 			}
 		}
@@ -206,15 +221,13 @@ public partial class PlayerCharacter : CharacterBase
 		}
 		else
 		{
-			if (ColliderResults.Contains(CharacterAttention.CurrentFocus))
+			if (ColliderResults != null && ColliderResults.Contains(CharacterAttention.CurrentFocus))
 			{
 				return;
 			}
 
 			LoseFocus();
 		}
-
-		GD.Print(GetFocus());
 	}
 
 	private bool CheckCanFocus(Node3D targetObject)
@@ -240,11 +253,19 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		if (!GetTree().Paused)
 		{
+
 			float headRelative = (float)(-mouseRelative.X * _inputSensitivity);
 			float cameraRelative = (float)(-mouseRelative.Y * _inputSensitivity);
 
-			if (_interactionComponent.IsGrabbing)
+			if (CharacterInteraction.IsGrabbing)
 			{
+
+				if (Input.IsActionPressed("mod"))
+				{
+					CharacterInteraction.AddGrabbedItemRotationSpeed(new Vector3(cameraRelative, headRelative, 0));
+					return;
+				}
+
 				headRelative *= (float)_carryGrabSpeedMultiplier;
 				cameraRelative *= (float)_carryGrabSpeedMultiplier;
 			}

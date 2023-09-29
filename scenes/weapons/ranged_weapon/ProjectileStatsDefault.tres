@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ProjectileStats" load_steps=3 format=3 uid="uid://cuy744glwbucs"]
+
+[ext_resource type="PackedScene" uid="uid://d2y7t8vmaqyxp" path="res://scenes/effects/BulletImpact.tscn" id="1_o8hpj"]
+[ext_resource type="Script" path="res://scenes/weapons/ranged_weapon/ProjectileStats.cs" id="1_xkpo5"]
+
+[resource]
+script = ExtResource("1_xkpo5")
+ImpactParticle = ExtResource("1_o8hpj")
+Damage = 1.0
+Lifetime = 3.0
+Speed = 5000.0
+ImpactSounds = null
+TravelSounds = null

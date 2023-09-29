@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://do7fbomwbyldg" path="res://_dev/scenes/gizmo.tscn" id="5_wlyjh"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_xmm4g"]
+friction = 0.5
+rough = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ueadv"]
 albedo_texture = ExtResource("1_m5nl0")
@@ -25,9 +27,8 @@ points = PackedVector3Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5
 [node name="Crate" type="RigidBody3D"]
 transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, -5, 0)
 collision_mask = 11
-mass = 150.0
+mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_xmm4g")
-angular_damp = 2.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_16s4j")

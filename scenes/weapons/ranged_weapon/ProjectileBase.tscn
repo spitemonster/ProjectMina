@@ -2,32 +2,39 @@
 
 [ext_resource type="PackedScene" uid="uid://ipr08g28lljf" path="res://scenes/components/hitbox/HitboxComponent.tscn" id="1_47ftj"]
 [ext_resource type="Script" path="res://scenes/weapons/ranged_weapon/ProjectileBase.cs" id="1_m77oo"]
-[ext_resource type="PackedScene" uid="uid://d2y7t8vmaqyxp" path="res://scenes/effects/BulletImpact.tscn" id="2_yfp80"]
+[ext_resource type="Resource" uid="uid://cuy744glwbucs" path="res://scenes/weapons/ranged_weapon/ProjectileStatsDefault.tres" id="2_3jhfu"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0w2wk"]
 radius = 0.015
-height = 0.2
+height = 0.1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_47dlr"]
-emission_enabled = true
+albedo_color = Color(0.203922, 0.203922, 0.203922, 1)
 emission = Color(1, 0.364706, 0, 1)
 emission_energy_multiplier = 16.0
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_wqffv"]
 material = SubResource("StandardMaterial3D_47dlr")
-radius = 0.015
-height = 0.1
+radius = 0.0005
+height = 0.01
 
 [node name="ProjectileBase" type="RigidBody3D" node_paths=PackedStringArray("_hitbox")]
-collision_layer = 0
+collision_layer = 8
+collision_mask = 255
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+mass = 0.1
 continuous_cd = true
-max_contacts_reported = 10
+max_contacts_reported = 1
 contact_monitor = true
 can_sleep = false
 script = ExtResource("1_m77oo")
 _hitbox = NodePath("HitboxComponent")
-ImpactParticle = ExtResource("2_yfp80")
-ProjectileSpeed = 500.0
+Stats = ExtResource("2_3jhfu")
+ImpactParticleEnabled = false
+ImpactSoundEnabled = false
+TravelSoundEnabled = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
@@ -43,4 +50,5 @@ mesh = SubResource("CapsuleMesh_wqffv")
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 shape = SubResource("CapsuleShape3D_0w2wk")
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+[node name="TravelPlayer" type="AudioStreamPlayer3D" parent="."]
+unique_name_in_owner = true

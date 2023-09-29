@@ -7,13 +7,15 @@ public partial class ProjectileBase : RigidBody3D
 {
 	public Godot.Collections.Array<Node3D> Exclude = new();
 
+	public double Speed { get => Stats.Speed; }
+
 	[Export] public HitboxComponent _hitbox;
+	[Export] protected ProjectileStats Stats;
+	[Export] protected bool ImpactParticleEnabled = true;
+	[Export] protected bool ImpactSoundEnabled = true;
+	[Export] protected bool TravelSoundEnabled = true;
 
-	[Export] protected float Lifetime = 3.0f;
-
-	[Export] protected Resource ImpactParticle;
-
-	[Export] public double ProjectileSpeed { get; protected set; } = 150.0;
+	private AudioStreamPlayer3D _travelPlayer;
 
 	private ParticleSystem impactParticle;
 
@@ -25,9 +27,20 @@ public partial class ProjectileBase : RigidBody3D
 		_hitbox.CanHit = true;
 		_hitbox.Exclude = Exclude;
 
-		if (ImpactParticle != null)
+		if (Stats == null)
 		{
-			PackedScene scene = GD.Load<PackedScene>(ImpactParticle.ResourcePath);
+			GD.PushError("Projectile missing Projectile Stats");
+			return;
+		}
+
+		if (GetNode("%TravelPlayer") is AudioStreamPlayer3D player)
+		{
+			_travelPlayer = player;
+		}
+
+		if (Stats.ImpactParticle != null && ImpactParticleEnabled)
+		{
+			PackedScene scene = GD.Load<PackedScene>(Stats.ImpactParticle.ResourcePath);
 
 			if (scene.Instantiate() is ParticleSystem p)
 			{
@@ -49,18 +62,20 @@ public partial class ProjectileBase : RigidBody3D
 		{
 			if (!Exclude.Contains((Node3D)node))
 			{
-				// GD.Print(node.Name);
-				// if (impactParticle != null)
-				// {
-				// 	impactParticle.GlobalPosition = GlobalPosition;
-				// 	impactParticle.Play();
-				// 	impactParticle.Finished += () =>
-				// 	{
-				// 		impactParticle?.QueueFree();
-				// 	};
+				DebugDraw.Sphere(GlobalPosition, .1f, Colors.Blue, 10.0f);
 
-				// 	impactParticle = null;
-				// }
+				if (impactParticle != null)
+				{
+					impactParticle.GlobalPosition = GlobalPosition;
+
+					impactParticle.Play();
+					impactParticle.Finished += () =>
+					{
+						impactParticle?.QueueFree();
+					};
+
+					impactParticle = null;
+				}
 
 				QueueFree();
 			}
@@ -68,14 +83,14 @@ public partial class ProjectileBase : RigidBody3D
 
 		_killTimer = new Timer()
 		{
-			WaitTime = Lifetime,
+			WaitTime = Stats.Lifetime,
 			OneShot = true,
 			Autostart = true
 		};
 
 		_killTimer.Timeout += () =>
 		{
-			// impactParticle?.QueueFree();
+			impactParticle?.QueueFree();
 			QueueFree();
 		};
 	}

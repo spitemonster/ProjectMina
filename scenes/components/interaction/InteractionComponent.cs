@@ -48,6 +48,8 @@ public partial class InteractionComponent : ComponentBase
 	[Export]
 	protected EquipmentManager equipmentManager;
 
+	[Export] protected StaticBody3D grabRoot;
+
 	private bool _canInteract;
 	private bool _canEquip;
 	private bool _canGrab;
@@ -56,6 +58,8 @@ public partial class InteractionComponent : ComponentBase
 	private InputManager _inputManager;
 	private Quaternion _grabbedItemDesiredRotation;
 	private InteractionType _interactionState = InteractionType.None;
+	private Vector3 _relativeRotation;
+	private Vector3 targetGrabbedItemRotationSpeed;
 
 	public override void _Ready()
 	{
@@ -92,6 +96,12 @@ public partial class InteractionComponent : ComponentBase
 		Debug.Assert(_grabAnchor != null, "no grab anchor");
 	}
 
+	public void AddGrabbedItemRotationSpeed(Vector3 direction)
+	{
+		targetGrabbedItemRotationSpeed = direction;
+		// GD.Print(targetGrabbedItemRotationSpeed);
+	}
+
 	public void Interact(bool isAlt)
 	{
 		switch (_interactionState)
@@ -125,6 +135,40 @@ public partial class InteractionComponent : ComponentBase
 			Vector3 targetLinearVelocity = (handPosition - pickedObjectPosition) * 5.0f;
 			targetLinearVelocity.Y *= 0.5f;
 			_grabbedItem.LinearVelocity = targetLinearVelocity;
+
+
+			if (Input.IsActionPressed("mod"))
+			{
+				if (_grabJoint.NodeB != null)
+				{
+					_grabJoint.NodeB = null;
+				}
+
+				if (Input.IsActionJustPressed("mod"))
+				{
+					_relativeRotation = _grabPosition.GlobalRotation - _grabbedItem.GlobalRotation;
+				}
+
+				_grabJoint.SetFlagX(Generic6DofJoint3D.Flag.EnableAngularLimit, false);
+				_grabJoint.SetFlagY(Generic6DofJoint3D.Flag.EnableAngularLimit, false);
+				_grabJoint.SetFlagZ(Generic6DofJoint3D.Flag.EnableAngularLimit, false);
+				GD.Print(_grabbedItemDesiredRotation);
+
+				_grabbedItem.AngularVelocity = new Vector3(1.0f, 0.0f, 0);
+			}
+			else
+			{
+				targetGrabbedItemRotationSpeed = Vector3.Zero;
+				if (_grabJoint.NodeB == null || _grabJoint.NodeB == "")
+				{
+					_grabJoint.NodeB = _grabbedItem.GetPath();
+				}
+
+				_grabJoint.SetFlagX(Generic6DofJoint3D.Flag.EnableAngularLimit, true);
+				_grabJoint.SetFlagY(Generic6DofJoint3D.Flag.EnableAngularLimit, true);
+				_grabJoint.SetFlagZ(Generic6DofJoint3D.Flag.EnableAngularLimit, true);
+
+			}
 		}
 	}
 
@@ -210,7 +254,6 @@ public partial class InteractionComponent : ComponentBase
 		if (_grabbedItem == null)
 		{
 			_grabbedItem = item;
-
 			_grabJoint.NodeB = _grabbedItem.GetPath();
 			return true;
 		}

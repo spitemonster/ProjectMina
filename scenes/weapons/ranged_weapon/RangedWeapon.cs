@@ -1,5 +1,7 @@
 using Godot;
+using System;
 using System.Diagnostics;
+using System.IO;
 namespace ProjectMina;
 
 // this weapon type spawns a projectile and launches it at the target position
@@ -16,7 +18,6 @@ public partial class RangedWeapon : WeaponBase
 
 	[Export] protected RangedWeaponStats WeaponStats;
 	[Export] protected Marker3D ProjectileSpawn;
-	[Export] protected AudioStreamPlayer3D FireSoundPlayer;
 	[Export] protected SoundQueue3D SoundQueue;
 
 	private PackedScene _projectileScene;
@@ -26,8 +27,11 @@ public partial class RangedWeapon : WeaponBase
 
 	private int _maxAmmo;
 	private bool _automatic;
-
 	private bool _triggerPulled;
+	private Vector3 _aimPosition;
+	private RandomNumberGenerator rng = new();
+
+	private float _spreadRad;
 
 	public override void _Ready()
 	{
@@ -92,6 +96,13 @@ public partial class RangedWeapon : WeaponBase
 			}
 		};
 
+		_spreadRad = WeaponStats.Spread;
+	}
+
+	public virtual void Aim(Vector3 AimPosition)
+	{
+		_aimPosition = AimPosition;
+		// DebugDraw.Sphere(_aimPosition, .2f, Colors.Green, 3.0f);
 	}
 
 	public override void Equip(CharacterBase equippingCharacter)
@@ -110,6 +121,7 @@ public partial class RangedWeapon : WeaponBase
 		_triggerPulled = false;
 	}
 
+
 	protected virtual void Fire(CharacterBase interactingCharacter)
 	{
 		if (!CanFire)
@@ -124,7 +136,20 @@ public partial class RangedWeapon : WeaponBase
 		}
 
 		ProjectileBase currentProjectile = GetProjectile();
-		currentProjectile.ApplyImpulse(-GlobalTransform.Basis.Z * (float)currentProjectile.ProjectileSpeed);
+		currentProjectile.GlobalTransform = ProjectileSpawn.GlobalTransform;
+		currentProjectile.LookAt(_aimPosition, Vector3.Up);
+
+		DebugDraw.Line(currentProjectile.GlobalPosition, _aimPosition, Colors.Purple, 10.0f);
+		DebugDraw.Sphere(_aimPosition, .25f, Colors.Purple, 10.0f);
+		Vector3 ProjectileDirection = (_aimPosition - currentProjectile.GlobalPosition).Normalized();
+		float randHOffset = ((rng.Randf() - .5f) * 2) * _spreadRad * (Mathf.Pi / 180);
+		float randVOffset = ((rng.Randf() - .5f) * 2) * _spreadRad * (Mathf.Pi / 180);
+
+		currentProjectile.Rotate(Vector3.Up, randHOffset);
+		currentProjectile.Rotate(currentProjectile.GlobalTransform.Basis.X, randVOffset);
+
+		currentProjectile.ApplyImpulse(ProjectileDirection * (float)currentProjectile.Speed);
+
 		CanFire = false;
 
 		if (CurrentAmmo > 0)
@@ -150,11 +175,9 @@ public partial class RangedWeapon : WeaponBase
 	protected ProjectileBase GetProjectile()
 	{
 		ProjectileBase currentProjectile = _projectileScene.Instantiate<ProjectileBase>();
-		currentProjectile.GlobalTransform = ProjectileSpawn.GlobalTransform;
 		GetTree().Root.AddChild(currentProjectile);
-
+		currentProjectile.TopLevel = true;
 		currentProjectile.Exclude = Exclude;
-
 		return currentProjectile;
 	}
 }

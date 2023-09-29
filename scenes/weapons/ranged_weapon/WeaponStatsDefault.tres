@@ -7,10 +7,11 @@
 
 [resource]
 script = ExtResource("1_3skur")
-FireRate = 20.0
-Automatic = true
-MaxAmmo = 100
+FireRate = 12.0
+Automatic = false
+MaxAmmo = 1500
 Projectile = ExtResource("1_1v2n4")
 ReloadDuration = 0.5
 FireSounds = Array[AudioStreamWAV]([ExtResource("1_u4t51")])
 ReloadSounds = Array[AudioStreamWAV]([ExtResource("3_p4scb")])
+Spread = 3.0

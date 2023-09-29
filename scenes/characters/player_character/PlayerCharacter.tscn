@@ -1,12 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://c45weam7tjqmw"]
+[gd_scene load_steps=14 format=3 uid="uid://c45weam7tjqmw"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b5t2"]
 [ext_resource type="Script" path="res://scenes/characters/player_character/PlayerCharacter.cs" id="2_7uq42"]
 [ext_resource type="Script" path="res://scenes/components/interaction/InteractionComponent.cs" id="3_3gtcp"]
 [ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://ui/PlayerHUD.tscn" id="4_161ca"]
 [ext_resource type="PackedScene" uid="uid://lw8xaecvvi5q" path="res://scenes/components/sound/SoundComponent.tscn" id="5_a402o"]
-[ext_resource type="PackedScene" uid="uid://uywniyg1yd8x" path="res://scenes/components/combat_grid/CombatGridComponent.tscn" id="6_uw203"]
-[ext_resource type="PackedScene" uid="uid://hqdj2ivnbab7" path="res://scenes/components/combat_grid/CombatGridPoint.tscn" id="7_1kmqq"]
 [ext_resource type="PackedScene" uid="uid://b3rq16aalq4c2" path="res://scenes/components/movement/MovementComponent.tscn" id="8_8i55q"]
 [ext_resource type="PackedScene" uid="uid://cf510k02wbxs4" path="res://scenes/components/equipment_manager/EquipmentManager.tscn" id="9_uaq73"]
 
@@ -15,6 +13,9 @@ radius = 0.025
 height = 1.5
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ywvxe"]
+radius = 0.1
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wd6j7"]
 radius = 0.05
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_lnesk"]
@@ -28,7 +29,7 @@ points = PackedVector3Array(-0.295156, 0.0595238, -0.0952232, 0.304742, 0.059523
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_fewu7"]
 height = 0.2
 
-[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "_interactionComponent", "_equipmentManager", "_head", "FocusCast", "_soundComponent", "CombatGrid", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterSound", "Eyes", "Chest") instance=ExtResource("1_5b5t2")]
+[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "_interactionComponent", "_equipmentManager", "_head", "FocusCast", "_soundComponent", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterSound", "Eyes", "Chest") instance=ExtResource("1_5b5t2")]
 collision_layer = 6
 collision_mask = 5
 script = ExtResource("2_7uq42")
@@ -42,7 +43,6 @@ _carryGrabSpeedMultiplier = 0.2
 _stealthCapsuleHeight = 0.9
 _stealthCapsulePosition = Vector3(0, 0.45, 0)
 _soundComponent = NodePath("SoundComponent")
-CombatGrid = NodePath("CharacterBody/CombatGridComponent")
 CharacterHealth = NodePath("HealthComponent")
 CharacterAttention = NodePath("AttentionComponent")
 CharacterMovement = NodePath("MovementComponent")
@@ -70,7 +70,7 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 
 shape = SubResource("CapsuleShape3D_u7t72")
 
 [node name="GrabPosition" type="Marker3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.7)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, -1.7)
 
 [node name="GrabJoint" type="Generic6DOFJoint3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="2"]
 node_a = NodePath("../StaticBody3D")
@@ -82,34 +82,26 @@ linear_limit_z/enabled = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
 [node name="Marker3D" type="Marker3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="4"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.412145, -0.249516, -0.347039)
+transform = Transform3D(0.99863, -0.052336, 0, 0.052336, 0.99863, 0, 0, 0, 1, 0.14, -0.13, -0.18)
 
 [node name="FocusTrace" type="ShapeCast3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="5"]
 unique_name_in_owner = true
+visible = false
 shape = SubResource("SphereShape3D_ywvxe")
-target_position = Vector3(0, 0, -50)
-max_results = 4
-collision_mask = 132
+target_position = Vector3(0, 0, -100)
+margin = 0.1
+collision_mask = 243
 collide_with_areas = true
-debug_shape_custom_color = Color(1, 0, 0, 1)
+debug_shape_custom_color = Color(0.266667, 0.501961, 1, 1)
+
+[node name="AimTrace" type="ShapeCast3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="6"]
+visible = false
+shape = SubResource("SphereShape3D_wd6j7")
+target_position = Vector3(0, 0, -100)
+collision_mask = 255
 
 [node name="Eyes" type="Marker3D" parent="CharacterBody/Hips/Head" index="1"]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
-
-[node name="CombatGridComponent" parent="CharacterBody" index="1" node_paths=PackedStringArray("GridPoints") instance=ExtResource("6_uw203")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -0.498571)
-GridPoints = [null]
-
-[node name="CombatGridPoint3" parent="CharacterBody/CombatGridComponent" index="0" node_paths=PackedStringArray("_collisionArea") instance=ExtResource("7_1kmqq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 3.5)
-_collisionArea = NodePath("../CombatGridPoint/Area3D")
-
-[node name="CombatGridPoint2" parent="CharacterBody/CombatGridComponent" index="1" node_paths=PackedStringArray("_collisionArea") instance=ExtResource("7_1kmqq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 3.5)
-_collisionArea = NodePath("../CombatGridPoint/Area3D")
-
-[node name="CombatGridPoint" parent="CharacterBody/CombatGridComponent" index="2" instance=ExtResource("7_1kmqq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0464694, 0)

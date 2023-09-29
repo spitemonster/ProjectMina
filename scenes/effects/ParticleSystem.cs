@@ -23,24 +23,24 @@ public partial class ParticleSystem : Node3D
 
 	public void Play()
 	{
-		if (animationPlayer == null || animationPlayer.GetAnimationList().Length == 0 && _particles.Count > 0)
-		{
-			foreach (var particle in _particles)
-			{
-				if (particle is CpuParticles3D c)
-				{
-					c.Emitting = true;
-					c.Finished += AccumulateCompletedParticles;
-				}
-				else if (particle is GpuParticles3D g)
-				{
-					g.Emitting = true;
-					g.Finished += AccumulateCompletedParticles;
-				}
-			}
+		// if (animationPlayer == null || animationPlayer.GetAnimationList().Length == 0 && _particles.Count > 0)
+		// {
+		// 	foreach (var particle in _particles)
+		// 	{
+		// 		if (particle is CpuParticles3D c)
+		// 		{
+		// 			c.Emitting = true;
+		// 			c.Finished += AccumulateCompletedParticles;
+		// 		}
+		// 		else if (particle is GpuParticles3D g)
+		// 		{
+		// 			g.Emitting = true;
+		// 			g.Finished += AccumulateCompletedParticles;
+		// 		}
+		// 	}
 
-			Playing = true;
-		}
+		// 	Playing = true;
+		// }
 	}
 
 	public override void _Ready()

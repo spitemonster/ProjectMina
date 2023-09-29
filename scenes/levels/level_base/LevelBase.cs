@@ -16,6 +16,7 @@ public partial class LevelBase : Node3D
 		{
 			_playerStart = s;
 			Global.Data.Player.GlobalPosition = _playerStart.GlobalPosition;
+			Global.Data.Player.GlobalRotation = _playerStart.GlobalRotation;
 		}
 	}
 

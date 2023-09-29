@@ -17,4 +17,6 @@ public partial class RangedWeaponStats : Resource
 	[Export] public double ReloadDuration = .5;
 	[Export] public Godot.Collections.Array<AudioStreamWav> FireSounds;
 	[Export] public Godot.Collections.Array<AudioStreamWav> ReloadSounds;
+
+	[Export] public float Spread = 1.0f;
 }

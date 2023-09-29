@@ -13,6 +13,8 @@ public partial class InputManager : Node
 	[Signal] public delegate void JumpEventHandler();
 	[Signal] public delegate void StealthEventHandler();
 	[Signal] public delegate void ReloadEventHandler();
+	public bool ModifierPressed { get => _modifierPressed; }
+	public InputManager Instance { get => this; }
 
 	private Timer _leftMouseTimer;
 	private bool _leftMouseClicked = false;
@@ -34,7 +36,7 @@ public partial class InputManager : Node
 
 	private void InitPreview()
 	{
-		// _modMonitor = Global.Data.DevLog.AddDevInfo("Alt Depressed");
+		// _modMonitor = Dev.UI.AddDevMonitor("Alt Depressed");
 	}
 
 	public override void _Input(InputEvent e)
@@ -49,7 +51,7 @@ public partial class InputManager : Node
 		if (e.IsAction("mod"))
 		{
 			_modifierPressed = e.IsActionPressed("mod");
-			_modMonitor.SetValue(_modifierPressed.ToString());
+			// _modMonitor.SetValue(_modifierPressed.ToString());
 			return;
 		}
 
