@@ -13,6 +13,7 @@ public partial class PlayerCharacter : CharacterBase
 	[ExportGroup("PlayerCharacter")]
 	[Export]
 	public Camera3D PrimaryCamera { get; protected set; }
+	[Export] public AnimationPlayer AnimationPlayer { get; protected set; }
 
 	[Export]
 	protected InteractionComponent _interactionComponent;
@@ -99,6 +100,8 @@ public partial class PlayerCharacter : CharacterBase
 					w.Reload();
 				}
 			};
+
+			_inputManager.Lean += CharacterMovement.Lean;
 		}
 
 		FocusCast.AddException(this);
@@ -139,9 +142,6 @@ public partial class PlayerCharacter : CharacterBase
 		}
 		else
 		{
-			// if the player is on the floor, update the _currentFloor value because we're using it down the line
-			// PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
-			// Godot.Collections.Array<Rid> x = new() { GetRid() };
 			HitResult traceResult = Trace.Line(GetWorld3D().DirectSpaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
 
 			if (traceResult != null && traceResult.Collider is Node3D n)
@@ -149,7 +149,7 @@ public partial class PlayerCharacter : CharacterBase
 				if (n is RigidBody3D r)
 				{
 					_currentFloor = r;
-					r.Sleeping = true;
+					// r.Sleeping = true;
 				}
 			}
 		}
@@ -166,17 +166,19 @@ public partial class PlayerCharacter : CharacterBase
 				angleFactor = Mathf.Clamp(Mathf.Pow(angleToCollision, 2), 0.0f, 1.0f);
 				angleFactor = Mathf.Round(angleFactor * 100) / 100;
 
-				if (angleFactor > 0.75)
+				if (angleFactor > 0.5)
 				{
-					r.ApplyCentralImpulse(-collision3D.GetNormal() * 2.0f * angleFactor);
-					// r.ApplyImpulse(-collision3D.GetNormal() * 2.0f * angleFactor, collision3D.GetPosition());
+					r.ApplyCentralImpulse(-collision3D.GetNormal() * 4.0f * angleFactor);
+					r.ApplyImpulse(-collision3D.GetNormal() * 0.01f * angleFactor, collision3D.GetPosition());
 				}
 			}
 		}
 
-
-		Vector2 inputDirection = InputManager.GetInputDirection();
-		Velocity = CharacterMovement.CalculateMovementVelocity(inputDirection, delta);
+		Vector2 controlInput = InputManager.GetInputDirection();
+		// Velocity = CharacterMovement.CalculateMovementVelocity(inputDirection, delta);
+		// CharacterMovement.AddMovementInput(inputDirection);
+		Vector3 direction = (GlobalTransform.Basis * new Vector3(-controlInput.X, 0, -controlInput.Y)).Normalized();
+		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta);
 
 		_ = MoveAndSlide();
 	}
@@ -290,13 +292,13 @@ public partial class PlayerCharacter : CharacterBase
 
 		if (_isStealthMode)
 		{
-			capsule.Height = (float)_stealthCapsuleHeight;
-			CharacterBody.Position = _stealthCapsulePosition;
+			AnimPlayer.Play("crouch");
+			CharacterBody.Disabled = true;
 		}
 		else
 		{
-			capsule.Height = (float)_defaultCapsuleHeight;
-			CharacterBody.Position = _defaultCapsulePosition;
+			AnimPlayer.PlayBackwards("crouch");
+			CharacterBody.Disabled = false;
 		}
 	}
 }

@@ -1,0 +1,3 @@
+[gd_scene format=3 uid="uid://djtmi5kyjnce4"]
+
+[node name="TestViewport" type="SubViewport"]

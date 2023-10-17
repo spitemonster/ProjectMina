@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://rw6sr5aw8chk"]
+
+[ext_resource type="Script" path="res://scenes/effects/ParticleSystem.cs" id="1_uy2j2"]
+[ext_resource type="PackedScene" uid="uid://bcoh7w5yjacxw" path="res://scenes/effects/Rain.tscn" id="2_dwqs4"]
+
+[node name="Rain" type="Node3D"]
+script = ExtResource("1_uy2j2")
+Loop = true
+Autostart = true
+
+[node name="CPUParticles3D" parent="." instance=ExtResource("2_dwqs4")]
+emitting = false
+amount = 7500
+emission_box_extents = Vector3(10, 0.5, 10)

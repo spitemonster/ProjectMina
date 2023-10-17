@@ -1,7 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://c45weam7tjqmw"]
+[gd_scene load_steps=19 format=3 uid="uid://c45weam7tjqmw"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b5t2"]
 [ext_resource type="Script" path="res://scenes/characters/player_character/PlayerCharacter.cs" id="2_7uq42"]
+[ext_resource type="PackedScene" uid="uid://rw6sr5aw8chk" path="res://scenes/effects/ParticlesSystem_Rain.tscn" id="3_2dkx8"]
 [ext_resource type="Script" path="res://scenes/components/interaction/InteractionComponent.cs" id="3_3gtcp"]
 [ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://ui/PlayerHUD.tscn" id="4_161ca"]
 [ext_resource type="PackedScene" uid="uid://lw8xaecvvi5q" path="res://scenes/components/sound/SoundComponent.tscn" id="5_a402o"]
@@ -18,22 +19,143 @@ radius = 0.1
 [sub_resource type="SphereShape3D" id="SphereShape3D_wd6j7"]
 radius = 0.05
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_lnesk"]
-top_radius = 0.3
-bottom_radius = 0.2
-height = 0.1
-
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ef883"]
 points = PackedVector3Array(-0.295156, 0.0595238, -0.0952232, 0.304742, 0.0595238, 0.0570981, 0.295196, 0.0595238, 0.0951635, -0.174525, -0.05, 0.0959839, 0.0435781, -0.05, -0.192022, -0.0952299, 0.0595238, 0.295216, 0.122222, -0.05, 0.157074, 0.0952103, 0.0595238, -0.295216, 0.174615, -0.05, -0.0959839, -0.122187, -0.05, -0.157129, -0.123748, 0.0595238, -0.28567, 0.161852, 0.0595238, 0.266637, -0.266638, 0.0595238, 0.161867, 0.247586, 0.0595238, -0.190446, -0.0436523, -0.05, 0.192022, 0.192007, -0.05, 0.0435893, -0.192026, -0.05, -0.043644, -0.304762, 0.0595238, 0.0570981, 0.0570865, 0.0595238, 0.304762, 0.304742, 0.0595238, -0.0570981, -0.247546, 0.0595238, -0.190446, -0.19039, 0.0595238, 0.247604, 0.113651, -0.0413318, -0.174851, 0.247586, 0.0595238, 0.190446, -0.0442438, -0.0330095, -0.212363, 0.0789195, -0.0414823, 0.192987, -0.0959906, -0.05, 0.174576, -0.0571657, 0.0595238, -0.304762, 0.174615, -0.05, 0.0959839, 0.19049, 0.0595238, -0.247544, -0.174525, -0.05, -0.0959839, -0.19039, 0.0595238, -0.247604)
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_fewu7"]
-height = 0.2
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vqwtx"]
+radius = 0.3
+height = 0.9
 
-[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "_interactionComponent", "_equipmentManager", "_head", "FocusCast", "_soundComponent", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterSound", "Eyes", "Chest") instance=ExtResource("1_5b5t2")]
+[sub_resource type="Animation" id="Animation_wn5pa"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterBody/Hips/Head/PrimaryCamera:rotation:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.5, 0.333465),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterBody/Hips:rotation:z")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterBody/Hips:position:y")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("CharacterBody/Hips:position:x")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_yub7w"]
+resource_name = "crouch"
+length = 0.5
+step = 0.05
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterBody/Hips:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, -0.7, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+
+[sub_resource type="Animation" id="Animation_utqba"]
+resource_name = "lean_left"
+length = 0.4
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterBody/Hips:rotation:z")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, -0.523599, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterBody/Hips:position:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0.05, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+
+[sub_resource type="Animation" id="Animation_fcnux"]
+resource_name = "lean_right"
+length = 0.4
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterBody/Hips:rotation:z")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0.523599, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterBody/Hips:position:x")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, -0.05, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.4)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mtqt7"]
+_data = {
+"RESET": SubResource("Animation_wn5pa"),
+"crouch": SubResource("Animation_yub7w"),
+"lean_left": SubResource("Animation_utqba"),
+"lean_right": SubResource("Animation_fcnux")
+}
+
+[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "AnimationPlayer", "_interactionComponent", "_equipmentManager", "_head", "FocusCast", "_soundComponent", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterSound", "Eyes", "Chest", "AnimPlayer") instance=ExtResource("1_5b5t2")]
 collision_layer = 6
 collision_mask = 5
+wall_min_slide_angle = 0.523599
 script = ExtResource("2_7uq42")
 PrimaryCamera = NodePath("CharacterBody/Hips/Head/PrimaryCamera")
+AnimationPlayer = NodePath("AnimationPlayer")
 _interactionComponent = NodePath("InteractionComponent")
 _equipmentManager = NodePath("EquipmentManager")
 _head = NodePath("CharacterBody/Hips/Head")
@@ -41,7 +163,7 @@ _inputSensitivity = 0.0025
 FocusCast = NodePath("CharacterBody/Hips/Head/PrimaryCamera/FocusTrace")
 _carryGrabSpeedMultiplier = 0.2
 _stealthCapsuleHeight = 0.9
-_stealthCapsulePosition = Vector3(0, 0.45, 0)
+_stealthCapsulePosition = Vector3(0, 10, 0)
 _soundComponent = NodePath("SoundComponent")
 CharacterHealth = NodePath("HealthComponent")
 CharacterAttention = NodePath("AttentionComponent")
@@ -50,12 +172,20 @@ CharacterInteraction = NodePath("InteractionComponent")
 CharacterSound = NodePath("SoundComponent")
 Eyes = NodePath("CharacterBody/Hips/Head/Eyes")
 Chest = NodePath("Chest")
+AnimPlayer = NodePath("AnimationPlayer")
+
+[node name="Rain" parent="." index="0" instance=ExtResource("3_2dkx8")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 3, 0)
+Loop = false
+Autostart = false
+
+[node name="CharacterBody" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.799724, 0)
 
 [node name="Hips" type="Node3D" parent="CharacterBody" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
 [node name="Head" type="Node3D" parent="CharacterBody/Hips" index="0"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.023665, 0)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0.706386, 0)
 
 [node name="PrimaryCamera" type="Camera3D" parent="CharacterBody/Hips/Head" index="0"]
 
@@ -100,25 +230,23 @@ shape = SubResource("SphereShape3D_wd6j7")
 target_position = Vector3(0, 0, -100)
 collision_mask = 255
 
+[node name="SpotLight3D" type="SpotLight3D" parent="CharacterBody/Hips/Head/PrimaryCamera" index="7"]
+transform = Transform3D(1, 0, -2.13163e-14, 0, 1, 0, 2.13163e-14, 0, 1, 0.170356, -0.114714, 0.0912258)
+visible = false
+shadow_enabled = true
+spot_range = 10.0
+spot_angle = 17.4208
+
 [node name="Eyes" type="Marker3D" parent="CharacterBody/Hips/Head" index="1"]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0464694, 0)
-mesh = SubResource("CylinderMesh_lnesk")
-skeleton = NodePath("../CollisionShape3D")
-
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="." index="2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0464694, 0)
+visible = false
 shape = SubResource("ConvexPolygonShape3D_ef883")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="3"]
-process_mode = 4
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-shape = SubResource("CylinderShape3D_fewu7")
 disabled = true
 
-[node name="InteractionComponent" type="Node" parent="." index="4" node_paths=PackedStringArray("_interactionCollision", "_grabPosition", "_grabJoint", "_grabAnchor", "equipmentManager")]
+[node name="InteractionComponent" type="Node" parent="." index="3" node_paths=PackedStringArray("_interactionCollision", "_grabPosition", "_grabJoint", "_grabAnchor", "equipmentManager")]
 script = ExtResource("3_3gtcp")
 _interactionCollision = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/FocusCollision")
 _grabPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabPosition")
@@ -127,7 +255,7 @@ _grabAnchor = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/StaticBody3D")
 _grabRotationStrength = 8.0
 equipmentManager = NodePath("../EquipmentManager")
 
-[node name="PlayerHUD" parent="." index="5" node_paths=PackedStringArray("_interactionComponent", "_healthComponent") instance=ExtResource("4_161ca")]
+[node name="PlayerHUD" parent="." index="4" node_paths=PackedStringArray("_interactionComponent", "_healthComponent") instance=ExtResource("4_161ca")]
 reticleDefaultColor = Color(1, 1, 1, 1)
 reticleUseColor = Color(0, 0, 1, 1)
 reticleGrabColor = Color(1, 1, 0, 1)
@@ -135,18 +263,28 @@ reticleEquipColor = Color(0, 1, 0, 1)
 _interactionComponent = NodePath("../InteractionComponent")
 _healthComponent = NodePath("../HealthComponent")
 
-[node name="SoundComponent" parent="." index="7" instance=ExtResource("5_a402o")]
+[node name="SoundComponent" parent="." index="6" instance=ExtResource("5_a402o")]
 visible = false
 
-[node name="MovementComponent" parent="." index="8" instance=ExtResource("8_8i55q")]
-MovementSpeed = 2.3
-AccelerationForce = 0.1
-BrakingForce = 0.1
-JumpForce = 5.0
-GravityMultiplier = 1.3
+[node name="MovementComponent" parent="." index="7" instance=ExtResource("8_8i55q")]
+MovementSpeedBase = 1.8
+AccelerationForce = 0.05
+BrakingForce = 0.08
+JumpForce = 4.5
+SprintSpeedMultiplier = 1.8
+AirControlMultiplier = 1.0
 
-[node name="EquipmentManager" parent="." index="9" node_paths=PackedStringArray("equipmentPosition") instance=ExtResource("9_uaq73")]
+[node name="EquipmentManager" parent="." index="8" node_paths=PackedStringArray("equipmentPosition") instance=ExtResource("9_uaq73")]
 equipmentPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/Marker3D")
 
-[node name="Chest" type="Marker3D" parent="." index="11"]
+[node name="Chest" type="Marker3D" parent="." index="10"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.19106, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="11"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("CapsuleShape3D_vqwtx")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="12"]
+libraries = {
+"": SubResource("AnimationLibrary_mtqt7")
+}

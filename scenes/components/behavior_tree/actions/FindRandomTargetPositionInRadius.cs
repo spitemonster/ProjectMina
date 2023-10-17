@@ -15,10 +15,9 @@ public partial class FindRandomTargetPositionInRadius : Action
 
 	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
-		GD.Print("finding new position");
-
 		await Task.Run(() =>
 		{
+
 			CallDeferred("FindPosition", character, blackboard);
 		});
 		Succeed();
@@ -40,8 +39,9 @@ public partial class FindRandomTargetPositionInRadius : Action
 		Vector3 pos = NavigationServer3D.MapGetClosestPoint(character.Brain.NavigationAgent.GetNavigationMap(), newPosition);
 
 		_newTarget = pos;
-		blackboard.SetValue("target_position", _newTarget);
-		blackboard.SetValue("target_position_reached", false);
+		blackboard.SetValue("target_movement_position", _newTarget);
+		blackboard.SetValue("target_movement_position_reached", false);
+
 	}
 
 }

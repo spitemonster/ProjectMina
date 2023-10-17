@@ -1,3 +1,6 @@
 {
-	"dotnet.defaultSolution": "ProjectMina.sln"
+	"dotnet.defaultSolution": "ProjectMina.sln",
+	"cSpell.words": [
+		"mult"
+	]
 }

@@ -77,6 +77,19 @@ public partial class ProjectileBase : RigidBody3D
 					impactParticle = null;
 				}
 
+				if (node is RigidBody3D r && GetCollidingBodies()[0] == r)
+				{
+					// Collisi
+
+					GD.Print();
+					Vector3 directionToCollision = (r.GlobalPosition - GlobalPosition).Normalized();
+					// float angleToCollision = new Vector3(0.0f, -1.0f, 0.0f).AngleTo(directionToCollision);
+					// float angleFactor = angleToCollision / (Mathf.Pi / 2);
+
+					Vector3 impulse = GlobalTransform.Basis.Z.Normalized() * 10.0f;
+					r.ApplyImpulse(impulse, GlobalPosition);
+				}
+
 				QueueFree();
 			}
 		};

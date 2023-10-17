@@ -9,38 +9,44 @@ public partial class ParticleSystem : Node3D
 
 	public bool Playing { get; private set; } = false;
 
-	[Signal]
-	public delegate void FinishedEventHandler();
-
-	[Export]
-	protected AnimationPlayer animationPlayer;
-
-	[Export]
-	public bool Loop { get; protected set; } = false;
+	[Signal] public delegate void FinishedEventHandler();
+	[Export] protected AnimationPlayer animationPlayer;
+	[Export] public bool Loop { get; protected set; } = false;
+	[Export] public bool Autostart { get; protected set; } = false;
 
 	private Godot.Collections.Array<Node> _particles = new();
 	private int _completedParticleCount = 0;
 
 	public void Play()
 	{
-		// if (animationPlayer == null || animationPlayer.GetAnimationList().Length == 0 && _particles.Count > 0)
-		// {
-		// 	foreach (var particle in _particles)
-		// 	{
-		// 		if (particle is CpuParticles3D c)
-		// 		{
-		// 			c.Emitting = true;
-		// 			c.Finished += AccumulateCompletedParticles;
-		// 		}
-		// 		else if (particle is GpuParticles3D g)
-		// 		{
-		// 			g.Emitting = true;
-		// 			g.Finished += AccumulateCompletedParticles;
-		// 		}
-		// 	}
+		if (_particles.Count < 1)
+		{
+			return;
+		}
 
-		// 	Playing = true;
-		// }
+		if (animationPlayer != null && animationPlayer.GetAnimationList().Length != 0)
+		{
+			// if there's an animation player and it has animations
+			animationPlayer.Play();
+		}
+		else
+		{
+			foreach (var particle in _particles)
+			{
+				if (particle is CpuParticles3D c)
+				{
+					c.Emitting = true;
+					c.Finished += AccumulateCompletedParticles;
+				}
+				else if (particle is GpuParticles3D g)
+				{
+					g.Emitting = true;
+					g.Finished += AccumulateCompletedParticles;
+				}
+			}
+
+			Playing = true;
+		}
 	}
 
 	public override void _Ready()
@@ -64,6 +70,11 @@ public partial class ParticleSystem : Node3D
 
 				_particles.Add(child);
 			}
+		}
+
+		if (Autostart)
+		{
+			Play();
 		}
 	}
 

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://btvl162ifi6id"]
+
+[ext_resource type="Script" path="res://scenes/managers/environment/EnvironmentManager.cs" id="1_b4vih"]
+
+[node name="EnvironmentManager" type="Node"]
+process_mode = 4
+script = ExtResource("1_b4vih")

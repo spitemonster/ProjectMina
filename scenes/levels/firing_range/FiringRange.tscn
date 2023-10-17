@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://e73bpqmuhvor"]
+[gd_scene load_steps=8 format=3 uid="uid://e73bpqmuhvor"]
 
 [ext_resource type="PackedScene" uid="uid://c37sghih0u831" path="res://scenes/levels/level_base/LevelBase.tscn" id="1_ykc5e"]
 [ext_resource type="PackedScene" uid="uid://cmjhf16ocrx1k" path="res://_dev/LevelBox.tscn" id="2_faflm"]
@@ -6,51 +6,73 @@
 [ext_resource type="PackedScene" uid="uid://hoyi6yec8avu" path="res://scenes/weapons/ranged_weapon/RangedWeapon.tscn" id="3_nfedo"]
 [ext_resource type="PackedScene" uid="uid://883wd7hsypnh" path="res://_dev/scenes/Target.tscn" id="5_qlhw5"]
 [ext_resource type="PackedScene" uid="uid://d2r7tsyvv6gsp" path="res://_dev/scenes/Crate.tscn" id="6_1r580"]
+[ext_resource type="PackedScene" uid="uid://btvl162ifi6id" path="res://scenes/managers/environment/EnvironmentManager.tscn" id="7_qyomg"]
 
 [node name="FiringRange" node_paths=PackedStringArray("NavigationRegion") instance=ExtResource("1_ykc5e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00512528, 12, -0.000184536)
 NavigationRegion = NodePath("NavigationRegion3D")
 
 [node name="PlayerStart" parent="NavigationRegion3D" index="0"]
 unique_name_in_owner = true
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -19.1839, -6.59611, -7.10764)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -19.1839, 0, -7.10764)
 
 [node name="LevelBox" parent="NavigationRegion3D" index="1" instance=ExtResource("2_faflm")]
+transform = Transform3D(1, 0, 0, 0, 0.32, 0, 0, 0, 1, 0, 1.58223, 0)
 
 [node name="10x1x1Block" parent="NavigationRegion3D" index="2" instance=ExtResource("3_jir6e")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -21.5, -6, -8)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -21.5, 0, -8)
 
 [node name="10x1x1Block2" parent="NavigationRegion3D" index="3" instance=ExtResource("3_jir6e")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -26, -6, -13)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -26, 0, -13)
 
 [node name="10x1x1Block3" parent="NavigationRegion3D" index="4" instance=ExtResource("3_jir6e")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -17, -6, -3)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -17, 0, -3)
 
 [node name="10x1x1Block4" parent="NavigationRegion3D" index="5" instance=ExtResource("3_jir6e")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -12.5, -6, 2)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -12.5, 0, 2)
 
 [node name="10x1x1Block6" parent="NavigationRegion3D" index="6" instance=ExtResource("3_jir6e")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -3.5, -6, 12)
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -3.5, 0, 12)
 
 [node name="10x1x1Block5" parent="NavigationRegion3D" index="7" instance=ExtResource("3_jir6e")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -8, -6, 7)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -8, 0, 7)
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="NavigationRegion3D" index="8"]
+use_collision = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="NavigationRegion3D/CSGCombiner3D" index="0"]
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="NavigationRegion3D/CSGCombiner3D" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="NavigationRegion3D/CSGCombiner3D" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="DirectionalLight3D" parent="." index="1"]
+light_angular_distance = 0.5
+shadow_enabled = true
 
 [node name="RangedWeapon" parent="." index="3" instance=ExtResource("3_nfedo")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.3605, -5.22762, -7.47646)
+transform = Transform3D(0.774082, -0.108277, 0.623758, 0.0843109, 0.994121, 0.067938, -0.627447, 7.45058e-09, 0.778659, -21.3605, 0, -7.47646)
 
 [node name="Target2" parent="." index="4" instance=ExtResource("5_qlhw5")]
-transform = Transform3D(-8.74228e-08, 0, 2, 0, 2, 0, -2, 0, -8.74228e-08, -31, -5, -11)
+transform = Transform3D(-8.74228e-08, 0, 2, 0, 2, 0, -2, 0, -8.74228e-08, -31, 1, -11)
 
 [node name="Target" parent="." index="5" instance=ExtResource("5_qlhw5")]
-transform = Transform3D(-8.74228e-08, 0, 2, 0, 2, 0, -2, 0, -8.74228e-08, -29, -5, -9)
+transform = Transform3D(-8.74228e-08, 0, 2, 0, 2, 0, -2, 0, -8.74228e-08, -29, 1, -9)
 
 [node name="Target3" parent="." index="6" instance=ExtResource("5_qlhw5")]
-transform = Transform3D(-0.0114494, 0, 1.99997, 0, 2, 0, -1.99997, 0, -0.0114494, -27.0557, -4.5, -3.89847)
+transform = Transform3D(-0.0114494, 0, 1.99997, 0, 2, 0, -1.99997, 0, -0.0114494, -27.0557, 1, -3.89847)
 
 [node name="Crate" parent="." index="7" instance=ExtResource("6_1r580")]
-transform = Transform3D(0.777212, 1.06581e-14, 0.629239, -8.2836e-15, 1, -6.70649e-15, -0.629239, 0, 0.777212, -19.3762, -5.70611, -9.0726)
+transform = Transform3D(0.777212, 1.06581e-14, 0.629239, -8.2836e-15, 1, -6.70649e-15, -0.629239, 0, 0.777212, -19.3762, 1.94187, -9.0726)
 
 [node name="Crate2" parent="." index="8" instance=ExtResource("6_1r580")]
-transform = Transform3D(0.631707, 0.591806, 0.500712, -0.582563, 0.788543, -0.19703, -0.511436, -0.167231, 0.842892, -18.5411, -4.48523, -9.74869)
+transform = Transform3D(0.631707, 0.591806, 0.500712, -0.582563, 0.788543, -0.19703, -0.511436, -0.167231, 0.842892, -17.3919, 1.53125, -10.0734)
 
 [node name="Crate3" parent="." index="9" instance=ExtResource("6_1r580")]
-transform = Transform3D(-0.0614848, 0.591806, 0.803732, -0.162699, 0.788543, -0.593068, -0.984758, -0.167231, 0.047803, -21.3141, -2.58762, -10.6141)
+transform = Transform3D(-0.0614848, 0.591806, 0.803732, -0.162699, 0.788543, -0.593068, -0.984758, -0.167231, 0.047803, -20.1649, 1.53125, -10.9388)
+
+[node name="EnvironmentManager" parent="." index="10" node_paths=PackedStringArray("Sun") instance=ExtResource("7_qyomg")]
+Sun = NodePath("../DirectionalLight3D")
+_enabled = false

@@ -154,7 +154,13 @@ public partial class InteractionComponent : ComponentBase
 				_grabJoint.SetFlagZ(Generic6DofJoint3D.Flag.EnableAngularLimit, false);
 				GD.Print(_grabbedItemDesiredRotation);
 
-				_grabbedItem.AngularVelocity = new Vector3(1.0f, 0.0f, 0);
+				if (targetGrabbedItemRotationSpeed.Length() > 0.1f)
+				{
+					_grabbedItem.AngularVelocity = -(targetGrabbedItemRotationSpeed * 5.0f) * _grabAnchor.GlobalRotation;
+				}
+
+
+				// _grabAnchor.GlobalRotation += new Vector3(1.0f, 1.0f, 0);
 			}
 			else
 			{

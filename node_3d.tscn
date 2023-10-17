@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://ck1djstder586"]
+
+[ext_resource type="PackedScene" uid="uid://bcoh7w5yjacxw" path="res://scenes/effects/Rain.tscn" id="1_36foi"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_o6o2l"]
+size = Vector3(10, 0.1, 10)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_biurn"]
+albedo_color = Color(0.0941176, 0.0941176, 0.0941176, 1)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_o6o2l")
+surface_material_override/0 = SubResource("StandardMaterial3D_biurn")
+
+[node name="CPUParticles3D" parent="." instance=ExtResource("1_36foi")]

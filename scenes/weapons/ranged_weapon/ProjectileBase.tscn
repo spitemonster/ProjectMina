@@ -5,18 +5,19 @@
 [ext_resource type="Resource" uid="uid://cuy744glwbucs" path="res://scenes/weapons/ranged_weapon/ProjectileStatsDefault.tres" id="2_3jhfu"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0w2wk"]
-radius = 0.015
+radius = 0.025
 height = 0.1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_47dlr"]
 albedo_color = Color(0.203922, 0.203922, 0.203922, 1)
+emission_enabled = true
 emission = Color(1, 0.364706, 0, 1)
 emission_energy_multiplier = 16.0
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_wqffv"]
 material = SubResource("StandardMaterial3D_47dlr")
-radius = 0.0005
-height = 0.01
+radius = 0.01
+height = 0.05
 
 [node name="ProjectileBase" type="RigidBody3D" node_paths=PackedStringArray("_hitbox")]
 collision_layer = 8
@@ -29,6 +30,7 @@ continuous_cd = true
 max_contacts_reported = 1
 contact_monitor = true
 can_sleep = false
+lock_rotation = true
 script = ExtResource("1_m77oo")
 _hitbox = NodePath("HitboxComponent")
 Stats = ExtResource("2_3jhfu")

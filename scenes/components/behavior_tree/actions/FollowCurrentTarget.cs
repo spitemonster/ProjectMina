@@ -34,7 +34,7 @@ public partial class FollowCurrentTarget : Action
 
 		if (GetNode(currentFocusPath) is Node3D node)
 		{
-			blackboard.SetValue("target_position", node.GlobalPosition);
+			blackboard.SetValue("target_movement_position", node.GlobalPosition);
 		}
 		else
 		{

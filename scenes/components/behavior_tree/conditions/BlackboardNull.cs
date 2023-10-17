@@ -7,34 +7,25 @@ namespace ProjectMina.BehaviorTree;
 
 [Tool]
 [GlobalClass]
-public partial class BlackboardCompare : Condition
+public partial class BlackboardNull : Condition
 {
 	protected enum Operators
 	{
 		EQUAL,
-		NOT_EQUAL,
-		GREATER,
-		GREATER_EQUAL,
-		LESS,
-		LESS_EQUAL,
+		NOT_EQUAL
 	}
 
-	// [Export(PropertyHint.Expression)] 
 	[Export] protected string BlackboardKey = "";
 	[Export] protected Operators Comparison = 0;
-	[Export(PropertyHint.Expression)] protected string Value = "";
-
-	private Expression val;
 
 	public override void _Ready()
 	{
 		base._Ready();
-		val = _ParseExpression(Value);
 	}
 
 	protected override Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
-		if (EvaluateComparison(blackboard))
+		if (EvaluateComparison(blackboard) && _childActions[0] is Action a)
 		{
 			Succeed();
 			_childActions[0].Tick(character, blackboard);
@@ -49,42 +40,52 @@ public partial class BlackboardCompare : Condition
 
 	private bool EvaluateComparison(BlackboardComponent blackboard)
 	{
-		Variant compareValue = val.Execute(new(), val);
 		Variant blackboardValue = blackboard.GetValue(BlackboardKey);
-		bool result = false;
+		bool isNull = true;
 
-		if (val.HasExecuteFailed())
+		switch (blackboardValue.VariantType)
 		{
-			Fail();
+			case Variant.Type.Nil:
+				isNull = true;
+				break;
+			case Variant.Type.NodePath:
+				isNull = (NodePath)blackboardValue == new NodePath();
+				break;
+			case Variant.Type.Array:
+				Array<Variant> a = (Array<Variant>)blackboardValue;
+				isNull = a.Count == 0;
+				break;
+			case Variant.Type.Float:
+				isNull = (float)blackboardValue == 0.0f;
+				break;
+			case Variant.Type.Int:
+				isNull = (int)blackboardValue == 0;
+				break;
+			case Variant.Type.Vector2:
+				isNull = (Vector2)blackboardValue == Vector2.Zero;
+				break;
+			case Variant.Type.Vector3:
+				isNull = (Vector3)blackboardValue == Vector3.Zero;
+				break;
+			case Variant.Type.Bool:
+				isNull = (bool)blackboardValue;
+				break;
+			default:
+				break;
 		}
+
+		GD.Print("result: ", isNull);
+		GD.Print("type: ", blackboardValue.VariantType);
+		GD.Print("null: ", blackboardValue.VariantType == Variant.Type.Nil);
 
 		switch (Comparison)
 		{
-			case Operators.EQUAL:
-				result = blackboardValue.Equals(compareValue);
-				break;
 			case Operators.NOT_EQUAL:
-				result = !blackboardValue.Equals(compareValue);
-				break;
+				return !isNull;
 			default:
-				result = false;
-				break;
+				return isNull;
 		}
 
-		return result;
-	}
-
-	private Expression _ParseExpression(string source)
-	{
-		Expression exp = new();
-		Error res = exp.Parse(source);
-
-		if (!(res == Error.Ok))
-		{
-			return null;
-		}
-
-		return exp;
 	}
 
 	public override string[] _GetConfigurationWarnings()

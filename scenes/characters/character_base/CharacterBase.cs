@@ -21,6 +21,7 @@ public partial class CharacterBase : CharacterBody3D
 	[Export] public SoundComponent CharacterSound { get; protected set; }
 	[Export] public Marker3D Eyes { get; protected set; }
 	[Export] public Marker3D Chest { get; protected set; }
+	[Export] public AnimationPlayer AnimPlayer { get; protected set; }
 
 	[Export] protected double RotationRate = 6.0;
 
@@ -119,33 +120,4 @@ public partial class CharacterBase : CharacterBody3D
 
 		return errs;
 	}
-
-	// /// <summary>
-	// /// wrapper for rotatetoface, getting target node's position
-	// /// </summary>
-	// protected virtual void LookAt(Node3D targetNode, double delta)
-	// {
-	// 	RotateToFace(targetNode.GlobalPosition, delta);
-	// }
-
-	// /// <summary>
-	// /// wrapper for rotatetoface
-	// /// </summary>
-	// protected virtual void LookAt(Vector3 targetVector, double delta)
-	// {
-	// 	RotateToFace(targetVector, delta);
-	// }
-
-	// /// <summary>
-	// /// rotates character to face target position, strictly on the Y axis
-	// /// </summary>
-	// /// <param name="targetVector">target look position</param>
-	// /// <param name="delta">delta time</param>
-	// protected virtual void RotateToFace(Vector3 targetVector, double delta)
-	// {
-	// 	Vector3 direction = (targetVector - GlobalPosition).Normalized();
-	// 	Vector3 newRotation = GlobalRotation;
-	// 	newRotation.Y = Mathf.LerpAngle(GlobalRotationDegrees.Y, Mathf.RadToDeg(Mathf.Atan2(direction.X, -direction.Z)), 1);
-	// 	GlobalRotation = newRotation;
-	// }
 }

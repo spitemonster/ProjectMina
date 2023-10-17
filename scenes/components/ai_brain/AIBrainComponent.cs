@@ -31,7 +31,7 @@ public partial class AIBrainComponent : ControllerComponent
 
 	public Vector3 GetTargetPosition()
 	{
-		return (Vector3)Blackboard.GetValue("target_position");
+		return (Vector3)Blackboard.GetValue("target_movement_position");
 	}
 
 	public override void _Ready()
@@ -63,7 +63,7 @@ public partial class AIBrainComponent : ControllerComponent
 			System.Diagnostics.Debug.Assert(Pawn != null, "No controlled character");
 		}
 
-		Blackboard?.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
+		// Blackboard?.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
 
 		Pawn.CharacterHealth.HealthChanged += (double newHealth, bool wasDamage) =>
 		{
@@ -77,10 +77,10 @@ public partial class AIBrainComponent : ControllerComponent
 
 		SightComponent.CharacterEnteredSightRadius += (character) =>
 		{
-			if (character is PlayerCharacter p)
-			{
-				// SeeEnemy(p);
-			}
+			// if (character is PlayerCharacter p)
+			// {
+			// 	SeeEnemy(p);
+			// }
 		};
 
 		SightComponent.CharacterEnteredLineOfSight += (character) =>
@@ -111,7 +111,8 @@ public partial class AIBrainComponent : ControllerComponent
 
 		NavigationAgent.TargetReached += () =>
 		{
-			Blackboard?.SetValue("target_position_reached", true);
+			GD.Print("position_reached");
+			Blackboard?.SetValue("target_movement_position_reached", true);
 		};
 
 		AttentionComponent.FocusChanged += (Node3D newFocus, Node3D previousFocus) =>
@@ -134,33 +135,5 @@ public partial class AIBrainComponent : ControllerComponent
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
-
-		Godot.Collections.Array<NodePath> visibleCharacters = new();
-		foreach (Node3D n in SightComponent.CharactersInSightRadius)
-		{
-			visibleCharacters.Add(n.GetPath());
-		}
-
-		Blackboard?.SetValue("visible_characters", visibleCharacters);
-
-		Godot.Collections.Array<NodePath> seenCharacters = new();
-
-		foreach (Node3D n in SightComponent.SeenCharacters)
-		{
-			seenCharacters.Add(n.GetPath());
-		}
-
-		Blackboard?.SetValue("seen_characters", seenCharacters);
-
-		// if (GetCurrentFocus() != null)
-		// {
-		// 	Blackboard?.SetValue("target_position", GetCurrentFocus().GlobalPosition);
-		// 	NavigationAgent.TargetPosition = GetCurrentFocus().GlobalPosition;
-		// }
-	}
-
-	private void SeeEnemy(CharacterBase targetCharacter)
-	{
-		// Pawn.SetFocus(targetCharacter);
 	}
 }
