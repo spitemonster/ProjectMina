@@ -35,7 +35,11 @@ public partial class Planner : ComponentBase
 
 		_instance = this;
 
-		State.Initialize(Blackboard.Entries);
+		if (Blackboard != null)
+		{
+			State?.Initialize(Blackboard.Entries);
+		}
+
 	}
 
 	private Array<Action> _FindOptimalPlan(Goal goal, Dictionary<string, Variant> desiredState, Dictionary<string, Variant> characterState)

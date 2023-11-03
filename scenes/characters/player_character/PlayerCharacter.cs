@@ -67,8 +67,9 @@ public partial class PlayerCharacter : CharacterBase
 			_inputManager = m;
 			_inputManager.MouseMove += HandleMouseMove;
 			_inputManager.Sprint += CharacterMovement.ToggleSprint;
-			_inputManager.Jump += CharacterMovement.Jump;
-			_inputManager.Stealth += ToggleStealth;
+			_inputManager.JumpPressed += CharacterMovement.TryJump;
+			_inputManager.JumpReleased += CharacterMovement.JumpReleased;
+			_inputManager.Stealth += CharacterMovement.ToggleSneak;
 			_inputManager.Interact += (isAlt) =>
 			{
 				if (_interactionComponent.CanInteract)
@@ -102,6 +103,10 @@ public partial class PlayerCharacter : CharacterBase
 			};
 
 			_inputManager.Lean += CharacterMovement.Lean;
+
+			CharacterMovement.SneakStarted += StartStealth;
+
+			CharacterMovement.SneakEnded += EndStealth;
 		}
 
 		FocusCast.AddException(this);
@@ -114,6 +119,7 @@ public partial class PlayerCharacter : CharacterBase
 
 	public override void _PhysicsProcess(double delta)
 	{
+		base._PhysicsProcess(delta);
 
 		if (FocusCast != null)
 		{
@@ -284,21 +290,15 @@ public partial class PlayerCharacter : CharacterBase
 		}
 	}
 
-	private void ToggleStealth()
+	private void StartStealth()
 	{
-		_isStealthMode = !_isStealthMode;
-		CapsuleShape3D capsule = (CapsuleShape3D)CharacterBody.Shape;
-		CharacterMovement.ToggleSneak();
+		AnimPlayer.Play("crouch");
+		CharacterBody.Disabled = true;
+	}
 
-		if (_isStealthMode)
-		{
-			AnimPlayer.Play("crouch");
-			CharacterBody.Disabled = true;
-		}
-		else
-		{
-			AnimPlayer.PlayBackwards("crouch");
-			CharacterBody.Disabled = false;
-		}
+	private void EndStealth()
+	{
+		AnimPlayer.PlayBackwards("crouch");
+		CharacterBody.Disabled = false;
 	}
 }

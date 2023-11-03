@@ -6,12 +6,15 @@ namespace ProjectMina;
 public partial class InputManager : Node
 {
 	[Signal] public delegate void MouseMoveEventHandler(Vector2 mouseDelta);
+	[Signal] public delegate void LookEventHandler(Vector2 lookDelta);
 	[Signal] public delegate void UseEventHandler(bool isAlt);
 	[Signal] public delegate void EndUseEventHandler();
 	[Signal] public delegate void InteractEventHandler(bool isAlt);
 	[Signal] public delegate void InteractReleasedEventHandler();
 	[Signal] public delegate void SprintEventHandler();
 	[Signal] public delegate void JumpEventHandler();
+	[Signal] public delegate void JumpPressedEventHandler();
+	[Signal] public delegate void JumpReleasedEventHandler();
 	[Signal] public delegate void StealthEventHandler();
 	[Signal] public delegate void ReloadEventHandler();
 	[Signal] public delegate void LeanLeftEventHandler();
@@ -31,6 +34,8 @@ public partial class InputManager : Node
 	private bool _rightMouseClicked;
 	private bool _rightMouseDoubleClicked;
 	private bool _modifierPressed;
+
+	private double _holdDuration = 1.0;
 
 	[Export] protected double _doubleClickWaitTime = .09;
 
@@ -94,6 +99,12 @@ public partial class InputManager : Node
 		if (e.IsActionPressed("jump"))
 		{
 			EmitSignal(SignalName.Jump);
+			EmitSignal(SignalName.JumpPressed);
+			return;
+		}
+		else if (e.IsActionReleased("jump"))
+		{
+			EmitSignal(SignalName.JumpReleased);
 			return;
 		}
 
@@ -129,7 +140,6 @@ public partial class InputManager : Node
 			EmitSignal(SignalName.Lean, (uint)Enums.DirectionHorizontal.Right, true);
 			return;
 		}
-
 	}
 
 	static public void SetMouseCapture(bool shouldCapture)

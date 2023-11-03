@@ -22,10 +22,13 @@ public partial class AICharacter : CharacterBase
 {
 	[Export] public AIBrainComponent Brain;
 	[Export] public MovementComponent MovementComponent { get; protected set; }
+	[Export] public SearchComponent searchComponent { get; protected set; }
 	[Export] protected AnimationPlayer _animPlayer;
 	[Export] protected MeleeWeapon TempWeapon;
 	[Export] protected AnimationTree _animationTree;
 	[Export] protected BehaviorTreeComponent _behaviorTree;
+
+	public Node3D _dtc;
 
 	public override void Attack()
 	{
@@ -50,6 +53,8 @@ public partial class AICharacter : CharacterBase
 		};
 
 		Brain.NavigationAgent.AvoidanceEnabled = false;
+
+		_dtc = GetNodeOrNull<Node3D>("%dtc");
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -91,7 +96,7 @@ public partial class AICharacter : CharacterBase
 		float brakingDist = 2.0f;
 		float mult = Mathf.Clamp((dist / brakingDist), 0.0f, 1.0f);
 
-		mult = mult < .6f ? 0 : mult;
+		mult = 1.0f;
 
 		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta) * mult;
 

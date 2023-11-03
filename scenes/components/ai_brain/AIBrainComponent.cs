@@ -1,6 +1,6 @@
-using System;
 using Godot;
-using ProjectMina.BehaviorTree;
+using Godot.Collections;
+
 
 namespace ProjectMina;
 /// <summary>
@@ -14,7 +14,6 @@ public partial class AIBrainComponent : ControllerComponent
 	[Export] public NavigationAgent3D NavigationAgent { get; protected set; }
 	[Export] protected AISightComponent SightComponent;
 	[Export] protected AIHearingComponent HearingComponent;
-	[Export] protected BehaviorTreeComponent BehaviorTree;
 	[Export] protected BlackboardComponent Blackboard;
 	[Export] protected AttentionComponent AttentionComponent;
 
@@ -23,6 +22,8 @@ public partial class AIBrainComponent : ControllerComponent
 
 	private CombatGridPoint currentGridPoint;
 	private bool _avoidanceEnabledDefault = false;
+
+	private BlackboardAsset _blackboardAsset;
 
 	public Node3D GetCurrentFocus()
 	{
@@ -44,7 +45,6 @@ public partial class AIBrainComponent : ControllerComponent
 			System.Diagnostics.Debug.Assert(SightComponent != null, "no ai sight component");
 			System.Diagnostics.Debug.Assert(HearingComponent != null, "no ai hearing component");
 			System.Diagnostics.Debug.Assert(NavigationAgent != null, "no navigation component");
-			System.Diagnostics.Debug.Assert(BehaviorTree != null, "no behavior tree component");
 			System.Diagnostics.Debug.Assert(Blackboard != null, "no blackboard component");
 		}
 
@@ -63,6 +63,11 @@ public partial class AIBrainComponent : ControllerComponent
 			System.Diagnostics.Debug.Assert(Pawn != null, "No controlled character");
 		}
 
+		if (Blackboard.Blackboard is BlackboardAsset bb)
+		{
+			_blackboardAsset = bb;
+		}
+
 		// Blackboard?.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
 
 		Pawn.CharacterHealth.HealthChanged += (double newHealth, bool wasDamage) =>
@@ -71,7 +76,7 @@ public partial class AIBrainComponent : ControllerComponent
 
 			if (wasDamage)
 			{
-				Blackboard?.SetValue("last_received_damage", DateTime.Now.ToBinary());
+				Blackboard?.SetValue("last_received_damage", Time.GetUnixTimeFromSystem());
 			}
 		};
 
@@ -88,6 +93,11 @@ public partial class AIBrainComponent : ControllerComponent
 			if (GetCurrentFocus() == null)
 			{
 				AttentionComponent?.SetFocus(character);
+
+				if (character is PlayerCharacter p)
+				{
+					Blackboard.SetValue("enemy_visible", true);
+				}
 			}
 		};
 
@@ -101,6 +111,11 @@ public partial class AIBrainComponent : ControllerComponent
 			if (character.Equals(GetCurrentFocus()))
 			{
 				AttentionComponent?.LoseFocus();
+
+				if (character is PlayerCharacter p)
+				{
+					Blackboard.SetValue("enemy_visible", false);
+				}
 			}
 		};
 
@@ -129,11 +144,17 @@ public partial class AIBrainComponent : ControllerComponent
 				GD.Print("lost focus!");
 			}
 		};
-
 	}
 
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
+
+		if (Pawn is AICharacter a)
+		{
+			Label3D enemySeen = a.GetNode<Label3D>("%enemy_seen_label");
+
+			enemySeen.Text = "Enemy Visible: " + Blackboard.GetValue("enemy_visible");
+		}
 	}
 }

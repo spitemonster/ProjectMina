@@ -22,3 +22,5 @@ _stealthCapsulePosition = Vector3(0, 0, 0)
 
 [node name="Planner" type="Node" parent="."]
 script = ExtResource("5_hh825")
+State = Object(Object,"script":Resource("res://scenes/components/goap/core/WorldState.cs"),"Properties":{})
+

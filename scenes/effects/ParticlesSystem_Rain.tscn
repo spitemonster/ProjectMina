@@ -1,14 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://rw6sr5aw8chk"]
+[gd_scene load_steps=5 format=3 uid="uid://rw6sr5aw8chk"]
 
 [ext_resource type="Script" path="res://scenes/effects/ParticleSystem.cs" id="1_uy2j2"]
-[ext_resource type="PackedScene" uid="uid://bcoh7w5yjacxw" path="res://scenes/effects/Rain.tscn" id="2_dwqs4"]
+[ext_resource type="Material" uid="uid://dyn16siosjyo8" path="res://scenes/effects/ProcessMaterial_Rain.tres" id="3_7vfoy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0v8ww"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.380392, 0.388235, 0.4, 1)
+disable_receive_shadows = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_rx8t7"]
+material = SubResource("StandardMaterial3D_0v8ww")
+size = Vector2(0.013, 0.7)
 
 [node name="Rain" type="Node3D"]
 script = ExtResource("1_uy2j2")
 Loop = true
 Autostart = true
 
-[node name="CPUParticles3D" parent="." instance=ExtResource("2_dwqs4")]
-emitting = false
-amount = 7500
-emission_box_extents = Vector3(10, 0.5, 10)
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+amount = 9000
+lifetime = 5.0
+visibility_aabb = AABB(-4, -8, -4, 8, 8, 8)
+process_material = ExtResource("3_7vfoy")
+draw_pass_1 = SubResource("QuadMesh_rx8t7")

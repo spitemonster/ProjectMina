@@ -174,12 +174,7 @@ Eyes = NodePath("CharacterBody/Hips/Head/Eyes")
 Chest = NodePath("Chest")
 AnimPlayer = NodePath("AnimationPlayer")
 
-[node name="Rain" parent="." index="0" instance=ExtResource("3_2dkx8")]
-transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 3, 0)
-Loop = false
-Autostart = false
-
-[node name="CharacterBody" parent="." index="1"]
+[node name="CharacterBody" parent="." index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.799724, 0)
 
 [node name="Hips" type="Node3D" parent="CharacterBody" index="0"]
@@ -240,13 +235,13 @@ spot_angle = 17.4208
 [node name="Eyes" type="Marker3D" parent="CharacterBody/Hips/Head" index="1"]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="." index="2"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="." index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0464694, 0)
 visible = false
 shape = SubResource("ConvexPolygonShape3D_ef883")
 disabled = true
 
-[node name="InteractionComponent" type="Node" parent="." index="3" node_paths=PackedStringArray("_interactionCollision", "_grabPosition", "_grabJoint", "_grabAnchor", "equipmentManager")]
+[node name="InteractionComponent" type="Node" parent="." index="2" node_paths=PackedStringArray("_interactionCollision", "_grabPosition", "_grabJoint", "_grabAnchor", "equipmentManager")]
 script = ExtResource("3_3gtcp")
 _interactionCollision = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/FocusCollision")
 _grabPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/GrabPosition")
@@ -255,7 +250,7 @@ _grabAnchor = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/StaticBody3D")
 _grabRotationStrength = 8.0
 equipmentManager = NodePath("../EquipmentManager")
 
-[node name="PlayerHUD" parent="." index="4" node_paths=PackedStringArray("_interactionComponent", "_healthComponent") instance=ExtResource("4_161ca")]
+[node name="PlayerHUD" parent="." index="3" node_paths=PackedStringArray("_interactionComponent", "_healthComponent") instance=ExtResource("4_161ca")]
 reticleDefaultColor = Color(1, 1, 1, 1)
 reticleUseColor = Color(0, 0, 1, 1)
 reticleGrabColor = Color(1, 1, 0, 1)
@@ -263,28 +258,33 @@ reticleEquipColor = Color(0, 1, 0, 1)
 _interactionComponent = NodePath("../InteractionComponent")
 _healthComponent = NodePath("../HealthComponent")
 
-[node name="SoundComponent" parent="." index="6" instance=ExtResource("5_a402o")]
+[node name="SoundComponent" parent="." index="5" instance=ExtResource("5_a402o")]
 visible = false
 
-[node name="MovementComponent" parent="." index="7" instance=ExtResource("8_8i55q")]
-MovementSpeedBase = 1.8
+[node name="MovementComponent" parent="." index="6" instance=ExtResource("8_8i55q")]
+MovementSpeedBase = 2.0
 AccelerationForce = 0.05
 BrakingForce = 0.08
 JumpForce = 4.5
 SprintSpeedMultiplier = 1.8
 AirControlMultiplier = 1.0
 
-[node name="EquipmentManager" parent="." index="8" node_paths=PackedStringArray("equipmentPosition") instance=ExtResource("9_uaq73")]
+[node name="EquipmentManager" parent="." index="7" node_paths=PackedStringArray("equipmentPosition") instance=ExtResource("9_uaq73")]
 equipmentPosition = NodePath("../CharacterBody/Hips/Head/PrimaryCamera/Marker3D")
 
-[node name="Chest" type="Marker3D" parent="." index="10"]
+[node name="Chest" type="Marker3D" parent="." index="9"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.19106, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="11"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="10"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
 shape = SubResource("CapsuleShape3D_vqwtx")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="12"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="11"]
 libraries = {
 "": SubResource("AnimationLibrary_mtqt7")
 }
+
+[node name="Rain" parent="." index="12" instance=ExtResource("3_2dkx8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.53713, 3)
+Loop = false
+Autostart = false

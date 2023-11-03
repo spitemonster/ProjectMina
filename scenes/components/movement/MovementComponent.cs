@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 
 namespace ProjectMina;
 
@@ -12,6 +13,7 @@ public partial class MovementComponent : ComponentBase
 		SPRINTING,
 		FALLING,
 		JUMPING,
+		CLIMBING,
 		SNEAKING
 	}
 
@@ -37,6 +39,7 @@ public partial class MovementComponent : ComponentBase
 	[Export] protected float AccelerationForce = 0.1f;
 	[Export] protected float BrakingForce = 0.1f;
 	[Export] protected float JumpForce = 1.0f;
+	[Export] protected float ClimbSpeed = 1.5f;
 	[Export] protected float GravityMultiplier = 1.0f;
 	[Export] protected float SprintSpeedMultiplier = 2.0f;
 	[Export] protected float SneakSpeedMultiplier = 0.5f;
@@ -56,22 +59,52 @@ public partial class MovementComponent : ComponentBase
 	private bool _sneakDesired = false;
 	private bool _standDesired = false;
 	private bool _leaning = false;
+	private bool _wishJump = false;
+	private bool _wishClimb = false;
+	private bool _wishStand = false;
+
+	private Vector3 _climbPosition = new();
+
 	private Enums.DirectionHorizontal _leanDirection;
 
 	public Vector3 GetCharacterVelocity(Vector3 movementDirection, double delta)
 	{
 
 		Vector3 currentVelocity = _character.Velocity;
-
 		float movementSpeed = CalculateMovementSpeed();
 
-		// actual movement code
-		if (!_character.IsOnFloor())
+		PhysicsDirectSpaceState3D spaceState = _character.GetWorld3D().DirectSpaceState;
+
+		if (_wishClimb && CanClimb(spaceState))
+		{
+			StartClimb(spaceState);
+		}
+		else if (_wishJump && CanJump(spaceState))
+		{
+			currentVelocity = Jump(currentVelocity);
+		}
+		else
+		{
+			_wishClimb = false;
+			_wishJump = false;
+		}
+
+		if (_wishStand && CanStand(spaceState))
+		{
+			EndSneak();
+		}
+
+		if (CharacterMovementState == MovementState.CLIMBING)
+		{
+			GD.Print("should climb");
+			currentVelocity = TickClimb(spaceState);
+		}
+		else if (!_character.IsOnFloor())
 		{
 			currentVelocity.Y -= (float)(_gravity * GravityMultiplier * delta);
-
 			currentVelocity.X += (float)(movementDirection.X * AirControlMultiplier * delta);
 			currentVelocity.Z += (float)(movementDirection.Z * AirControlMultiplier * delta);
+
 
 			// only trigger falling when our velocity is actually negative
 			if (currentVelocity.Y < 0.0f && !_falling)
@@ -113,7 +146,7 @@ public partial class MovementComponent : ComponentBase
 			SetMovementState(MovementState.NONE);
 		}
 
-		if (_moving && !_sprinting && CharacterMovementState != MovementState.WALKING)
+		if (_moving && !_sprinting && CharacterMovementState != MovementState.WALKING && CharacterMovementState != MovementState.CLIMBING)
 		{
 			SetMovementState(MovementState.WALKING);
 		}
@@ -237,12 +270,59 @@ public partial class MovementComponent : ComponentBase
 		return localMovementSpeed;
 	}
 
-	public void Jump()
+	public void TryJump()
 	{
-		Vector3 currentVelocity = _character.Velocity;
-		currentVelocity.Y = JumpForce;
-		_character.Velocity = currentVelocity;
+		_wishJump = true;
+		_wishClimb = true;
+	}
+
+	private bool CanJump(PhysicsDirectSpaceState3D spaceState)
+	{
+		if (_character.IsOnFloor() && CharacterMovementState != MovementState.SNEAKING)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	private Vector3 Jump(Vector3 currentVelocity)
+	{
+		Dev.UI.PushDevNotification("should jump");
+		Vector3 newVelocity = currentVelocity;
+		newVelocity.Y = JumpForce;
+		_wishJump = false;
+		_wishClimb = false;
 		SetMovementState(MovementState.JUMPING);
+		return newVelocity;
+	}
+
+	public void JumpReleased()
+	{
+		_wishClimb = false;
+
+		if (CharacterMovementState == MovementState.CLIMBING)
+		{
+			EndClimb();
+		}
+	}
+
+	private void StartClimb(PhysicsDirectSpaceState3D spaceState)
+	{
+		Array<Rid> exclude = new();
+		exclude.Add(_character.GetRid());
+		Vector3 downTraceOrigin = _character.GlobalPosition + (_character.ForwardVector * -.75f) + new Vector3(0, 2.0f, 0);
+		Vector3 downTraceEnd = downTraceOrigin + new Vector3(0, -1, 0);
+
+		HitResult res = Trace.Line(spaceState, downTraceOrigin, downTraceEnd, exclude, true, true);
+
+		if (res != null)
+		{
+			EndSprint();
+			_wishClimb = false;
+			_climbPosition = res.HitPosition;
+			SetMovementState(MovementState.CLIMBING);
+		}
 	}
 
 	public void ToggleSprint()
@@ -261,7 +341,7 @@ public partial class MovementComponent : ComponentBase
 	{
 		if (_sneaking)
 		{
-			EndSneak();
+			_wishStand = true;
 		}
 		else
 		{
@@ -273,92 +353,6 @@ public partial class MovementComponent : ComponentBase
 			StartSneak();
 		}
 	}
-
-	// private void TryStand()
-	// {
-	// 	if (CanStand())
-	// 	{
-	// 		Stand();
-	// 	}
-	// 	else
-	// 	{
-	// 		_wishStand = true;
-	// 	}
-	// }
-
-	// private void TrySneak()
-	// {
-	// 	if (CanSneak())
-	// 	{
-	// 		Sneak();
-	// 	}
-	// 	else
-	// 	{
-	// 		_wishSneak = true;
-	// 	}
-	// }
-
-	// private bool CanStand()
-	// {
-	// 	return true;
-	// }
-
-	// private void Stand()
-	// {
-	// 	// character stands to full height here
-	// }
-
-	// public override void _PhysicsProcess(double delta)
-	// {
-	// 	base._PhysicsProcess(delta);
-
-	// 	if (_owner == null)
-	// 	{
-	// 		return;
-	// 	}
-
-	// 	if (_moving && _owner.Velocity.Length() < 0.025)
-	// 	{
-	// 		_moving = false;
-	// 		_sprinting = false;
-	// 		EmitSignal(SignalName.MovementEnded);
-	// 		SetMovementState(MovementState.NONE);
-	// 	}
-	// 	else if (!_moving && _owner.Velocity.Length() > 0.1)
-	// 	{
-	// 		_moving = true;
-	// 		EmitSignal(SignalName.MovementStarted);
-	// 		SetMovementState(MovementState.WALKING);
-	// 	}
-
-	// 	// check if owner is on the floor and the character isn't on the upswing
-	// 	if (!_owner.IsOnFloor() && !_falling)
-	// 	{
-	// 		// if not, run fall logic
-	// 		HandleFall();
-	// 	}
-	// 	else if (_owner.IsOnFloor() && _falling)
-	// 	{
-	// 		// if we were falling but have landed, trigger landed
-	// 		HandleLanding();
-	// 	}
-	// }
-
-	// private float CalculateMovementSpeed()
-	// {
-	// 	float localMovementSpeed = MovementSpeed;
-
-	// 	if (_sprinting)
-	// 	{
-	// 		localMovementSpeed *= SprintMultiplier;
-	// 	}
-	// 	else if (_sneaking)
-	// 	{
-	// 		localMovementSpeed *= SneakMultiplier;
-	// 	}
-
-	// 	return localMovementSpeed;
-	// }
 
 	private void SetMovementState(MovementState newState)
 	{
@@ -395,6 +389,7 @@ public partial class MovementComponent : ComponentBase
 	private void EndSneak()
 	{
 		_sneaking = false;
+		_wishStand = false;
 		EmitSignal(SignalName.SneakEnded);
 	}
 
@@ -420,4 +415,97 @@ public partial class MovementComponent : ComponentBase
 			SetMovementState(MovementState.NONE);
 		}
 	}
+
+	private bool CanClimb(PhysicsDirectSpaceState3D spaceState)
+	{
+		if (spaceState == null && CharacterMovementState == MovementState.SNEAKING)
+		{
+			return false;
+		}
+
+		Array<Rid> exclude = new();
+		exclude.Add(_character.GetRid());
+		Vector3 downTraceOrigin = _character.GlobalPosition + (_character.ForwardVector * -.75f) + new Vector3(0, 2.0f, 0);
+		Vector3 downTraceEnd = downTraceOrigin + new Vector3(0, -1, 0);
+
+		downTraceEnd.Y = _character.GlobalPosition.Y;
+		DebugDraw.Sphere(downTraceOrigin, .5f, Colors.Red);
+		DebugDraw.Sphere(downTraceEnd, .4f, Colors.Green);
+
+		HitResult res = Trace.Line(spaceState, downTraceOrigin, downTraceEnd, exclude, true, true);
+
+		if (res != null)
+		{
+			DebugDraw.Sphere(res.HitPosition, .6f, Colors.Yellow, .5f);
+			GD.Print("can climb!");
+			return true;
+		}
+		GD.Print("can't climb!");
+		return false;
+	}
+
+
+	private Vector3 TickClimb(PhysicsDirectSpaceState3D spaceState)
+	{
+		Array<Rid> exclude = new()
+		{
+			_character.GetRid()
+		};
+
+		Vector3 forwardTraceOrigin = _character.GlobalPosition;
+		Vector3 forwardTraceEnd = forwardTraceOrigin + _character.ForwardVector * -1.0f;
+		HitResult forwardTraceRes = Trace.Line(spaceState, forwardTraceOrigin, forwardTraceEnd, exclude, true, true);
+
+		if (_character.GlobalPosition.Y >= _climbPosition.Y)
+		{
+			Vector3 directionToClimbPosition = (_climbPosition - _character.GlobalPosition).Normalized();
+
+			Vector3 downTraceOrigin = forwardTraceOrigin + directionToClimbPosition * -.25f;
+			Vector3 downTraceEnd = downTraceOrigin + new Vector3(0, -1, 0);
+
+			HitResult downTraceRes = Trace.Line(spaceState, downTraceOrigin, downTraceEnd, exclude, true, true);
+
+			if (downTraceRes != null)
+			{
+				_climbPosition = new();
+				EndClimb();
+				return new();
+			}
+
+
+			return directionToClimbPosition * ClimbSpeed;
+		}
+		else
+		{
+			return new(0, ClimbSpeed, 0);
+		}
+	}
+
+	private void EndClimb()
+	{
+		_wishClimb = false;
+		_wishJump = false;
+		SetMovementState(MovementState.NONE);
+	}
+
+	private bool CanStand(PhysicsDirectSpaceState3D spaceState)
+	{
+		Array<Rid> exclude = new()
+		{
+			_character.GetRid()
+		};
+
+		Vector3 standTraceOrigin = _character.GlobalPosition + new Vector3(0, .5f, 0);
+		Vector3 standTraceEnd = standTraceOrigin + new Vector3(0, 1, 0);
+		HitResult standTraceResult = Trace.Line(spaceState, standTraceOrigin, standTraceEnd, exclude, true, true);
+
+		if (standTraceResult == null)
+		{
+			GD.Print("can stand!");
+			return true;
+		}
+
+		return false;
+	}
+
 }

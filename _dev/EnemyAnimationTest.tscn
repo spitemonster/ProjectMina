@@ -1095,12 +1095,11 @@ Blackboard = ExtResource("16_hk8gq")
 [node name="AttentionComponent" type="Node" parent="."]
 script = ExtResource("20_fyeya")
 
-[node name="AIBrainComponent" type="Node" parent="." node_paths=PackedStringArray("NavigationAgent", "SightComponent", "HearingComponent", "BehaviorTree", "Blackboard", "AttentionComponent")]
+[node name="AIBrainComponent" type="Node" parent="." node_paths=PackedStringArray("NavigationAgent", "SightComponent", "HearingComponent", "Blackboard", "AttentionComponent")]
 script = ExtResource("17_s4wim")
 NavigationAgent = NodePath("../NavigationAgent3D")
 SightComponent = NodePath("AISightComponent")
 HearingComponent = NodePath("AIHearingComponent")
-BehaviorTree = NodePath("../BehaviorTree")
 Blackboard = NodePath("../Blackboard")
 AttentionComponent = NodePath("../AttentionComponent")
 
@@ -1113,3 +1112,13 @@ _sightCollision = NodePath("../../GeneralSkeleton/HeadCollision/Eyes/SightCollis
 
 [node name="Marker3D" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25822, 0)
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+
+[node name="dtc" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="enemy_seen_label" type="Label3D" parent="dtc"]
+unique_name_in_owner = true
+billboard = 2
