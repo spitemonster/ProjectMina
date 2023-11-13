@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 
@@ -43,6 +45,7 @@ public partial class PlayerCharacter : CharacterBase
 
 	[ExportGroup("Combat")]
 	[Export] public CombatGridComponent CombatGrid { get; protected set; }
+	[Export] public GrabbingComponent GC;
 
 	public Node3D _currentFloor;
 	private bool _isStealthMode = false;
@@ -50,12 +53,9 @@ public partial class PlayerCharacter : CharacterBase
 	private Vector3 _defaultCapsulePosition;
 
 	private Godot.Collections.Array<Rid> x = new();
-
-	// private FocusInfo CharacterAttention.CurrentFocus;
-	// private object _currentPlayerFocusCollider;
-
 	public override void _Ready()
 	{
+		base._Ready();
 		// setup player in global data
 		Global.Data.Player = this;
 
@@ -66,47 +66,124 @@ public partial class PlayerCharacter : CharacterBase
 		{
 			_inputManager = m;
 			_inputManager.MouseMove += HandleMouseMove;
-			_inputManager.Sprint += CharacterMovement.ToggleSprint;
-			_inputManager.JumpPressed += CharacterMovement.TryJump;
-			_inputManager.JumpReleased += CharacterMovement.JumpReleased;
-			_inputManager.Stealth += CharacterMovement.ToggleSneak;
+			// _inputManager.Sprint += CharacterMovement.ToggleSprint;
+			// _inputManager.JumpPressed += CharacterMovement.TryJump;
+			// _inputManager.JumpReleased += CharacterMovement.JumpReleased;
+			// _inputManager.Stealth += CharacterMovement.ToggleSneak;
+			
 			_inputManager.Interact += (isAlt) =>
 			{
-				if (_interactionComponent.CanInteract)
-				{
-					_interactionComponent.Interact(isAlt);
-				}
+				// if (_interactionComponent.FocusedItem != null && _interactionComponent.FocusedItem is RigidBody3D r && GC != null)
+				// {
+				// 	GC.GrabItem(r);
+				// }
 			};
 
-			_inputManager.Use += (modifierPressed) =>
+			_inputManager.ActionPressed += (action) =>
 			{
-				if (_equipmentManager.EquippedItem != null)
+				switch (action)
 				{
-					_equipmentManager.EquippedItem.GetNode<Interaction>("Interaction")?.Use(this);
+					case "sprint":
+						CharacterMovement.ToggleSprint();
+						break;
+					case "jump":
+						CharacterMovement.TryJump();
+						break;
+					case "stealth":
+						CharacterMovement.ToggleSneak();
+						break;
+					default:
+						break;
+
 				}
 			};
 
-			_inputManager.EndUse += () =>
+			_inputManager.ActionReleased += (action, actionCompleted) =>
 			{
-				if (_equipmentManager.EquippedItem != null)
+				switch (action)
 				{
-					_equipmentManager.EquippedItem.GetNode<Interaction>("Interaction")?.EndUse(this);
+					case "jump":
+						CharacterMovement.JumpReleased();
+						break;
+					default:
+						break;
 				}
 			};
 
-			_inputManager.Reload += () =>
+			_inputManager.ActionHoldStarted += (action) =>
 			{
-				if (_equipmentManager.EquippedItem != null && _equipmentManager.EquippedItemType == Equipment.EquipmentType.Weapon && _equipmentManager.EquippedItem is RangedWeapon w)
+				// if the character is holding on interact it means they're trying to grab something
+				if (action == "interact" && CharacterAttention.CurrentFocus != null)
 				{
-					w.Reload();
+					// if we can't grab the item, interact with it as normal and prevent the hold from executing
+					if (!GC.CanGrab(CharacterAttention.CurrentFocus) &&
+					    CharacterInteraction.CanInteract(CharacterAttention.CurrentFocus))
+					{
+						CharacterInteraction.Interact(CharacterAttention.CurrentFocus);
+						_inputManager.ClearActionHold(action);
+					}
+					
 				}
 			};
 
-			_inputManager.Lean += CharacterMovement.Lean;
+			_inputManager.ActionHoldCompleted += (action) =>
+			{
+				if (action == "interact")
+				{
+					if (GC.IsGrabbing())
+					{
+						GD.Print("is grabbing, interrupted!");
+						GC.ReleaseGrabbedItem();
+						return;
+					}
+
+					if (CharacterAttention.CurrentFocus != null && GC.CanGrab(CharacterAttention.CurrentFocus))
+					{
+						GC.GrabItem((RigidBody3D)CharacterAttention.CurrentFocus);
+					}
+				}
+			};
+
+			// _inputManager.Use += (modifierPressed) =>
+			// {
+			// 	if (_equipmentManager.EquippedItem != null)
+			// 	{
+			// 		_equipmentManager.EquippedItem.GetNode<Interaction>("Interaction")?.Use(this);
+			// 	}
+			// };
+			//
+			// _inputManager.EndUse += () =>
+			// {
+			// 	if (_equipmentManager.EquippedItem != null)
+			// 	{
+			// 		_equipmentManager.EquippedItem.GetNode<Interaction>("Interaction")?.EndUse(this);
+			// 	}
+			// };
+			//
+			// _inputManager.Reload += () =>
+			// {
+			// 	if (_equipmentManager.EquippedItem != null && _equipmentManager.EquippedItemType == Equipment.EquipmentType.Weapon && _equipmentManager.EquippedItem is RangedWeapon w)
+			// 	{
+			// 		w.Reload();
+			// 	}
+			// };
+
+			// _inputManager.Lean += CharacterMovement.Lean;
 
 			CharacterMovement.SneakStarted += StartStealth;
 
 			CharacterMovement.SneakEnded += EndStealth;
+
+			// CharacterMovement.MovementStarted += () =>
+			// {
+			// 	AnimationPlayer.SpeedScale = .8f;
+			// 	AnimationPlayer.Play("head_bob");
+			// };
+			//
+			// CharacterMovement.MovementEnded += () =>
+			// {
+			// 	AnimationPlayer.Stop();
+			// };
 		}
 
 		FocusCast.AddException(this);
@@ -121,19 +198,14 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		base._PhysicsProcess(delta);
 
-		if (FocusCast != null)
-		{
-			CheckPlayerFocus();
-		}
-
+		PhysicsDirectSpaceState3D spaceState = GetWorld3D().DirectSpaceState;
+		
 		if (_equipmentManager.EquippedItem is RangedWeapon w && _equipmentManager.EquippedItemType == Equipment.EquipmentType.Weapon)
 		{
 			Vector3 traceStart = PrimaryCamera.GlobalPosition;
 			Vector3 traceEnd = PrimaryCamera.GlobalPosition + PrimaryCamera.GlobalTransform.Basis.Z * -100.0f;
-			HitResult aimTraceResult = Trace.Line(GetWorld3D().DirectSpaceState, traceStart, traceEnd, x);
+			HitResult aimTraceResult = Trace.Line(spaceState, traceStart, traceEnd, x);
 			Vector3 aimPosition = aimTraceResult != null ? aimTraceResult.HitPosition : traceEnd;
-
-			// DebugDraw.Sphere(aimPosition, .25f, Colors.Red, .5f);
 
 			w.Aim(aimPosition);
 		}
@@ -148,7 +220,7 @@ public partial class PlayerCharacter : CharacterBase
 		}
 		else
 		{
-			HitResult traceResult = Trace.Line(GetWorld3D().DirectSpaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
+			HitResult traceResult = Trace.Line(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
 
 			if (traceResult != null && traceResult.Collider is Node3D n)
 			{
@@ -181,17 +253,21 @@ public partial class PlayerCharacter : CharacterBase
 		}
 
 		Vector2 controlInput = InputManager.GetInputDirection();
-		// Velocity = CharacterMovement.CalculateMovementVelocity(inputDirection, delta);
-		// CharacterMovement.AddMovementInput(inputDirection);
-		Vector3 direction = (GlobalTransform.Basis * new Vector3(-controlInput.X, 0, -controlInput.Y)).Normalized();
-		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta);
+		Vector3 direction = (GlobalTransform.Basis * new Vector3(controlInput.X, 0, controlInput.Y)).Normalized();
+		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, spaceState);
 
 		_ = MoveAndSlide();
+		
+		if (FocusCast != null && CharacterAttention != null)
+		{
+			CheckPlayerFocus();
+		}
 	}
 
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
+
 	}
 
 	private void CheckPlayerFocus()
@@ -200,41 +276,39 @@ public partial class PlayerCharacter : CharacterBase
 		{
 			if (CharacterAttention.CurrentFocus != null)
 			{
-				LoseFocus();
+				CharacterAttention.LoseFocus();
 			}
-
+		
 			return;
 		}
-
-		Array<Node3D> ColliderResults = new();
-
+		
+		Array<Node3D> colliderResults = new();
+		
 		for (int i = 0; i < FocusCast.CollisionResult.Count; i++)
 		{
 			if (FocusCast.GetCollider(i) is Node3D n)
 			{
-				ColliderResults.Add(n);
+				colliderResults.Add(n);
 			}
 		}
-
-		if (CharacterAttention.CurrentFocus == null)
+		
+		if (colliderResults.Count < 1)
 		{
-			foreach (Node3D node in ColliderResults)
+			if (CharacterAttention.CurrentFocus != null)
 			{
-				if (CheckCanFocus(node))
-				{
-					SetFocus(node);
-					break;
-				}
+				CharacterAttention.LoseFocus();
 			}
+		
+			return;
 		}
-		else
+		
+		foreach (Node3D node in colliderResults)
 		{
-			if (ColliderResults != null && ColliderResults.Contains(CharacterAttention.CurrentFocus))
+			if (CheckCanFocus(node))
 			{
-				return;
+				CharacterAttention.SetFocus(node);
+				break;
 			}
-
-			LoseFocus();
 		}
 	}
 
@@ -264,19 +338,19 @@ public partial class PlayerCharacter : CharacterBase
 
 			float headRelative = (float)(-mouseRelative.X * _inputSensitivity);
 			float cameraRelative = (float)(-mouseRelative.Y * _inputSensitivity);
-
-			if (CharacterInteraction.IsGrabbing)
-			{
-
-				if (Input.IsActionPressed("mod"))
-				{
-					CharacterInteraction.AddGrabbedItemRotationSpeed(new Vector3(cameraRelative, headRelative, 0));
-					return;
-				}
-
-				headRelative *= (float)_carryGrabSpeedMultiplier;
-				cameraRelative *= (float)_carryGrabSpeedMultiplier;
-			}
+			
+			// if (CharacterInteraction.IsGrabbing)
+			// {
+			//
+			// 	if (Input.IsActionPressed("mod"))
+			// 	{
+			// 		CharacterInteraction.AddGrabbedItemRotationSpeed(new Vector3(cameraRelative, headRelative, 0));
+			// 		return;
+			// 	}
+			//
+			// 	headRelative *= (float)_carryGrabSpeedMultiplier;
+			// 	cameraRelative *= (float)_carryGrabSpeedMultiplier;
+			// }
 
 			RotateY(headRelative);
 			PrimaryCamera.RotateX(cameraRelative);

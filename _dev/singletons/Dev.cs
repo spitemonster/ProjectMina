@@ -35,7 +35,7 @@ public partial class Dev : Node
 		DevUI devHUD = hudScene.Instantiate<DevUI>();
 		if (devHUD != null)
 		{
-			GetTree().Root.GetNode("MainScene").AddChild(devHUD);
+			GetTree().Root.AddChild(devHUD);
 			UI = devHUD;
 		}
 	}

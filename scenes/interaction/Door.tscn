@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dthkgruo86yys"]
+[gd_scene load_steps=6 format=3 uid="uid://dthkgruo86yys"]
 
 [ext_resource type="PackedScene" uid="uid://p7v7yqiyokub" path="res://scenes/interaction/Interaction.tscn" id="1_0buvd"]
 [ext_resource type="Script" path="res://scenes/interaction/Door.cs" id="1_6v7ht"]
+[ext_resource type="Script" path="res://scenes/components/interactable/InteractableComponent.cs" id="3_hfjl0"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_471hd"]
 size = Vector3(1, 2, 0.1)
@@ -26,3 +27,6 @@ shape = SubResource("ConvexPolygonShape3D_ug10r")
 
 [node name="Interaction" parent="." instance=ExtResource("1_0buvd")]
 unique_name_in_owner = true
+
+[node name="InteractableComponent" type="Node" parent="."]
+script = ExtResource("3_hfjl0")

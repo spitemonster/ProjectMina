@@ -7,7 +7,6 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class CharacterBase : CharacterBody3D
 {
-
 	// signals
 	[Signal] public delegate void AttackedEventHandler();
 	[Signal] public delegate void FinishedAttackEventHandler();
@@ -29,12 +28,31 @@ public partial class CharacterBase : CharacterBody3D
 
 	public Vector3 ForwardVector { get; protected set; }
 
+	protected double _footstepTimeout = .1;
+	protected bool _canFootstep = true;
+	private Timer _footstepTimer;
+
 	public override void _Ready()
 	{
 		if (Engine.IsEditorHint())
 		{
 			return;
 		}
+
+		_footstepTimer = new()
+		{
+			WaitTime = .5,
+			Autostart = false,
+			OneShot = true
+		};
+
+		_footstepTimer.Timeout += () =>
+		{
+			GD.Print("footstep timeout");
+			_canFootstep = true;
+		};
+
+		AddChild(_footstepTimer);
 
 		CharacterHealth.HealthDepleted += Die;
 	}
@@ -64,22 +82,6 @@ public partial class CharacterBase : CharacterBody3D
 		return false;
 	}
 
-	// shortcut methods for setting and getting focus
-	public virtual void SetFocus(Node3D newFocus)
-	{
-		CharacterAttention.SetFocus(newFocus);
-	}
-
-	public virtual void LoseFocus()
-	{
-		CharacterAttention.LoseFocus();
-	}
-
-	public virtual Node3D GetFocus()
-	{
-		return CharacterAttention.CurrentFocus;
-	}
-
 	public virtual void Die()
 	{
 		if (_debug)
@@ -88,6 +90,11 @@ public partial class CharacterBase : CharacterBody3D
 		}
 
 		QueueFree();
+	}
+
+	public virtual void Footstep()
+	{
+		GD.Print("footstep!");
 	}
 
 	public override string[] _GetConfigurationWarnings()

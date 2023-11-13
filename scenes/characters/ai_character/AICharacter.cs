@@ -52,6 +52,10 @@ public partial class AICharacter : CharacterBase
 			Dev.UI.PushDevNotification("AI character health changed: " + newHealth);
 		};
 
+		CharacterMovement.EnableClimbing = false;
+		CharacterMovement.EnableJumping = false;
+		CharacterMovement.EnableSneaking = false;
+
 		Brain.NavigationAgent.AvoidanceEnabled = false;
 
 		_dtc = GetNodeOrNull<Node3D>("%dtc");
@@ -98,7 +102,7 @@ public partial class AICharacter : CharacterBase
 
 		mult = 1.0f;
 
-		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta) * mult;
+		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, GetWorld3D().DirectSpaceState) * mult;
 
 		Transform3D t = GlobalTransform;
 		t = t.InterpolateWith(t.LookingAt(lookTarget, Vector3.Up), 0.05f);

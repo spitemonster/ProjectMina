@@ -2,6 +2,7 @@ using System;
 using Godot;
 namespace ProjectMina;
 
+[GlobalClass]
 public partial class PlayerHUD : Control
 {
 	[Export]
@@ -27,6 +28,11 @@ public partial class PlayerHUD : Control
 	public override void _Ready()
 	{
 		base._Ready();
+
+		_player = Global.Data.Player;
+
+		_interactionComponent = _player.CharacterInteraction;
+		_healthComponent = _player.CharacterHealth;
 
 		if (_interactionComponent != null)
 		{

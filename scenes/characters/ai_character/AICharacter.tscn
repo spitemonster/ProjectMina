@@ -8,9 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://sccy77n6xvl1" path="res://scenes/components/ai_brain/AIBrainComponent.tscn" id="5_4dcp8"]
 [ext_resource type="Animation" uid="uid://driftre7xvs5a" path="res://scenes/weapons/melee_weapon/Attack.res" id="7_5dg40"]
 [ext_resource type="PackedScene" uid="uid://b3rq16aalq4c2" path="res://scenes/components/movement/MovementComponent.tscn" id="8_cxsam"]
-[ext_resource type="Script" path="res://scenes/components/behavior_tree/BehaviorTree.cs" id="9_qilcb"]
-[ext_resource type="Script" path="res://scenes/components/behavior_tree/Blackboard.cs" id="10_5nfpl"]
-[ext_resource type="Script" path="res://scenes/components/behavior_tree/Selector.cs" id="10_hpd2o"]
+[ext_resource type="Script" path="res://scenes/components/behavior_tree/core/behavior_tree/BehaviorTreeComponent.cs" id="9_qilcb"]
+[ext_resource type="Script" path="res://scenes/components/behavior_tree/core/blackboard/BlackboardComponent.cs" id="10_5nfpl"]
+[ext_resource type="Script" path="res://scenes/components/behavior_tree/core/Selector.cs" id="10_hpd2o"]
 [ext_resource type="Script" path="res://scenes/components/behavior_tree/BTTSayName.cs" id="11_vqwob"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_bpama"]

@@ -2,7 +2,6 @@ using Godot;
 
 namespace ProjectMina;
 
-[Tool]
 [GlobalClass, Icon("res://_dev/icons/icon--magnifier.svg")]
 public partial class AttentionComponent : ComponentBase
 {
@@ -10,7 +9,9 @@ public partial class AttentionComponent : ComponentBase
 	[Signal] public delegate void FocusGainedEventHandler(Node3D newFocus);
 	[Signal] public delegate void FocusLostEventHandler();
 
+	[Export] public ShapeCast3D FocusCast;
 	public Node3D CurrentFocus { get; private set; } = null;
+	
 
 	public bool SetFocus(Node3D newFocus)
 	{
@@ -21,6 +22,7 @@ public partial class AttentionComponent : ComponentBase
 		}
 
 		// if no focus and they're not equal, newFocus isn't null, so emit this
+		// this accounts for situations where a player may shift their focus from one item directly to another
 		if (CurrentFocus == null)
 		{
 			EmitSignal(SignalName.FocusGained, newFocus);
@@ -28,6 +30,7 @@ public partial class AttentionComponent : ComponentBase
 
 		EmitSignal(SignalName.FocusChanged, newFocus, CurrentFocus);
 		CurrentFocus = newFocus;
+		GD.Print("set focus: ", newFocus);
 		return true;
 	}
 
@@ -37,6 +40,8 @@ public partial class AttentionComponent : ComponentBase
 		{
 			return false;
 		}
+		
+		GD.Print("focus lost");
 
 		// use SetFocus to trigger changed event handler
 		SetFocus(null);

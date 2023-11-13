@@ -4,23 +4,46 @@
 [ext_resource type="PackedScene" uid="uid://cvvqjmdnrb1ku" path="res://_dev/scenes/gyms/gym_base/GymBase.tscn" id="2_84ibd"]
 [ext_resource type="PackedScene" uid="uid://c45weam7tjqmw" path="res://scenes/characters/player_character/PlayerCharacter.tscn" id="3_ofqq3"]
 [ext_resource type="PackedScene" uid="uid://waxi0ov75vye" path="res://ui/MainMenu.tscn" id="4_hgum0"]
-[ext_resource type="Script" path="res://scenes/components/goap/core/Planner.cs" id="5_hh825"]
+[ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://ui/PlayerHUD.tscn" id="5_o2pxt"]
 
-[node name="MainScene" type="Node3D" node_paths=PackedStringArray("_levelSlot")]
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+stretch = true
+stretch_shrink = 4
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(480, 270)
+render_target_update_mode = 4
+
+[node name="MainScene" type="Node3D" parent="SubViewportContainer/SubViewport" node_paths=PackedStringArray("_levelSlot")]
+unique_name_in_owner = true
 script = ExtResource("1_i74qh")
 _levelSlot = NodePath("LevelSlot")
 _startingLevel = ExtResource("2_84ibd")
 
-[node name="LevelSlot" type="Node3D" parent="."]
+[node name="LevelSlot" type="Node3D" parent="SubViewportContainer/SubViewport/MainScene"]
 
-[node name="PlayerCharacter" parent="." instance=ExtResource("3_ofqq3")]
+[node name="PlayerCharacter" parent="SubViewportContainer/SubViewport/MainScene" instance=ExtResource("3_ofqq3")]
 _stealthCapsulePosition = Vector3(0, 0, 0)
 
-[node name="MainMenu" parent="." instance=ExtResource("4_hgum0")]
+[node name="UI" type="CanvasLayer" parent="."]
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="PlayerHUD" parent="UI" instance=ExtResource("5_o2pxt")]
 
-[node name="Planner" type="Node" parent="."]
-script = ExtResource("5_hh825")
-State = Object(Object,"script":Resource("res://scenes/components/goap/core/WorldState.cs"),"Properties":{})
-
+[node name="MainMenu" parent="UI" instance=ExtResource("4_hgum0")]

@@ -7,7 +7,7 @@ namespace ProjectMina;
 public partial class AISightComponent : ComponentBase
 {
 	// intended to be used in the array rather than direct references to characters
-	class VisibilityContainer
+	public class VisibilityContainer
 	{
 		public CharacterBase Character = new();
 		public float Visibility = 1.0f;
@@ -40,13 +40,13 @@ public partial class AISightComponent : ComponentBase
 	/// <summary>
 	/// fired when character to which we previously had line of sight is now obscured
 	/// </summary>
-	/// <param name="exclude">
+	/// <param name="character">
 	/// unseen character
 	/// </param>
 	[Signal] public delegate void CharacterExitedLineOfSightEventHandler(CharacterBase character);
-	[Export] protected Area3D _sightCollision;
+	[Export] protected Area3D SightCollision;
 
-	private Array<Rid> exclude = new();
+	private Array<Rid> _exclude = new();
 	private int _visibilityCheckIndex;
 	private AICharacter _owner;
 
@@ -61,16 +61,16 @@ public partial class AISightComponent : ComponentBase
 
 		if (_debug)
 		{
-			System.Diagnostics.Debug.Assert(_sightCollision != null, "no sight collision");
+			System.Diagnostics.Debug.Assert(SightCollision != null, "no sight collision");
 		}
 
 		_owner = GetOwner<AICharacter>();
-		_sightCollision.BodyEntered += CheckShouldObserveBody;
-		_sightCollision.BodyExited += CheckRemoveBody;
+		SightCollision.BodyEntered += CheckShouldObserveBody;
+		SightCollision.BodyExited += CheckRemoveBody;
 
 		if (!Engine.IsEditorHint())
 		{
-			exclude.Add(GetOwner<CharacterBase>().GetRid());
+			_exclude.Add(GetOwner<CharacterBase>().GetRid());
 		}
 
 		CallDeferred("CheckInitialOverlaps");
@@ -80,7 +80,7 @@ public partial class AISightComponent : ComponentBase
 	{
 		base._PhysicsProcess(delta);
 
-		foreach (CharacterBase c in CharactersInSightRadius)
+		foreach (var c in CharactersInSightRadius)
 		{
 			if (HaveLineOfSightToCharacter(c))
 			{
@@ -101,18 +101,17 @@ public partial class AISightComponent : ComponentBase
 
 	private void CheckRemoveBody(Node3D body)
 	{
-		if (body is CharacterBase c)
-		{
-			TryRemoveCharacterFromSightRadius(c);
-			TryRemoveSeenCharacter(c);
-		}
+		if (body is not CharacterBase c) return;
+		
+		TryRemoveCharacterFromSightRadius(c);
+		TryRemoveSeenCharacter(c);
 	}
 
 	private void CheckInitialOverlaps()
 	{
-		Array<Node3D> initialOverlaps = _sightCollision.GetOverlappingBodies();
+		var initialOverlaps = SightCollision.GetOverlappingBodies();
 
-		foreach (Node3D body in initialOverlaps)
+		foreach (var body in initialOverlaps)
 		{
 			if (body is CharacterBase c && c != _owner)
 			{
@@ -128,28 +127,23 @@ public partial class AISightComponent : ComponentBase
 	/// <returns>true if owner has line of sight, else false</returns>
 	private bool HaveLineOfSightToCharacter(CharacterBase targetCharacter)
 	{
-		PhysicsDirectSpaceState3D spaceState = _owner.GetWorld3D().DirectSpaceState;
-		CollisionShape3D targetCharacterBody = targetCharacter.CharacterBody;
-		Vector3 traceOrigin = _owner.Eyes.GlobalPosition;
-		Vector3 traceEnd = targetCharacter.Chest.GlobalPosition;
-		HitResult traceResult = Trace.Line(spaceState, traceOrigin, targetCharacterBody.GlobalPosition, exclude);
+		var spaceState = _owner.GetWorld3D().DirectSpaceState;
+		var targetCharacterBody = targetCharacter.CharacterBody;
+		var traceOrigin = _owner.Eyes.GlobalPosition;
+		var traceEnd = targetCharacter.Chest.GlobalPosition;
+		var traceResult = Trace.Line(spaceState, traceOrigin, targetCharacterBody.GlobalPosition, _exclude);
 
 		if (_debug)
 		{
 			DebugDraw.Line(traceOrigin, traceEnd, Colors.Red);
 		}
 
-		if (traceResult == null || !traceResult.Collider.Equals(targetCharacter))
-		{
-			return false;
-		}
-
-		return true;
+		return traceResult != null && traceResult.Collider.Equals(targetCharacter);
 	}
 
 	private void CheckShouldObserveBody(Node3D body)
 	{
-		if (body != null && body is CharacterBase c && c != _owner)
+		if (body is CharacterBase c && c != _owner)
 		{
 			TryAddCharacterToSightRadius(c);
 		}
@@ -165,11 +159,11 @@ public partial class AISightComponent : ComponentBase
 		CharactersInSightRadius.Add(character);
 		EmitSignal(SignalName.CharacterEnteredSightRadius, character);
 
-		if (_debug)
-		{
-			GD.Print(character.Name + " entered sight radius of " + GetOwner<Node>().Name);
-			DebugDraw.Sphere(character.GlobalTransform, 1, Colors.Red, 3f);
-		}
+		if (!_debug) return true;
+		
+		GD.Print(character.Name + " entered sight radius of " + GetOwner<Node>().Name);
+		DebugDraw.Sphere(character.GlobalTransform, 1, Colors.Red, 3f);
+
 		return true;
 	}
 
@@ -184,11 +178,9 @@ public partial class AISightComponent : ComponentBase
 		CharactersInSightRadius.Remove(character);
 		EmitSignal(SignalName.CharacterExitedSightRadius, character);
 
-		if (_debug)
-		{
-			GD.Print(character.Name + " exited sight radius of " + GetOwner<Node>().Name);
-			DebugDraw.Sphere(character.GlobalTransform, 1, Colors.Red, 3f);
-		}
+		if (!_debug) return true;
+		GD.Print(character.Name + " exited sight radius of " + GetOwner<Node>().Name);
+		DebugDraw.Sphere(character.GlobalTransform, 1, Colors.Red, 3f);
 
 		return true;
 	}
@@ -204,10 +196,9 @@ public partial class AISightComponent : ComponentBase
 		SeenCharacters.Add(character);
 		EmitSignal(SignalName.CharacterEnteredLineOfSight, character);
 
-		if (_debug)
-		{
-			GD.Print(character.Name + " entered line of sight of " + GetOwner<Node>().Name);
-		}
+		if (!_debug) return true;
+		GD.Print(character.Name + " entered line of sight of " + GetOwner<Node>().Name);
+
 		return true;
 	}
 
@@ -221,10 +212,8 @@ public partial class AISightComponent : ComponentBase
 		SeenCharacters.Remove(character);
 		EmitSignal(SignalName.CharacterExitedLineOfSight, character);
 
-		if (_debug)
-		{
-			GD.Print(character.Name + " exited line of sight of " + GetOwner<Node>().Name);
-		}
+		if (!_debug) return true;
+		GD.Print(character.Name + " exited line of sight of " + GetOwner<Node>().Name);
 		return true;
 	}
 }

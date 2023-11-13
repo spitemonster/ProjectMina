@@ -13,7 +13,7 @@ namespace ProjectMina
 		private Resource _startingLevel;
 
 		private InputManager _inputManager;
-		public LevelBase CurrentLevel { get; private set; }
+		public LevelBase CurrentLevel { get; protected set; }
 
 		public override void _Ready()
 		{
@@ -57,12 +57,14 @@ namespace ProjectMina
 
 		private void UnloadCurrentLevel()
 		{
-			if (IsInstanceValid(CurrentLevel))
+			if (!IsInstanceValid(CurrentLevel))
 			{
-				_levelSlot.RemoveChild(CurrentLevel);
-				CurrentLevel.QueueFree();
-				CurrentLevel = null;
+				return;
 			}
+			
+			_levelSlot.RemoveChild(CurrentLevel);
+			CurrentLevel.QueueFree();
+			CurrentLevel = null;
 		}
 	}
 }

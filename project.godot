@@ -14,7 +14,6 @@ config/name="ProjectMina"
 run/main_scene="res://scenes/MainScene.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 run/flush_stdout_on_print=true
-run/max_fps=60
 boot_splash/bg_color=Color(0.054902, 0.054902, 0.054902, 1)
 boot_splash/show_image=false
 boot_splash/image="res://assets/images/bh_lettermark.png"
@@ -25,10 +24,10 @@ boot_splash/use_filter=false
 
 Global="*res://singletons/Global.cs"
 Debug="*res://singletons/Debug.cs"
-InputManager="*res://singletons/InputManager.cs"
 Trace="*res://singletons/Trace.cs"
 Dev="*res://_dev/singletons/Dev.cs"
 DebugDraw="*res://addons/debug_drawing/DebugDraw.cs"
+InputManager="*res://singletons/InputManager.cs"
 
 [debug]
 
@@ -38,7 +37,9 @@ file_logging/enable_file_logging=true
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+window/stretch/scale=0.5
 
 [dotnet]
 
@@ -170,6 +171,11 @@ lean_right={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":69,"key_label":0,"unicode":101,"echo":false,"script":null)
 ]
 }
+test={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":84,"key_label":0,"unicode":116,"echo":false,"script":null)
+]
+}
 
 [layer_names]
 
@@ -190,6 +196,7 @@ common/physics_ticks_per_second=240
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
 lights_and_shadows/directional_shadow/16_bits=false
 lights_and_shadows/positional_shadow/soft_shadow_filter_quality=3
+global_illumination/sdfgi/frames_to_converge=2
 anti_aliasing/quality/msaa_3d=1
 anti_aliasing/quality/screen_space_aa=1
 occlusion_culling/use_occlusion_culling=true
