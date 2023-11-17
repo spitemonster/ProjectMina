@@ -3,7 +3,6 @@ using Godot.Collections;
 
 namespace ProjectMina;
 
-[GlobalClass]
 public partial class InputManagerSettings : Resource
 {
     [Export] public Array<StringName> HoldableActions;

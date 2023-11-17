@@ -22,12 +22,14 @@ boot_splash/use_filter=false
 
 [autoload]
 
-Global="*res://singletons/Global.cs"
-Debug="*res://singletons/Debug.cs"
-Trace="*res://singletons/Trace.cs"
 Dev="*res://_dev/singletons/Dev.cs"
 DebugDraw="*res://addons/debug_drawing/DebugDraw.cs"
-InputManager="*res://singletons/InputManager.cs"
+Global="*res://scripts/singletons/Global.cs"
+InputManager="*res://scripts/singletons/InputManager.cs"
+Trace="*res://scripts/singletons/Trace.cs"
+TimerPool="*res://scripts/pools/timer/TimerPool.cs"
+AudioPlayerPool="*res://scripts/pools/audio_player/AudioPlayerPool.cs"
+AudioStreamPool="*res://scripts/pools/audio_stream/AudioStreamPool.cs"
 
 [debug]
 
@@ -47,7 +49,7 @@ project/assembly_name="ProjectMina"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/csgtomeshinstance/plugin.cfg", "res://addons/debug_drawing/plugin.cfg", "res://addons/imrp/plugin.cfg")
+enabled=PackedStringArray("res://addons/debug_drawing/plugin.cfg", "res://addons/imrp/plugin.cfg", "res://addons/qodot/plugin.cfg")
 
 [filesystem]
 

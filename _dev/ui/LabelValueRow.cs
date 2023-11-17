@@ -40,7 +40,7 @@ public partial class LabelValueRow : HBoxContainer
 	public override void _Ready()
 	{
 
-		Debug.Assert(_labelNode != null, "There is no label node!");
+		System.Diagnostics.Debug.Assert(_labelNode != null, "There is no label node!");
 		// base._Ready();
 
 		// if (GetNode("%Label") is Label l)

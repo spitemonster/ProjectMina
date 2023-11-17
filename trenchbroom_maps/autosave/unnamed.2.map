@@ -1,0 +1,25 @@
+// Game: Qodot
+// Format: Standard
+// entity 0
+{
+"classname" "worldspawn"
+"_tb_textures" "textures;textures/asphalt;textures/brick_wall_02"
+// brush 0
+{
+( -320 320 16 ) ( -320 -320 16 ) ( -320 -320 -16 ) asphalt/asphalt 0 0 0 1 1
+( -320 -320 16 ) ( 320 -320 16 ) ( 320 -320 -16 ) asphalt/asphalt 0 0 0 1 1
+( 320 -320 -16 ) ( 320 320 -16 ) ( -320 320 -16 ) asphalt/asphalt 0 0 0 1 1
+( -320 320 16 ) ( 320 320 16 ) ( 320 -320 16 ) asphalt/asphalt 0 0 0 1 1
+( 320 320 -16 ) ( 320 320 16 ) ( -320 320 16 ) asphalt/asphalt 0 0 0 1 1
+( 320 -320 16 ) ( 320 320 16 ) ( 320 320 -16 ) asphalt/asphalt 0 0 0 1 1
+}
+// brush 1
+{
+( -86 -63 80 ) ( -86 -62 80 ) ( -86 -63 81 ) brick_wall_02/brick_wall_02 0 0 0 1 1
+( -86 -63 80 ) ( -86 -63 81 ) ( -85 -63 80 ) brick_wall_02/brick_wall_02 0 0 0 1 1
+( -86 -63 80 ) ( -85 -63 80 ) ( -86 -62 80 ) brick_wall_02/brick_wall_02 0 0 0 1 1
+( 42 65 112 ) ( 42 66 112 ) ( 43 65 112 ) brick_wall_02/brick_wall_02 0 0 0 1 1
+( 42 65 112 ) ( 43 65 112 ) ( 42 65 113 ) brick_wall_02/brick_wall_02 0 0 0 1 1
+( 42 65 112 ) ( 42 65 113 ) ( 42 66 112 ) brick_wall_02/brick_wall_02 0 0 0 1 1
+}
+}

@@ -1,6 +1,52 @@
-<Project Sdk="Godot.NET.Sdk/4.2.0-beta.1">
+<Project Sdk="Godot.NET.Sdk/4.2.0-beta.3">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="addons\.DS_Store" />
+    <Content Include="addons\csgtomeshinstance\plugin.cfg" />
+    <Content Include="addons\csgtomeshinstance\plugin.gd" />
+    <Content Include="addons\csgtomeshinstance\plugin_button.gd" />
+    <Content Include="addons\csgtomeshinstance\plugin_button.tscn" />
+    <Content Include="addons\debug_drawing\control\debug_dock.tscn" />
+    <Content Include="addons\debug_drawing\demo\demo.tscn" />
+    <Content Include="addons\debug_drawing\icon.png" />
+    <Content Include="addons\debug_drawing\icon.png.import" />
+    <Content Include="addons\debug_drawing\plugin.cfg" />
+    <Content Include="addons\godot-jolt\.DS_Store" />
+    <Content Include="addons\godot-jolt\godot-jolt.gdextension" />
+    <Content Include="addons\godot-jolt\LICENSE.txt" />
+    <Content Include="addons\godot-jolt\linux\godot-jolt_linux-x64.so" />
+    <Content Include="addons\godot-jolt\linux\godot-jolt_linux-x64_editor.so" />
+    <Content Include="addons\godot-jolt\linux\godot-jolt_linux-x86.so" />
+    <Content Include="addons\godot-jolt\linux\godot-jolt_linux-x86_editor.so" />
+    <Content Include="addons\godot-jolt\macos\.DS_Store" />
+    <Content Include="addons\godot-jolt\macos\godot-jolt_macos.framework\godot-jolt_macos" />
+    <Content Include="addons\godot-jolt\macos\godot-jolt_macos.framework\Resources\Info.plist" />
+    <Content Include="addons\godot-jolt\macos\godot-jolt_macos.framework\_CodeSignature\CodeResources" />
+    <Content Include="addons\godot-jolt\macos\godot-jolt_macos_editor.framework\godot-jolt_macos_editor" />
+    <Content Include="addons\godot-jolt\macos\godot-jolt_macos_editor.framework\Resources\Info.plist" />
+    <Content Include="addons\godot-jolt\macos\godot-jolt_macos_editor.framework\_CodeSignature\CodeResources" />
+    <Content Include="addons\godot-jolt\THIRDPARTY.txt" />
+    <Content Include="addons\godot-jolt\windows\godot-jolt_windows-x64.dll" />
+    <Content Include="addons\godot-jolt\windows\godot-jolt_windows-x64_editor.dll" />
+    <Content Include="addons\godot-jolt\windows\godot-jolt_windows-x86.dll" />
+    <Content Include="addons\godot-jolt\windows\godot-jolt_windows-x86_editor.dll" />
+    <Content Include="addons\imrp\.DS_Store" />
+    <Content Include="addons\imrp\icons\Search.svg" />
+    <Content Include="addons\imrp\icons\Search.svg.import" />
+    <Content Include="addons\imrp\LICENSE" />
+    <Content Include="addons\imrp\plugin.cfg" />
+    <Content Include="addons\imrp\plugin.gd" />
+    <Content Include="addons\imrp\src\scene\ImprovedResourcePicker.gd" />
+    <Content Include="addons\imrp\src\scene\ImprovedResourcePicker.tscn" />
+    <Content Include="addons\imrp\src\scene\Tree.gd" />
+  </ItemGroup>
 </Project>

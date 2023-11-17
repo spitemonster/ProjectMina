@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="InputManagerSettings" load_steps=2 format=3 uid="uid://cyuj6kaqgrybg"]
-
-[ext_resource type="Script" path="res://scripts/resources/settings/InputManagerSettings.cs" id="1_j27pa"]
-
-[resource]
-script = ExtResource("1_j27pa")
-HoldableActions = Array[StringName]([&"interact"])
-HoldTimeoutDelay = 0.1
-HoldDuration = 1.0

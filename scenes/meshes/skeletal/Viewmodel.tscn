@@ -372,10 +372,7 @@ surface_material_override/1 = SubResource("StandardMaterial3D_nis4a")
 process_priority = 1
 root_bone = &"UpperArm.R"
 tip_bone = &"Hand.R"
-target_node = NodePath("RightArmIKTarget")
-
-[node name="RightArmIKTarget" type="Node3D" parent="FPS_Arms/RightArmIK"]
-transform = Transform3D(-1, -8.74228e-08, -6.38378e-15, 0, 2.98023e-08, -1, 8.74228e-08, -1, -2.98023e-08, 0.3, 0, -1)
+target_node = NodePath("../../RightArmIKTarget")
 
 [node name="LeftArmIK" type="SkeletonIK3D" parent="FPS_Arms"]
 process_priority = 1
@@ -383,10 +380,7 @@ root_bone = &"UpperArm.L"
 tip_bone = &"Hand.L"
 use_magnet = true
 magnet = Vector3(1, -1, 0)
-target_node = NodePath("LeftArmIKTarget")
-
-[node name="LeftArmIKTarget" type="Node3D" parent="FPS_Arms/LeftArmIK"]
-transform = Transform3D(-0.5, 0, -0.866025, 0.866025, -4.37114e-08, -0.5, -3.78552e-08, -1, 2.18557e-08, -0.3, 8.74228e-09, -0.9)
+target_node = NodePath("../../LeftArmIKTarget")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../AnimationTree")
@@ -397,3 +391,9 @@ tree_root = SubResource("AnimationRootNode_q82ky")
 anim_player = NodePath("../AnimationPlayer")
 
 [node name="Revolver" parent="." instance=ExtResource("2_dmvdv")]
+
+[node name="RightArmIKTarget" type="Node3D" parent="."]
+transform = Transform3D(-1, -8.74228e-08, -6.38378e-15, 0, 2.98023e-08, -1, 8.74228e-08, -1, -2.98023e-08, 0.3, 0, -1)
+
+[node name="LeftArmIKTarget" type="Node3D" parent="."]
+transform = Transform3D(-0.5, 0, -0.866025, 0.866025, -4.37114e-08, -0.5, -3.78552e-08, -1, 2.18557e-08, -0.3, 8.74228e-09, -0.9)

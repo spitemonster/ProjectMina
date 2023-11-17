@@ -1,14 +1,13 @@
-[gd_scene load_steps=26 format=3 uid="uid://c45weam7tjqmw"]
+[gd_scene load_steps=25 format=3 uid="uid://c45weam7tjqmw"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b5t2"]
-[ext_resource type="Script" path="res://scenes/characters/player_character/PlayerCharacter.cs" id="2_7uq42"]
-[ext_resource type="Script" path="res://scenes/components/interaction/InteractionComponent.cs" id="3_3gtcp"]
-[ext_resource type="PackedScene" uid="uid://b6xw5dr1t71qn" path="res://scenes/meshes/skeletal/Viewmodel.tscn" id="3_730n3"]
+[ext_resource type="Script" path="res://scripts/characters/player_character/PlayerCharacter.cs" id="2_7uq42"]
+[ext_resource type="Script" path="res://scripts/components/interaction/InteractionComponent.cs" id="3_3gtcp"]
 [ext_resource type="PackedScene" uid="uid://lw8xaecvvi5q" path="res://scenes/components/sound/SoundComponent.tscn" id="5_a402o"]
 [ext_resource type="PackedScene" uid="uid://b3rq16aalq4c2" path="res://scenes/components/movement/MovementComponent.tscn" id="8_8i55q"]
-[ext_resource type="Script" path="res://scenes/components/attention/AttentionComponent.cs" id="9_nqsj2"]
+[ext_resource type="Script" path="res://scripts/components/attention/AttentionComponent.cs" id="9_nqsj2"]
 [ext_resource type="PackedScene" uid="uid://cf510k02wbxs4" path="res://scenes/components/equipment_manager/EquipmentManager.tscn" id="9_uaq73"]
-[ext_resource type="Script" path="res://scenes/components/grabbing/GrabbingComponent.cs" id="10_8ufgj"]
+[ext_resource type="Script" path="res://scripts/components/grabbing/GrabbingComponent.cs" id="10_8ufgj"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vqwtx"]
 radius = 0.3
@@ -103,6 +102,39 @@ tracks/6/keys = {
 "points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0, 0.001)
 }
+tracks/7/type = "bezier"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:x")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/8/type = "bezier"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:y")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/9/type = "bezier"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:z")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
 
 [sub_resource type="Animation" id="Animation_yub7w"]
 resource_name = "crouch"
@@ -166,6 +198,41 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id="Animation_tjbfi"]
 resource_name = "head_idle"
+length = 5.0
+loop_mode = 1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0.0523599, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 2.5, 5.1)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 2.5, 5.1)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 2.5, 5.1)
+}
 
 [sub_resource type="Animation" id="Animation_utqba"]
 resource_name = "lean_left"
@@ -242,7 +309,6 @@ min_space = 0.0
 filters = ["CharacterBody/Hips:position:y"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_vih8b"]
-graph_offset = Vector2(-24, 120)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_gqj8v")
 nodes/Animation/position = Vector2(30, 210)
 "nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_wc0nq")
@@ -254,27 +320,19 @@ nodes/crouch/position = Vector2(520, 280)
 nodes/output/position = Vector2(690, 140)
 node_connections = [&"crouch", 0, &"Animation", &"crouch", 1, &"Animation 2"]
 
-[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "AnimationPlayer", "_interactionComponent", "_equipmentManager", "_head", "FocusCast", "_soundComponent", "GC", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterSound", "Eyes", "Chest", "AnimPlayer") instance=ExtResource("1_5b5t2")]
+[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "_equipmentManager", "_head", "GrabComponent", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "Eyes", "Chest", "AnimPlayer") instance=ExtResource("1_5b5t2")]
 collision_layer = 6
 collision_mask = 5
 wall_min_slide_angle = 0.523599
 script = ExtResource("2_7uq42")
 PrimaryCamera = NodePath("CharacterBody/Hips/HeadAnim/Head/PrimaryCamera")
-AnimationPlayer = NodePath("AnimationPlayer")
-_interactionComponent = NodePath("InteractionComponent")
 _equipmentManager = NodePath("EquipmentManager")
 _head = NodePath("CharacterBody/Hips/HeadAnim/Head")
-_inputSensitivity = 0.0025
-FocusCast = NodePath("CharacterBody/Hips/HeadAnim/Head/PrimaryCamera/FocusTrace")
-_carryGrabSpeedMultiplier = 0.2
-_stealthCapsuleHeight = 0.9
-_stealthCapsulePosition = Vector3(0, 10, 0)
-_soundComponent = NodePath("SoundComponent")
-GC = NodePath("GrabbingComponent")
+GrabComponent = NodePath("GrabbingComponent")
+CarryGrabSpeedMultiplier = 1.0
 CharacterAttention = NodePath("AttentionComponent")
 CharacterMovement = NodePath("MovementComponent")
 CharacterInteraction = NodePath("InteractionComponent")
-CharacterSound = NodePath("SoundComponent")
 Eyes = NodePath("CharacterBody/Hips/HeadAnim/Head/Eyes")
 Chest = NodePath("Chest")
 AnimPlayer = NodePath("AnimationPlayer")
@@ -296,10 +354,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 [node name="Eyes" type="Marker3D" parent="CharacterBody/Hips/HeadAnim/Head" index="0"]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="Viewmodel" parent="CharacterBody/Hips/HeadAnim/Head" index="1" instance=ExtResource("3_730n3")]
-visible = false
-
-[node name="PrimaryCamera" type="Camera3D" parent="CharacterBody/Hips/HeadAnim/Head" index="2"]
+[node name="PrimaryCamera" type="Camera3D" parent="CharacterBody/Hips/HeadAnim/Head" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.93391e-06, 0)
 current = true
 
@@ -316,7 +371,7 @@ shape = SubResource("CapsuleShape3D_u7t72")
 [node name="GrabAnchor" type="StaticBody3D" parent="CharacterBody/Hips/HeadAnim/Head/PrimaryCamera" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="FocusTrace" type="ShapeCast3D" parent="CharacterBody/Hips/HeadAnim/Head/PrimaryCamera" index="2"]
+[node name="AttentionCast" type="ShapeCast3D" parent="CharacterBody/Hips/HeadAnim/Head/PrimaryCamera" index="2"]
 unique_name_in_owner = true
 shape = SubResource("SphereShape3D_ywvxe")
 target_position = Vector3(0, 0, -2)
@@ -326,24 +381,12 @@ collide_with_areas = true
 debug_shape_custom_color = Color(0.266667, 0.501961, 1, 1)
 
 [node name="AimTrace" type="ShapeCast3D" parent="CharacterBody/Hips/HeadAnim/Head/PrimaryCamera" index="3"]
-visible = false
 shape = SubResource("SphereShape3D_wd6j7")
 target_position = Vector3(0, 0, -100)
 collision_mask = 255
 
-[node name="SpotLight3D" type="SpotLight3D" parent="CharacterBody/Hips/HeadAnim/Head/PrimaryCamera" index="4"]
-transform = Transform3D(1, 0, -2.13163e-14, 0, 1, 0, 2.13163e-14, 0, 1, 0.170356, -0.114714, 0.0912258)
-visible = false
-shadow_enabled = true
-spot_range = 10.0
-spot_angle = 17.4208
-
-[node name="InteractionComponent" type="Node" parent="." index="2" node_paths=PackedStringArray("_interactionCollision")]
+[node name="InteractionComponent" type="Node" parent="." index="2"]
 script = ExtResource("3_3gtcp")
-_interactionCollision = NodePath("../CharacterBody/Hips/HeadAnim/Head/PrimaryCamera/FocusCollision")
-
-[node name="HealthComponent" parent="." index="3"]
-script = null
 
 [node name="SoundComponent" parent="." index="4" instance=ExtResource("5_a402o")]
 visible = false
@@ -389,6 +432,8 @@ linear_limit_z/enabled = false
 script = ExtResource("10_8ufgj")
 GrabJoint = NodePath("../GrabJoint")
 GrabAnchor = NodePath("../CharacterBody/Hips/HeadAnim/Head/PrimaryCamera/GrabAnchor")
+GrabStrength = 50.0
 
-[node name="AttentionComponent" type="Node" parent="." index="12"]
+[node name="AttentionComponent" type="Node" parent="." index="12" node_paths=PackedStringArray("AttentionCast")]
 script = ExtResource("9_nqsj2")
+AttentionCast = NodePath("../CharacterBody/Hips/HeadAnim/Head/PrimaryCamera/AttentionCast")

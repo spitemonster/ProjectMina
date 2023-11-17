@@ -2,7 +2,6 @@ using Godot;
 
 namespace ProjectMina;
 
-[GlobalClass]
 public partial class Enums : GodotObject
 {
 

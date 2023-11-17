@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bycj2qoglbpn1"]
+
+[ext_resource type="Script" path="res://scripts/components/ai/patrol_path/PatrolPathComponent.cs" id="1_58uf2"]
+
+[node name="PatrolPath" type="Node3D" node_paths=PackedStringArray("patrolPoints")]
+script = ExtResource("1_58uf2")
+patrolPoints = [null]

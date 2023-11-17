@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://c8chdv8jtto08" path="res://assets/models/Paladin_Paladin_diffuse.png" id="1_htyra"]
 [ext_resource type="Texture2D" uid="uid://b13211571kc1h" path="res://assets/models/Paladin_Paladin_normal.png" id="2_2m225"]
 [ext_resource type="AnimationLibrary" uid="uid://bjqhlofwf4wi6" path="res://assets/models/BasicLocomotion.res" id="4_a6adc"]
-[ext_resource type="Script" path="res://scenes/components/movement/MovementComponent.cs" id="6_lthvu"]
+[ext_resource type="Script" path="res://scripts/components/movement/MovementComponent.cs" id="6_lthvu"]
 [ext_resource type="Script" path="res://scenes/components/health/HealthComponent.cs" id="7_0ecbv"]
 [ext_resource type="Script" path="res://scenes/components/ai_hearing/AIHearingComponent.cs" id="7_qwcd7"]
 [ext_resource type="Script" path="res://scenes/components/behavior_tree/core/behavior_tree/BehaviorTreeComponent.cs" id="10_omacv"]
@@ -16,7 +16,7 @@
 [ext_resource type="Script" path="res://scenes/components/behavior_tree/actions/Wait.cs" id="16_pa8ey"]
 [ext_resource type="Script" path="res://scenes/components/ai_brain/AIBrainComponent.cs" id="17_s4wim"]
 [ext_resource type="Script" path="res://scenes/components/ai_sight/AISightComponent.cs" id="18_d56lo"]
-[ext_resource type="Script" path="res://scenes/components/attention/AttentionComponent.cs" id="20_fyeya"]
+[ext_resource type="Script" path="res://scripts/components/attention/AttentionComponent.cs" id="20_fyeya"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wsm1g"]
 radius = 0.2
