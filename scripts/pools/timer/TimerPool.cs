@@ -53,8 +53,6 @@ public partial class TimerPool : PoolBase
 
 	public override void _Ready()
 	{
-		
-		EnableDebug = true;
 		for (var i = 0; i < PoolSize; i++)
 		{
 			Timer t = new()

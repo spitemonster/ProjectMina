@@ -5,7 +5,6 @@ namespace ProjectMina;
 
 public partial class MainMenu : Control
 {
-	private InputManager _inputManager;
 	private bool _isShown;
 
 	public bool IsShown { get; }
@@ -18,12 +17,7 @@ public partial class MainMenu : Control
 	public override void _Ready()
 	{
 		_isShown = Visible;
-
-		if (GetNode("/root/InputManager") is InputManager i)
-		{
-			_inputManager = i;
-		}
-
+		
 		if (_returnButton != null)
 		{
 			_returnButton.Pressed += ToggleMainMenu;
@@ -53,7 +47,7 @@ public partial class MainMenu : Control
 	{
 		_isShown = !_isShown;
 		Visible = _isShown;
-		Global.Data.MainScene.SetPause(_isShown);
-		InputManager.SetMouseCapture(!_isShown);
+		PlayerInput.Manager.SetPause(_isShown);
+		PlayerInput.Manager.SetMouseCapture(!_isShown);
 	}
 }

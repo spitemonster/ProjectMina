@@ -28,7 +28,6 @@ public partial class PlayerCharacter : CharacterBase
 	private bool _isStealthMode = false;
 	private float _defaultCapsuleHeight;
 	private Vector3 _defaultCapsulePosition;
-	private InputManager _inputManager;
 
 	private Godot.Collections.Array<Rid> x = new();
 	public override void _Ready()
@@ -39,30 +38,28 @@ public partial class PlayerCharacter : CharacterBase
 		Global.Data.Player = this;
 
 		x.Add(GetRid());
-		
-		// ensure there is an input manager before binding events to it
-		if (GetNode("/root/InputManager") is InputManager m)
-		{
-			_inputManager = m;
-			_inputManager.MouseMove += HandleMouseMove;
 
-			_inputManager.ActionPressed += OnActionPressed;
-			_inputManager.ActionReleased += OnActionReleased;
-			_inputManager.ActionHoldStarted += OnActionHoldStarted;
-			_inputManager.ActionHoldCompleted += OnActionHoldCompleted;
-			_inputManager.ActionHoldCanceled += OnActionHoldCanceled;
-			CharacterMovement.SneakStarted += StartStealth;
-			CharacterMovement.SneakEnded += EndStealth;
+		CallDeferred("InitEvents");		
 
-			AnimPlayer?.Play("head_idle");
-		}
-
+		AnimPlayer?.Play("head_idle");
 		CharacterAttention?.AddExclude(this);
 		
 		// get our default capsule settings for crouching
 		var bodyCapsule = (CapsuleShape3D)CharacterBody.Shape;
 		_defaultCapsuleHeight = bodyCapsule.Height;
 		_defaultCapsulePosition = CharacterBody.Position;
+	}
+
+	private void InitEvents()
+	{
+		PlayerInput.Manager.MouseMove += HandleMouseMove;
+		PlayerInput.Manager.ActionPressed += OnActionPressed;
+		PlayerInput.Manager.ActionReleased += OnActionReleased;
+		PlayerInput.Manager.ActionHoldStarted += OnActionHoldStarted;
+		PlayerInput.Manager.ActionHoldCompleted += OnActionHoldCompleted;
+		PlayerInput.Manager.ActionHoldCanceled += OnActionHoldCanceled;
+		CharacterMovement.SneakStarted += StartStealth;
+		CharacterMovement.SneakEnded += EndStealth;
 	}
 
 	private void OnActionPressed(StringName action)
@@ -97,7 +94,7 @@ public partial class PlayerCharacter : CharacterBase
 			    CharacterInteraction.CanInteract(CharacterAttention.CurrentFocus))
 			{
 				CharacterInteraction.Interact(CharacterAttention.CurrentFocus);
-				_inputManager.ClearActionHold(action);
+				PlayerInput.Manager.ClearActionHold(action);
 			}
 
 		}
@@ -207,7 +204,7 @@ public partial class PlayerCharacter : CharacterBase
 			r.ApplyImpulse(-collision3D.GetNormal() * 0.01f * angleFactor, collision3D.GetPosition());
 		}
 
-		var controlInput = InputManager.GetInputDirection();
+		var controlInput = PlayerInput.GetInputDirection();
 		var direction = (GlobalTransform.Basis * new Vector3(controlInput.X, 0, controlInput.Y)).Normalized();
 		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, spaceState);
 

@@ -25,11 +25,11 @@ boot_splash/use_filter=false
 Dev="*res://_dev/singletons/Dev.cs"
 DebugDraw="*res://addons/debug_drawing/DebugDraw.cs"
 Global="*res://scripts/singletons/Global.cs"
-InputManager="*res://scripts/singletons/InputManager.cs"
 Trace="*res://scripts/singletons/Trace.cs"
 TimerPool="*res://scripts/pools/timer/TimerPool.cs"
 AudioPlayerPool="*res://scripts/pools/audio_player/AudioPlayerPool.cs"
 AudioStreamPool="*res://scripts/pools/audio_stream/AudioStreamPool.cs"
+PlayerInput="*res://scripts/singletons/PlayerInput.cs"
 
 [debug]
 

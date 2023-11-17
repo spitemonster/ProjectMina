@@ -6,13 +6,17 @@
 [ext_resource type="PackedScene" uid="uid://waxi0ov75vye" path="res://ui/MainMenu.tscn" id="4_hgum0"]
 [ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://ui/PlayerHUD.tscn" id="5_o2pxt"]
 
-[node name="Control" type="Control"]
+[node name="Control" type="Control" node_paths=PackedStringArray("LevelSlot")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_i74qh")
+EnableDebug = true
+LevelSlot = NodePath("SubViewportContainer/SubViewport/LevelSlot")
+StartingLevel = ExtResource("2_vgw6j")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
 layout_mode = 1
@@ -37,15 +41,9 @@ audio_listener_enable_3d = true
 size = Vector2i(274, 154)
 render_target_update_mode = 4
 
-[node name="MainScene" type="Node3D" parent="SubViewportContainer/SubViewport" node_paths=PackedStringArray("_levelSlot")]
-unique_name_in_owner = true
-script = ExtResource("1_i74qh")
-_levelSlot = NodePath("LevelSlot")
-_startingLevel = ExtResource("2_vgw6j")
+[node name="LevelSlot" type="Node3D" parent="SubViewportContainer/SubViewport"]
 
-[node name="LevelSlot" type="Node3D" parent="SubViewportContainer/SubViewport/MainScene"]
-
-[node name="PlayerCharacter" parent="SubViewportContainer/SubViewport/MainScene" instance=ExtResource("3_ofqq3")]
+[node name="PlayerCharacter" parent="SubViewportContainer/SubViewport/LevelSlot" instance=ExtResource("3_ofqq3")]
 
 [node name="UI" type="CanvasLayer" parent="."]
 

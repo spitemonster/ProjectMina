@@ -1,68 +1,71 @@
 using Godot;
-using System;
+
 
 namespace ProjectMina
 {
-	public partial class MainScene : Node3D
+	public partial class MainScene : Control
 	{
 
-		[Export] protected Node3D _levelSlot;
+		[Export] protected bool EnableDebug = false;
+		[Export] protected Node3D LevelSlot;
+		[Export] protected Resource StartingLevel;
+		
+		public LevelBase CurrentLevel { get; private set; }
 
-		[Export] protected Resource _startingLevel;
+		public bool LoadLevel(Resource level)
+		{
+			if (LevelSlot == null || level == null)
+			{
+				if (EnableDebug) GD.PushError("Main scene missing slot or level is null");
+				return false;
+			}
 
-		private InputManager _inputManager;
-		public LevelBase CurrentLevel { get; protected set; }
+			if (!UnloadCurrentLevel())
+			{
+				if (EnableDebug) GD.PushError("Main scene failed unloading the current level");
+			}
 
+			PackedScene levelScene = GD.Load<PackedScene>(level.ResourcePath);
+
+			if (levelScene.Instantiate() is LevelBase l)
+			{
+				LevelSlot.AddChild(l);
+				CurrentLevel = l;
+				Global.Data.CurrentLevel = CurrentLevel;
+				return true;
+			}
+			else
+			{
+				if (EnableDebug) GD.PushError("Attempted to load a non LevelBase level with the main scene.");
+				return false;
+			}
+		}
+		
 		public override void _Ready()
 		{
 			Global.Data.MainScene = this;
 
-			if (GetNode("/root/InputManager") is InputManager m)
-			{
-				_inputManager = m;
-			}
+			PlayerInput.Manager.SetMouseCapture(true);
 
-			InputManager.SetMouseCapture(true);
-
-			LoadLevel(_startingLevel);
+			LoadLevel(StartingLevel);
 		}
 
-		public void SetPause(bool shouldPause)
+		private bool UnloadCurrentLevel()
 		{
-			GetTree().Paused = shouldPause;
-		}
-
-		public void LoadLevel(Resource inLevelResource)
-		{
-			System.Diagnostics.Debug.Assert(_levelSlot != null, "No level slot.");
-
-			UnloadCurrentLevel();
-
-			PackedScene scene = GD.Load<PackedScene>(inLevelResource.ResourcePath);
-
-			if (scene.Instantiate() is LevelBase sceneInstance)
+			if (!IsInstanceValid(CurrentLevel) && CurrentLevel != null)
 			{
-				CurrentLevel = sceneInstance;
-				_levelSlot.AddChild(CurrentLevel);
-
-				Global.Data.CurrentLevel = sceneInstance;
+				if (EnableDebug) GD.PushError("Attempted to unload an invalid level from main scene.");
+				return false;
 			}
-			else
-			{
 
-			}
-		}
-
-		private void UnloadCurrentLevel()
-		{
-			if (!IsInstanceValid(CurrentLevel))
+			if (CurrentLevel != null)
 			{
-				return;
+				LevelSlot.RemoveChild(CurrentLevel);
+				CurrentLevel.QueueFree();
+				CurrentLevel = null;
 			}
 			
-			_levelSlot.RemoveChild(CurrentLevel);
-			CurrentLevel.QueueFree();
-			CurrentLevel = null;
+			return true;
 		}
 	}
 }
