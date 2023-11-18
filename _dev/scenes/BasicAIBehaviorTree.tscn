@@ -1,0 +1,35 @@
+[gd_scene load_steps=7 format=3 uid="uid://d0223p0875vc3"]
+
+[ext_resource type="Script" path="res://scripts/components/behavior_tree/core/behavior_tree/BehaviorTreeComponent.cs" id="1_groht"]
+[ext_resource type="Script" path="res://scripts/components/behavior_tree/core/Sequence.cs" id="2_24itu"]
+[ext_resource type="Script" path="res://scripts/components/behavior_tree/conditions/BlackboardNull.cs" id="3_mb12n"]
+[ext_resource type="Script" path="res://scripts/components/behavior_tree/actions/FindRandomTargetPositionInRadius.cs" id="4_aogn6"]
+[ext_resource type="Script" path="res://scripts/components/behavior_tree/actions/MoveToTargetPosition.cs" id="5_xrko6"]
+[ext_resource type="Script" path="res://scripts/components/behavior_tree/actions/Wait.cs" id="6_xyipg"]
+
+[node name="BehaviorTree" type="Node" node_paths=PackedStringArray("_blackboard")]
+process_mode = 4
+script = ExtResource("1_groht")
+IsActive = false
+_blackboard = NodePath("")
+
+[node name="Sequence" type="Node" parent="."]
+script = ExtResource("2_24itu")
+_debug = true
+
+[node name="BlackboardNull" type="Node" parent="Sequence"]
+script = ExtResource("3_mb12n")
+BlackboardKey = "current_focus"
+
+[node name="FindRandomTargetPositionInRadius" type="Node" parent="Sequence/BlackboardNull"]
+script = ExtResource("4_aogn6")
+_debug = true
+
+[node name="MoveToTargetPosition" type="Node" parent="Sequence"]
+script = ExtResource("5_xrko6")
+_debug = true
+
+[node name="Wait" type="Node" parent="Sequence"]
+script = ExtResource("6_xyipg")
+WaitTime = 3.0
+_debug = true

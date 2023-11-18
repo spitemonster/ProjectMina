@@ -3,16 +3,23 @@ using Godot.Collections;
 
 namespace ProjectMina;
 
+[Tool]
+[GlobalClass]
 public partial class BlackboardComponent : ComponentBase
 {
-	[Signal] public delegate void ValueChangedEventHandler(string key, Variant newValue);
+	[Signal] public delegate void ValueChangedEventHandler(StringName key, Variant newValue);
 	[Export] public Resource Blackboard;
 
-	public Array<string> Keys = new();
+	public Array<StringName> Keys = new();
 
-	private Dictionary<string, Variant> _blackboard = new();
+	private Dictionary<StringName, Variant> _blackboard = new();
+	
+	public Dictionary<StringName, Variant> GetBlackboard()
+	{
+		return _blackboard.Duplicate();
+	}
 
-	public bool ValueEqual(string key, Variant compare)
+	public bool ValueEqual(StringName key, Variant compare)
 	{
 		Variant v = GetValue(key);
 
@@ -24,14 +31,14 @@ public partial class BlackboardComponent : ComponentBase
 		return true;
 	}
 
-	public bool TypeEqual(string key, Variant compare)
+	public bool TypeEqual(StringName key, Variant compare)
 	{
 		Variant v = GetValue(key);
 
 		return !((bool)v == false || GetValueType(key) != compare.GetType());
 	}
 
-	public bool HasValue(string key)
+	public bool HasValue(StringName key)
 	{
 		bool hasValue = _blackboard.ContainsKey(key);
 
@@ -43,7 +50,7 @@ public partial class BlackboardComponent : ComponentBase
 		return hasValue;
 	}
 
-	public Variant GetValue(string key)
+	public Variant GetValue(StringName key)
 	{
 		if (!HasValue(key))
 		{
@@ -53,7 +60,7 @@ public partial class BlackboardComponent : ComponentBase
 		return _blackboard[key];
 	}
 
-	public System.Type GetValueType(string key)
+	public System.Type GetValueType(StringName key)
 	{
 		if (!HasValue(key))
 		{
@@ -63,7 +70,7 @@ public partial class BlackboardComponent : ComponentBase
 		return GetValue(key).GetType();
 	}
 
-	public bool SetValue(string key, Variant value)
+	public bool SetValue(StringName key, Variant value)
 	{
 		// ensure our data contains the correct key, the types are the same and the value currently there is not the same as what is being submitted
 		if (!HasValue(key) || _blackboard[key].GetType() != value.GetType() || _blackboard[key].Equals(value))
@@ -76,7 +83,7 @@ public partial class BlackboardComponent : ComponentBase
 		return true;
 	}
 
-	public bool EraseValue(string key)
+	public bool EraseValue(StringName key)
 	{
 		if (!HasValue(key))
 		{
@@ -107,9 +114,9 @@ public partial class BlackboardComponent : ComponentBase
 
 		foreach (var key in _blackboard.Keys)
 		{
-			if (key is not string)
+			if (key is not null)
 			{
-				warnings.Add("Blackboard keys must be of type string.");
+				warnings.Add("Blackboard keys must be of type StringName.");
 				break;
 			}
 		}

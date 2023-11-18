@@ -7,9 +7,10 @@
 [node name="LevelBase" type="Node3D"]
 script = ExtResource("1_2guyt")
 
+[node name="PlayerStart" type="Marker3D" parent="."]
+unique_name_in_owner = true
+
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_o7sw1")
-
-[node name="PlayerStart" type="Marker3D" parent="NavigationRegion3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]

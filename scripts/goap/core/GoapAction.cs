@@ -2,9 +2,9 @@ using Godot;
 using Godot.Collections;
 
 namespace ProjectMina.Goap;
-[Tool]
+
 [GlobalClass]
-public partial class Action : Node
+public partial class GoapAction : Node
 {
 	public virtual bool IsValid(Dictionary<string, Variant> worldState)
 	{

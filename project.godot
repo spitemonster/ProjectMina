@@ -30,6 +30,7 @@ TimerPool="*res://scripts/pools/timer/TimerPool.cs"
 AudioPlayerPool="*res://scripts/pools/audio_player/AudioPlayerPool.cs"
 AudioStreamPool="*res://scripts/pools/audio_stream/AudioStreamPool.cs"
 PlayerInput="*res://scripts/singletons/PlayerInput.cs"
+GoapPlanner="*res://scripts/goap/core/singletons/GoapPlanner.cs"
 
 [debug]
 
@@ -37,8 +38,8 @@ file_logging/enable_file_logging=true
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
+window/size/viewport_width=2560
+window/size/viewport_height=1440
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/stretch/scale=0.5

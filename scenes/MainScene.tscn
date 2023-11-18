@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://waxi0ov75vye" path="res://ui/MainMenu.tscn" id="4_hgum0"]
 [ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://ui/PlayerHUD.tscn" id="5_o2pxt"]
 
-[node name="Control" type="Control" node_paths=PackedStringArray("LevelSlot")]
+[node name="MainScene" type="Control" node_paths=PackedStringArray("LevelSlot")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -15,10 +15,10 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_i74qh")
 EnableDebug = true
-LevelSlot = NodePath("SubViewportContainer/SubViewport/LevelSlot")
+LevelSlot = NodePath("MainViewportContainer/MainViewport/LevelSlot")
 StartingLevel = ExtResource("2_vgw6j")
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+[node name="MainViewportContainer" type="SubViewportContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,7 +30,7 @@ size_flags_vertical = 6
 stretch = true
 stretch_shrink = 7
 
-[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+[node name="MainViewport" type="SubViewport" parent="MainViewportContainer"]
 handle_input_locally = false
 screen_space_aa = 1
 use_debanding = true
@@ -38,12 +38,12 @@ use_occlusion_culling = true
 canvas_item_default_texture_filter = 0
 audio_listener_enable_2d = true
 audio_listener_enable_3d = true
-size = Vector2i(274, 154)
+size = Vector2i(365, 205)
 render_target_update_mode = 4
 
-[node name="LevelSlot" type="Node3D" parent="SubViewportContainer/SubViewport"]
+[node name="LevelSlot" type="Node3D" parent="MainViewportContainer/MainViewport"]
 
-[node name="PlayerCharacter" parent="SubViewportContainer/SubViewport/LevelSlot" instance=ExtResource("3_ofqq3")]
+[node name="PlayerCharacter" parent="MainViewportContainer/MainViewport/LevelSlot" instance=ExtResource("3_ofqq3")]
 
 [node name="UI" type="CanvasLayer" parent="."]
 

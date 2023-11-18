@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GoapGoalBase" load_steps=2 format=3 uid="uid://5c4rkyrs8fx8"]
+
+[ext_resource type="Script" path="res://scripts/goap/core/GoapGoalBase.cs" id="1_arxbr"]
+
+[resource]
+script = ExtResource("1_arxbr")
+GoalName = &"current_health"
+BaseDesiredValue = [100.0]
+BasePriority = 1.0

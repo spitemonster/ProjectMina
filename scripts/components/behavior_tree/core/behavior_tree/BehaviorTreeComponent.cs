@@ -39,12 +39,13 @@ public partial class BehaviorTreeComponent : ComponentBase
 
 	public override async void _Process(double delta)
 	{
-		base._Process(delta);
 		if (!IsActive || _root == null || _character == null || _blackboard == null)
 		{
 			SetProcess(false);
 			return;
 		}
+		
+		base._Process(delta);
 
 		Task tickAction = _root.Tick(_character, _blackboard);
 

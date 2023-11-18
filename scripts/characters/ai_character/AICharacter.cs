@@ -30,11 +30,6 @@ public partial class AICharacter : CharacterBase
 
 	public Node3D _dtc;
 
-	public override void Attack()
-	{
-		base.Attack();
-	}
-
 	public override void _Ready()
 	{
 		base._Ready();
@@ -74,47 +69,63 @@ public partial class AICharacter : CharacterBase
 		Vector3 lookTarget = new();
 		Vector3 targetMovementPosition = new();
 
-		if (Brain.GetCurrentFocus() != null && Brain.GetCurrentFocus() is Node3D n)
-		{
-			direction = (n.GlobalPosition - GlobalPosition).Normalized();
-			targetMovementPosition = n.GlobalPosition;
-			lookTarget = n.GlobalPosition;
-		}
-		else if (Brain.GetTargetPosition() != Vector3.Zero)
-		{
-			direction = (Brain.GetTargetPosition() - GlobalPosition).Normalized();
-			targetMovementPosition = Brain.GetTargetPosition();
-			lookTarget = Brain.GetTargetPosition();
+		// this should be moved to the brain component rather than the character somehow
+		// if (Brain.GetCurrentFocus() != null && Brain.GetCurrentFocus() is Node3D n)
+		// {
+		// 	direction = (n.GlobalPosition - GlobalPosition).Normalized();
+		// 	targetMovementPosition = n.GlobalPosition;
+		// 	lookTarget = n.GlobalPosition;
+		// }
+		// else if (Brain.GetTargetPosition() != Vector3.Zero)
+		// {
+		// 	direction = (Brain.GetTargetPosition() - GlobalPosition).Normalized();
+		// 	targetMovementPosition = Brain.GetTargetPosition();
+		// 	lookTarget = Brain.GetTargetPosition();
+		//
+		// 	if (Brain.GetTargetPosition() != Brain.NavigationAgent.TargetPosition)
+		// 	{
+		// 		Brain.NavigationAgent.TargetPosition = Brain.GetTargetPosition();
+		// 	}
+		// }
+		// else
+		// {
+		// 	GD.Print("nope");
+		// }
+		
+		// for (var i = 0; i < GetSlideCollisionCount(); i++)
+		// {
+		// 	KinematicCollision3D collision3D = GetSlideCollision(i);
+		// 	if (collision3D.GetCollider() is not RigidBody3D r || !IsOnFloor()) continue;
+		// 	
+		// 	var directionToCollision = (r.GlobalPosition - CharacterBody.GlobalPosition).Normalized();
+		// 	var angleToCollision = new Vector3(0.0f, -1.0f, 0.0f).AngleTo(directionToCollision);
+		// 	var angleFactor = Mathf.Clamp(Mathf.Pow(angleToCollision, 2), 0.0f, 1.0f);
+		// 	angleFactor = Mathf.Round(angleFactor * 100) / 100;
+		//
+		// 	if (!(angleFactor > 0.5)) continue;
+		// 	
+		// 	r.ApplyCentralImpulse(-collision3D.GetNormal() * 4.0f * angleFactor);
+		// 	r.ApplyImpulse(-collision3D.GetNormal() * 0.01f * angleFactor, collision3D.GetPosition());
+		// }
 
-			if (Brain.GetTargetPosition() != Brain.NavigationAgent.TargetPosition)
-			{
-				Brain.NavigationAgent.TargetPosition = Brain.GetTargetPosition();
-			}
-		}
-		else
-		{
-			GD.Print("nope");
-		}
+		// float dist = (targetMovementPosition - GlobalPosition).Length();
+		// float brakingDist = 2.0f;
+		// float mult = Mathf.Clamp((dist / brakingDist), 0.0f, 1.0f);
 
-		float dist = (targetMovementPosition - GlobalPosition).Length();
-		float brakingDist = 2.0f;
-		float mult = Mathf.Clamp((dist / brakingDist), 0.0f, 1.0f);
-
-		mult = 1.0f;
+		var mult = 1.0f;
 
 		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, GetWorld3D().DirectSpaceState) * mult;
-
-		Transform3D t = GlobalTransform;
+		_animationTree.Set("parameters/test/blend_position", Velocity.Length());
+		
+		var t = GlobalTransform;
 		t = t.InterpolateWith(t.LookingAt(lookTarget, Vector3.Up), 0.05f);
 		GlobalTransform = t;
 
-		Vector3 gr = GlobalRotation;
+		var gr = GlobalRotation;
 		gr.X = 0;
 		gr.Z = 0;
 		GlobalRotation = gr;
 		MoveAndSlide();
-
-		_animationTree.Set("parameters/Transition/transition_request", MovementComponent.Moving ? "moving" : "idle");
 	}
 
 	private void SetVelocity(Vector3 safeVelocity)

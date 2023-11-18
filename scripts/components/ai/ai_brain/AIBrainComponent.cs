@@ -35,7 +35,11 @@ public partial class AIBrainComponent : ControllerComponent
 
 	public override void _Ready()
 	{
-		base._Ready();
+		if (!Active)
+		{
+			return;
+		}
+		
 		// all these components are required for the ai brain to function, so pitch a fit right a way
 		if (EnableDebug)
 		{
@@ -53,6 +57,13 @@ public partial class AIBrainComponent : ControllerComponent
 			SetPhysicsProcess(false);
 			return;
 		}
+		
+		if (Blackboard == null)
+		{
+			return;
+		}
+		
+		base._Ready();
 
 		Pawn = GetOwner<CharacterBase>();
 

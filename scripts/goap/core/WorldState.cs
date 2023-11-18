@@ -5,19 +5,19 @@ namespace ProjectMina.Goap;
 
 public partial class WorldState : GodotObject
 {
-	[Export] public Dictionary<string, Variant> Properties { get; protected set; } = new();
+	[Export] public Dictionary<StringName, Variant> Properties { get; protected set; } = new();
 
-	public Variant GetProperty(string propertyName)
+	public Variant GetProperty(StringName propertyName)
 	{
 		return Properties[propertyName];
 	}
 
-	public bool HasProperty(string propertyName)
+	public bool HasProperty(StringName propertyName)
 	{
 		return Properties.ContainsKey(propertyName);
 	}
 
-	public void Initialize(Dictionary<string, Variant> props)
+	public void Initialize(Dictionary<StringName, Variant> props)
 	{
 		Properties = props;
 	}
