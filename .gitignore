@@ -1,6 +1,6 @@
 # Godot 4+ specific ignores
 .godot/
-/assets/
+/resources/**/*[.wav,.png,.jpg,.blend,.gltf,.fbx,.glb]
 /addons/
 /_dev/assets
 export.cfg

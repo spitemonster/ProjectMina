@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="AudioStreamPoolSettings" load_steps=9 format=3 uid="uid://bs6s1n165hsr7"]
+
+[ext_resource type="AudioStream" uid="uid://5i0ejd03tq0k" path="res://resources/audio/wood_hit_6_16_44.wav" id="1_pwwug"]
+[ext_resource type="Script" path="res://scripts/resources/settings/AudioStreamPoolSettings.cs" id="1_r882u"]
+[ext_resource type="AudioStream" uid="uid://bh2yicb3dtjib" path="res://resources/audio/wood_hit_3_16_44.wav" id="2_ddct2"]
+[ext_resource type="AudioStream" uid="uid://cndepek4soem" path="res://resources/audio/wood_hit_2_16_44.wav" id="2_jk5i8"]
+[ext_resource type="AudioStream" uid="uid://c07c3usvi4m0c" path="res://resources/audio/wood_hit_1_16_44.wav" id="3_yk3c1"]
+[ext_resource type="AudioStream" uid="uid://bkegrn8fnbfvc" path="res://resources/audio/wood_hit_4_16_44.wav" id="4_7881x"]
+[ext_resource type="AudioStream" uid="uid://be6w6mehfe67o" path="res://resources/audio/wood_hit_5_16_44.wav" id="5_7wuvh"]
+[ext_resource type="AudioStream" uid="uid://bb45yka7k3q7k" path="res://resources/audio/wood_hit_7_16_44.wav" id="7_ljwgu"]
+
+[resource]
+script = ExtResource("1_r882u")
+StreamCategories = {
+"impact_soft_wood": [ExtResource("3_yk3c1"), ExtResource("2_jk5i8"), ExtResource("2_ddct2"), ExtResource("4_7881x"), ExtResource("5_7wuvh"), ExtResource("1_pwwug"), ExtResource("7_ljwgu")]
+}
+OffsetTimeout = 0.025
