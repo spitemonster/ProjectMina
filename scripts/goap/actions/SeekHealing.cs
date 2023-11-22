@@ -12,7 +12,7 @@ public partial class SeekHealing : GoapActionBase
         {
             GD.Print("actor sought healing and found it");
             agent.Blackboard.SetValue("healing_located", true);
-            agent.Blackboard.SetValue("healing_location", agent.Healing.GlobalPosition);
+            agent.Blackboard.SetValue("healing_position", agent.Healing.GlobalPosition);
             return ActionStatus.Succeeded;
         }
         

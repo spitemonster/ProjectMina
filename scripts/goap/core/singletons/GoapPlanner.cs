@@ -86,8 +86,44 @@ public partial class GoapPlanner : Node
 			GD.Print("Agent no available actions");
 			return plan;
 		}
+
 		
-		GoapActionBase action = _FindAction(agent, goal, localWs);
+
+		int planStepCap = 5;
+		int currentPlanStep = 0;
+		bool hasNextStep = true;
+		GoapGoalBase currentGoal = goal;
+		
+		while (hasNextStep && currentPlanStep < planStepCap)
+		{
+			GD.Print("CURRENT GOAL: ", currentGoal.GoalName, " IS NOT SATISFIED. SEARCHING FOR ACTION.");
+			GoapActionBase action = _FindAction(agent, currentGoal, localWs);
+			GD.Print("selected action: ", action.Name);
+			plan.Insert(0, action);
+			localWs[action.GetEffects().Keys.First()] = action.GetEffects().Values.First();
+			
+			if (action.GetPreconditions().Keys.Count > 0)
+			{
+				GD.Print("action has precondition");
+				
+			
+				currentGoal = new()
+				{
+					GoalName = action.GetPreconditions().Keys.First(),
+					BaseDesiredValue = new() { action.GetPreconditions().Values.First() }
+				};
+				currentPlanStep++;	
+			}
+			else
+			{
+				GD.Print("action has no precondition");
+				hasNextStep = false;
+			}
+		}
+		
+		GD.Print("GOAL FINALLY SATISFIED");
+		GD.Print("plan: ", plan);
+		
 		
 		// Dictionary<StringName, Variant> localGoalWs = localWs.Duplicate();
 		// localGoalWs[goal.GoalName] = goal.DesiredValue(localWs);
@@ -123,8 +159,7 @@ public partial class GoapPlanner : Node
 		// 	GD.Print("we are not aligned");
 		// }
 
-		// return plan;
-		return new();
+		return plan;
 	}
 
 	private GoapActionBase _FindAction(GoapAgentComponent agent, GoapGoalBase goal, Dictionary<StringName, Variant> worldState)
@@ -140,7 +175,7 @@ public partial class GoapPlanner : Node
 			GD.Print("    goal satisfied by action: ", goal.Satisfied(action.GetEffects()));
 			GD.Print("    action is valid: ", action.IsValid(agent, worldState));
 			
-			if (goal.Satisfied(action.GetEffects()) && action.IsValid(agent, worldState))
+			if (goal.Satisfied(action.GetEffects()))
 			{
 				GD.Print("seeking action and selected ", action.Name, " to satisfy ", goal.GoalName);
 				return action;

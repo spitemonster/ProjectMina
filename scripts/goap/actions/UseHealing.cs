@@ -27,6 +27,7 @@ public partial class UseHealing : GoapActionBase
     {
         agent.Blackboard.SetValue("current_health", 100.0f);
         agent.Blackboard.SetValue("healing_located", false);
+        agent.Blackboard.SetValue("healing_reached", false);
         GD.Print("character healed");
         return ActionStatus.Succeeded;
     }

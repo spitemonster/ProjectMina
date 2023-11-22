@@ -85,10 +85,13 @@ public partial class GoapAgentComponent : ComponentBase
 			_currentPlanRequest = GoapPlanner.Instance.RequestPlan(this, GetCurrentHighestPriorityGoal());
 			return;
 		}
+
+		Dictionary<StringName, Variant> ws = GoapPlanner.Instance.WorldState;
+		ws.Merge(GetState(), true);
 		
 		GD.Print("running action: ", CurrentPlan[0].Name);
 
-		if (CurrentPlan[0].Run(this, GoapPlanner.Instance.WorldState) == GoapActionBase.ActionStatus.Succeeded)
+		if (CurrentPlan[0].Run(this, ws) == GoapActionBase.ActionStatus.Succeeded)
 		{
 			CurrentPlan.RemoveAt(0);
 			GD.Print("action completed successfully");
