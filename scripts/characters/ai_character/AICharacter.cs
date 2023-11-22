@@ -29,19 +29,20 @@ public partial class AICharacter : CharacterBase
 	[Export] protected BehaviorTreeComponent _behaviorTree;
 
 	public Node3D _dtc;
+	
+	private Vector3 _direction = new();
+	private Vector3 _lookTarget = new();
 
 	public override void _Ready()
 	{
 		base._Ready();
-
-		Brain.NavigationAgent.DebugEnabled = true;
-
+		
 		System.Diagnostics.Debug.Assert(Brain != null, "no brain component");
 		System.Diagnostics.Debug.Assert(Brain.NavigationAgent != null, "No navigation agent");
 		System.Diagnostics.Debug.Assert(MovementComponent != null, "No movement component");
-
-		// Brain.NavigationAgent.VelocityComputed += SetVelocity;
-
+		
+		Brain.NavigationAgent.DebugEnabled = true;
+		
 		CharacterHealth.HealthChanged += (double newHealth, bool wasDamage) =>
 		{
 			Dev.UI.PushDevNotification("AI character health changed: " + newHealth);
@@ -51,33 +52,21 @@ public partial class AICharacter : CharacterBase
 		CharacterMovement.EnableJumping = false;
 		CharacterMovement.EnableSneaking = false;
 
-		Brain.NavigationAgent.AvoidanceEnabled = false;
-
 		_dtc = GetNodeOrNull<Node3D>("%dtc");
+		
+		Brain.NavigationAgent.VelocityComputed += SetVelocity;
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		base._PhysicsProcess(delta);
-
-		if (!_behaviorTree.Started && !Engine.IsEditorHint())
-		{
-			_behaviorTree.Start();
-		}
-
-		Vector3 direction = new();
-		Vector3 lookTarget = new();
-		Vector3 targetMovementPosition = Brain.NavigationAgent.TargetPosition;
-
-		direction = (targetMovementPosition - GlobalPosition).Normalized();
-		lookTarget = targetMovementPosition;
 		
 		for (var i = 0; i < GetSlideCollisionCount(); i++)
 		{
 			KinematicCollision3D collision3D = GetSlideCollision(i);
 			if (collision3D.GetCollider() is not RigidBody3D r || !IsOnFloor()) continue;
 			
-			var directionToCollision = (r.GlobalPosition - CharacterBody.GlobalPosition).Normalized();
+			var directionToCollision = (collision3D.GetPosition() - CharacterBody.GlobalPosition).Normalized();
 			var angleToCollision = new Vector3(0.0f, -1.0f, 0.0f).AngleTo(directionToCollision);
 			var angleFactor = Mathf.Clamp(Mathf.Pow(angleToCollision, 2), 0.0f, 1.0f);
 			angleFactor = Mathf.Round(angleFactor * 100) / 100;
@@ -88,24 +77,33 @@ public partial class AICharacter : CharacterBase
 			r.ApplyImpulse(-collision3D.GetNormal() * 0.01f * angleFactor, collision3D.GetPosition());
 		}
 
-		// float dist = (targetMovementPosition - GlobalPosition).Length();
-		// float brakingDist = 2.0f;
-		// float mult = Mathf.Clamp((dist / brakingDist), 0.0f, 1.0f);
-
-		var mult = 1.0f;
+		_direction = (Brain.NavigationAgent.TargetPosition - GlobalPosition).Normalized();
+		_lookTarget = Brain.NavigationAgent.TargetPosition;
+		
+		var dist = (Brain.NavigationAgent.TargetPosition - GlobalPosition).Length() - .5f;
+		var brakingDist = .5f;
+		var mult = Mathf.Clamp((dist / brakingDist), 0.0f, 1.0f);
 
 		if (!Brain.NavigationAgent.IsTargetReached())
 		{
-			Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, GetWorld3D().DirectSpaceState) * mult;
+			// Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, GetWorld3D().DirectSpaceState) * mult;
+			Brain.NavigationAgent.Velocity = CharacterMovement.GetCharacterVelocity(_direction, delta, GetWorld3D().DirectSpaceState) * mult; 
 		}
 		else
 		{
-			Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState) * mult;
+			GD.Print("reached");
+			// Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState) * mult;
+			Brain.NavigationAgent.Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState) * mult;
 		}
+	}
+
+	private void SetVelocity(Vector3 safeVelocity)
+	{
+		Velocity = safeVelocity;
 		_animationTree.Set("parameters/test/blend_position", Velocity.Length());
 		
 		var t = GlobalTransform;
-		t = t.InterpolateWith(t.LookingAt(lookTarget, Vector3.Up), 0.05f);
+		t = t.InterpolateWith(t.LookingAt(_lookTarget, Vector3.Up), 0.05f);
 		GlobalTransform = t;
 
 		var gr = GlobalRotation;
@@ -113,11 +111,5 @@ public partial class AICharacter : CharacterBase
 		gr.Z = 0;
 		GlobalRotation = gr;
 		MoveAndSlide();
-	}
-
-	private void SetVelocity(Vector3 safeVelocity)
-	{
-		Velocity = safeVelocity;
-		
 	}
 }

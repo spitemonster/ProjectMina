@@ -45,7 +45,7 @@ namespace ProjectMina
 		{
 			Global.Data.MainScene = this;
 
-			PlayerInput.Manager.SetMouseCapture(true);
+			PlayerInput.SetMouseCapture(true);
 
 			LoadLevel(StartingLevel);
 		}

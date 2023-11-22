@@ -48,6 +48,6 @@ public partial class MainMenu : Control
 		_isShown = !_isShown;
 		Visible = _isShown;
 		PlayerInput.Manager.SetPause(_isShown);
-		PlayerInput.Manager.SetMouseCapture(!_isShown);
+		PlayerInput.SetMouseCapture(!_isShown);
 	}
 }
