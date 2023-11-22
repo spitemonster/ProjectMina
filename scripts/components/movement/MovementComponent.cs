@@ -312,7 +312,7 @@ public partial class MovementComponent : ComponentBase
 		Vector3 downTraceOrigin = _character.GlobalPosition + (_character.ForwardVector * .75f) + new Vector3(0, 2, 0);
 		Vector3 downTraceEnd = downTraceOrigin + new Vector3(0, -.7f, 0);
 
-		HitResult res = Trace.Line(spaceState, downTraceOrigin, downTraceEnd, _exclude, true, true);
+		HitResult res = Cast.Ray(spaceState, downTraceOrigin, downTraceEnd, _exclude, true, true);
 
 		if (res != null)
 		{
@@ -437,7 +437,7 @@ public partial class MovementComponent : ComponentBase
 		DebugDraw.Sphere(downTraceOrigin, .5f, Colors.Red);
 		DebugDraw.Sphere(downTraceEnd, .4f, Colors.Green);
 
-		var res = Trace.Line(spaceState, downTraceOrigin, downTraceEnd, _exclude, true, true);
+		var res = Cast.Ray(spaceState, downTraceOrigin, downTraceEnd, _exclude, true, true);
 
 		if (res == null) return false;
 		
@@ -451,7 +451,7 @@ public partial class MovementComponent : ComponentBase
 
 		var forwardTraceOrigin = _character.GlobalPosition;
 		var forwardTraceEnd = forwardTraceOrigin + _character.ForwardVector * -1.0f;
-		var forwardTraceRes = Trace.Line(spaceState, forwardTraceOrigin, forwardTraceEnd, _exclude, true, true);
+		var forwardTraceRes = Cast.Ray(spaceState, forwardTraceOrigin, forwardTraceEnd, _exclude, true, true);
 
 		if (_character.GlobalPosition.Y >= _climbPosition.Y)
 		{
@@ -460,7 +460,7 @@ public partial class MovementComponent : ComponentBase
 			var downTraceOrigin = forwardTraceOrigin + directionToClimbPosition * -.25f;
 			var downTraceEnd = downTraceOrigin + new Vector3(0, -1, 0);
 
-			var downTraceRes = Trace.Line(spaceState, downTraceOrigin, downTraceEnd, _exclude, true, true);
+			var downTraceRes = Cast.Ray(spaceState, downTraceOrigin, downTraceEnd, _exclude, true, true);
 
 			if (downTraceRes == null) return directionToClimbPosition * ClimbSpeed;
 			
@@ -487,7 +487,7 @@ public partial class MovementComponent : ComponentBase
 	{
 		var standTraceOrigin = _character.GlobalPosition + new Vector3(0, .5f, 0);
 		var standTraceEnd = standTraceOrigin + new Vector3(0, 1, 0);
-		var standTraceResult = Trace.Line(spaceState, standTraceOrigin, standTraceEnd, _exclude, true, true);
+		var standTraceResult = Cast.Ray(spaceState, standTraceOrigin, standTraceEnd, _exclude, true, true);
 
 		return standTraceResult == null;
 	}

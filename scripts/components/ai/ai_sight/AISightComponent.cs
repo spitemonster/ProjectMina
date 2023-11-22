@@ -129,7 +129,7 @@ public partial class AISightComponent : ComponentBase
 		var targetCharacterBody = targetCharacter.CharacterBody;
 		var traceOrigin = _owner.Eyes.GlobalPosition;
 		var traceEnd = targetCharacter.Chest.GlobalPosition;
-		var traceResult = Trace.Line(spaceState, traceOrigin, targetCharacterBody.GlobalPosition, _exclude);
+		var traceResult = Cast.Ray(spaceState, traceOrigin, targetCharacterBody.GlobalPosition, _exclude);
 
 		if (EnableDebug)
 		{

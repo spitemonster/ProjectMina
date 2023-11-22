@@ -162,7 +162,7 @@ public partial class PlayerCharacter : CharacterBase
 		// {
 		// 	var traceStart = PrimaryCamera.GlobalPosition;
 		// 	var traceEnd = PrimaryCamera.GlobalPosition + PrimaryCamera.GlobalTransform.Basis.Z * -100.0f;
-		// 	var aimTraceResult = Trace.Line(spaceState, traceStart, traceEnd, x);
+		// 	var aimTraceResult = Cast.Ray(spaceState, traceStart, traceEnd, x);
 		// 	var aimPosition = aimTraceResult?.HitPosition ?? traceEnd;
 		//
 		// 	w.Aim(aimPosition);
@@ -178,7 +178,7 @@ public partial class PlayerCharacter : CharacterBase
 		}
 		else
 		{
-			var traceResult = Trace.Line(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
+			var traceResult = Cast.Ray(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
 
 			if (traceResult is { Collider: RigidBody3D r })
 			{
