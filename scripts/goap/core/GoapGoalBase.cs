@@ -7,14 +7,14 @@ namespace ProjectMina.Goap;
 public partial class GoapGoalBase : Resource
 {
 	[Export] public StringName GoalName { get; protected set; }
+	// provided as an array here for better use and type setting in the editor
 	[Export] public Array<Variant> BaseDesiredValue { get; protected set; } = new();
 	[Export] public double BasePriority { get; protected set; } = 1.0;
 	
 	/// <summary>
-	/// get the priority 
+	/// get the priority. obvs virtual methods are intended to be overridden by the inheriting resources
 	/// </summary>
 	/// <param name="worldState"></param>
-	/// <param name="characterState"></param>
 	/// <returns></returns>
 	public virtual double Priority(Dictionary<StringName, Variant> worldState)
 	{
@@ -25,11 +25,15 @@ public partial class GoapGoalBase : Resource
 	/// given a world state and character state, check if this goal is satisfied
 	/// </summary>
 	/// <param name="worldState"></param>
-	/// <param name="characterState"></param>
 	/// <returns></returns>
-	public virtual bool Satisfied(WorldState worldState, WorldState characterState)
+	public virtual bool Satisfied(Dictionary<StringName, Variant> worldState)
 	{
-		return false;
+		if (!worldState.ContainsKey(GoalName))
+		{
+			return false;
+		}
+		
+		return GoapPlanner.VariantsEqual(worldState[GoalName], DesiredValue(worldState));
 	}
 
 	/// <summary>
@@ -38,7 +42,6 @@ public partial class GoapGoalBase : Resource
 	/// i.e. always want more gold regardless of current amount
 	/// </summary>
 	/// <param name="worldState"></param>
-	/// <param name="characterState"></param>
 	/// <returns></returns>
 	public virtual Variant DesiredValue(Dictionary<StringName, Variant> worldState)
 	{

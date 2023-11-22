@@ -1,8 +1,6 @@
-using System.Collections.Generic;
+using System;
 using Godot;
 using Godot.Collections;
-using System.Diagnostics;
-using System.Linq;
 using Array = System.Array;
 
 namespace ProjectMina.Goap;
@@ -11,59 +9,67 @@ namespace ProjectMina.Goap;
 public partial class GoapAgentComponent : ComponentBase
 {
 	[Export] public BlackboardComponent Blackboard { get; protected set; }
-	[Export] public GoapGoalBase[] Goals;
-	public Array<GoapAction> AvailableActions = new();
-	public Array<GoapAction> CurrentPlan { get; private set; }
+	[Export] public Array<GoapGoalBase> Goals = new();
+	[Export] public Array<GoapActionBase> Actions = new();
+	
+	public AICharacter Pawn { get; protected set; }
+	
+	public Array<GoapActionBase> CurrentPlan { get; private set; } = new();
 
 	private StringName[] _goals = new StringName[1];
-	private int _goalCount;
+	private int _currentPlanRequest;
 
-	public Godot.Collections.Dictionary<StringName, Variant> GetState()
+	[Export] public RigidBody3D Healing;
+
+	public Dictionary<StringName, Variant> GetState()
 	{
 		return Blackboard.GetBlackboard().Duplicate();
 	}
-	
-	public Godot.Collections.Dictionary<StringName, Variant> GetGoals(Godot.Collections.Dictionary<StringName, Variant> worldState)
+
+	public GoapGoalBase GetCurrentHighestPriorityGoal()
 	{
-		// A temporary list to hold goals with their priorities
-		var prioritizedGoals = new List<(StringName GoalName, Variant Value, double Priority)>();
-
-		foreach (var t in Goals)
-		{
-			if (Blackboard.HasValue(t.GoalName))
-			{
-				// Add goal along with its priority to the list
-				prioritizedGoals.Add((t.GoalName, t.DesiredValue(worldState), t.Priority(worldState)));
-			}
-		}
-		
-		// Sort the list in descending order of priority
-		prioritizedGoals.Sort((a, b) => b.Priority.CompareTo(a.Priority));
-
-		Godot.Collections.Dictionary<StringName, Variant> goalDict = new();
-		
-		foreach (var t in Goals)
-		{
-			if (Blackboard.HasValue(t.GoalName))
-			{
-				goalDict.Add(t.GoalName, t.DesiredValue(worldState));
-			}
-		}
-
-		return goalDict;
+		return Goals[0];
 	}
 
-	public void ReceivePlan(Array<GoapAction> plan)
+	public GoapGoalBase GetRandomGoal()
 	{
+		return Goals.PickRandom();
+	}
+	
+	public Array<GoapGoalBase> GetGoals(Dictionary<StringName, Variant> worldState)
+	{
+		return Goals;
+	}
+
+	public Array<GoapActionBase> GetActions(Dictionary<StringName, Variant> worldState)
+	{
+		return Actions;
+	}
+
+	public void ReceivePlan(Array<GoapActionBase> plan)
+	{
+		_currentPlanRequest = 0;
 		
+		CurrentPlan = plan;
 	}
 
 	public override void _Ready()
 	{
-		_goalCount = Goals.Length;
-		Array.Resize(ref _goals, _goalCount);
+		if (GetOwner<AICharacter>() is { } c)
+		{
+			Pawn = c;
+		}
+		else
+		{
+			GD.PushError("Goap Agent not child of AICharacter");
+			SetProcess(false);
+			SetPhysicsProcess(false);
+			return;
+		}
+		
+		Array.Resize(ref _goals, Goals.Count);
 
-		for (var i = 0; i < _goalCount; i++)
+		for (var i = 0; i < Goals.Count; i++)
 		{
 			if (Blackboard.HasValue(Goals[i].GoalName))
 			{
@@ -74,14 +80,23 @@ public partial class GoapAgentComponent : ComponentBase
 
 	public override void _Process(double delta)
 	{
-		GD.Print("goap agent is processing");
-		GoapPlanner.Instance.RequestPlan(this);
-		// GoapGoalBase currentGoal;
-		// StringName currentGoalName;
-		// for (var i = 0; i < _goalCount; i++)
-		// {
-		// 	currentGoalName = _goals[i];
-		// 	GD.Print(Blackboard.GetValue(currentGoalName));
-		// }
+		if (CurrentPlan.Count < 1)
+		{
+			_currentPlanRequest = GoapPlanner.Instance.RequestPlan(this, GetCurrentHighestPriorityGoal());
+			return;
+		}
+		
+		GD.Print("running action: ", CurrentPlan[0].Name);
+
+		if (CurrentPlan[0].Run(this, GoapPlanner.Instance.WorldState) == GoapActionBase.ActionStatus.Succeeded)
+		{
+			CurrentPlan.RemoveAt(0);
+			GD.Print("action completed successfully");
+		}
+	}
+
+	private void _CompleteAction(GoapActionBase action)
+	{
+		
 	}
 }

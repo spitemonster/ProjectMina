@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bm4svyymnqho2"]
+
+[ext_resource type="Script" path="res://scripts/goap/actions/SeekHealing.cs" id="1_84h5e"]
+
+[node name="ActionSeekHealing" type="Node"]
+script = ExtResource("1_84h5e")

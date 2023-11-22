@@ -10,6 +10,8 @@ Entries = {
 "enemy_visible": false,
 "has_melee_weapon": false,
 "has_ranged_weapon": false,
+"healing_located": false,
+"healing_location": Vector3(0, 0, 0),
 "last_received_damage": 0,
 "max_health": 0.0,
 "seen_characters": [],

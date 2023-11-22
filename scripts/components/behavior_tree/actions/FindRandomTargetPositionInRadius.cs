@@ -24,14 +24,14 @@ public partial class FindRandomTargetPositionInRadius : Action
 
 	private void FindPosition(AICharacter character, BlackboardComponent blackboard)
 	{
-		Vector3 characterPosition = character.GlobalPosition;
-		Vector3 newPosition = characterPosition;
+		var characterPosition = character.GlobalPosition;
+		var newPosition = characterPosition;
 
-		float X = characterPosition.X + rng.RandfRange(-12.5f, 12.5f);
-		float Z = characterPosition.Z + rng.RandfRange(-12.5f, 12.5f);
+		var x = characterPosition.X + rng.RandfRange(-12.5f, 12.5f);
+		var z = characterPosition.Z + rng.RandfRange(-12.5f, 12.5f);
 
-		newPosition.X = X;
-		newPosition.Z = Z;
+		newPosition.X = x;
+		newPosition.Z = z;
 		newPosition.Y = characterPosition.Y;
 
 		Vector3 pos = NavigationServer3D.MapGetClosestPoint(character.Brain.NavigationAgent.GetNavigationMap(), newPosition);
