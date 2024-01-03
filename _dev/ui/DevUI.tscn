@@ -26,6 +26,7 @@ script = ExtResource("1_dpuy1")
 metadata/_edit_use_anchors_ = true
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0

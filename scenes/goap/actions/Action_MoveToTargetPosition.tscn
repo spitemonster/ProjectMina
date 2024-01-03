@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c4x7rqi7savdu"]
 
-[ext_resource type="Script" path="res://scripts/goap/actions/MoveToTargetPosition.cs" id="1_mabtt"]
+[ext_resource type="Script" path="res://scenes/goap/actions/MoveToTargetPosition.cs" id="1_mabtt"]
 
 [node name="GoapActionBase" type="Node"]
 script = ExtResource("1_mabtt")

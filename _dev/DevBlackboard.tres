@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="BlackboardAsset" load_steps=2 format=3 uid="uid://v5hgid8722vl"]
 
-[ext_resource type="Script" path="res://scripts/components/behavior_tree/core/blackboard/BlackboardAsset.cs" id="1_00urv"]
+[ext_resource type="Script" path="res://scenes/components/behavior_tree/core/blackboard/BlackboardAsset.cs" id="1_00urv"]
 
 [resource]
 script = ExtResource("1_00urv")
@@ -10,6 +10,8 @@ Entries = {
 "enemy_visible": false,
 "has_melee_weapon": false,
 "has_ranged_weapon": false,
+"has_target_movement_position": false,
+"has_weapon": false,
 "healing_located": false,
 "healing_position": Vector3(0, 0, 0),
 "healing_reached": false,

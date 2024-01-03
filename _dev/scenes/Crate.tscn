@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://d2r7tsyvv6gsp"]
+[gd_scene load_steps=13 format=3 uid="uid://d2r7tsyvv6gsp"]
 
 [ext_resource type="Texture2D" uid="uid://0a4vrlttxrba" path="res://_dev/assets/images/crate2_diffuse.png" id="1_m5nl0"]
 [ext_resource type="Texture2D" uid="uid://b2xxixvb035p6" path="res://_dev/assets/images/crate2_bump.png" id="2_kmotd"]
@@ -6,7 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://byci7nuogpuvf" path="res://scenes/components/impact_sound/ImpactSoundComponent.tscn" id="5_dsyg4"]
 [ext_resource type="PackedScene" uid="uid://do7fbomwbyldg" path="res://_dev/scenes/gizmo.tscn" id="5_wlyjh"]
 [ext_resource type="AudioStream" uid="uid://5i0ejd03tq0k" path="res://resources/audio/wood_hit_6_16_44.wav" id="7_016s4"]
-[ext_resource type="Script" path="res://scripts/audio/sound_player/SoundPlayer3D.cs" id="7_77juh"]
+[ext_resource type="Script" path="res://scenes/audio/sound_player/SoundPlayer3D.cs" id="7_77juh"]
+[ext_resource type="PackedScene" uid="uid://c4lbnfkrm3e5v" path="res://scenes/components/impact/ImpactComponent.tscn" id="8_jul71"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_xmm4g"]
 friction = 0.5
@@ -24,6 +25,7 @@ texture_filter = 0
 
 [sub_resource type="BoxMesh" id="BoxMesh_16s4j"]
 material = SubResource("StandardMaterial3D_ueadv")
+size = Vector3(1.02, 1.02, 1.02)
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_crahu"]
 points = PackedVector3Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5)
@@ -60,3 +62,5 @@ stream = ExtResource("7_016s4")
 [node name="SoundPlayer" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("7_016s4")
 script = ExtResource("7_77juh")
+
+[node name="ImpactComponent" parent="." instance=ExtResource("8_jul71")]

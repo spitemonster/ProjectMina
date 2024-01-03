@@ -1,11 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://cmjhf16ocrx1k"]
+[gd_scene load_steps=9 format=3 uid="uid://cmjhf16ocrx1k"]
 
-[ext_resource type="Texture2D" uid="uid://drtma0g5a1cti" path="res://_dev/assets/images/grid/dark/texture_04.png" id="1_7hesc"]
+[ext_resource type="Material" uid="uid://ehlue8xya6d8" path="res://resources/materials/asphalt/asphalt.tres" id="1_1tjf4"]
 [ext_resource type="Texture2D" uid="uid://db76qxhk2gn6u" path="res://_dev/assets/images/grid/dark/texture_09.png" id="1_wn4mo"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_27i7k"]
-albedo_texture = ExtResource("1_7hesc")
-uv1_triplanar = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ipjc1"]
 
@@ -46,7 +42,7 @@ collision_layer = 3
 collision_mask = 3
 
 [node name="MapBase" type="MeshInstance3D" parent="."]
-material_override = SubResource("StandardMaterial3D_27i7k")
+material_override = ExtResource("1_1tjf4")
 mesh = SubResource("ArrayMesh_l50td")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_pwb0w")

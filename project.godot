@@ -29,8 +29,9 @@ TimerPool="*res://scripts/pools/timer/TimerPool.cs"
 AudioPlayerPool="*res://scripts/pools/audio_player/AudioPlayerPool.cs"
 AudioStreamPool="*res://scripts/pools/audio_stream/AudioStreamPool.cs"
 PlayerInput="*res://scripts/singletons/PlayerInput.cs"
-GoapPlanner="*res://scripts/goap/core/singletons/GoapPlanner.cs"
+GoapPlanner="*res://scenes/goap/core/singletons/GoapPlanner.cs"
 Cast="*res://scripts/singletons/Cast.cs"
+DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 
 [debug]
 
@@ -38,8 +39,9 @@ file_logging/enable_file_logging=true
 
 [display]
 
-window/size/viewport_width=2560
-window/size/viewport_height=1440
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/resizable=false
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/stretch/scale=0.5
@@ -50,7 +52,7 @@ project/assembly_name="ProjectMina"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/debug_drawing/plugin.cfg", "res://addons/imrp/plugin.cfg", "res://addons/qodot/plugin.cfg")
+enabled=PackedStringArray("res://addons/debug_drawing/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/imjp94.yafsm/plugin.cfg", "res://addons/imrp/plugin.cfg", "res://addons/qodot/plugin.cfg")
 
 [filesystem]
 

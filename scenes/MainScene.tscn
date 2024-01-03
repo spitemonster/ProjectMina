@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://qs22y507arl5"]
 
-[ext_resource type="Script" path="res://scripts/main/MainScene.cs" id="1_i74qh"]
+[ext_resource type="Script" path="res://scenes/MainScene.cs" id="1_i74qh"]
 [ext_resource type="PackedScene" uid="uid://cvvqjmdnrb1ku" path="res://_dev/scenes/gyms/gym_base/GymBase.tscn" id="2_vgw6j"]
 [ext_resource type="PackedScene" uid="uid://c45weam7tjqmw" path="res://scenes/characters/player_character/PlayerCharacter.tscn" id="3_ofqq3"]
-[ext_resource type="PackedScene" uid="uid://waxi0ov75vye" path="res://ui/MainMenu.tscn" id="4_hgum0"]
-[ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://ui/PlayerHUD.tscn" id="5_o2pxt"]
+[ext_resource type="PackedScene" uid="uid://waxi0ov75vye" path="res://scenes/ui/MainMenu.tscn" id="4_hgum0"]
+[ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://scenes/ui/PlayerHUD.tscn" id="5_o2pxt"]
 
 [node name="MainScene" type="Control" node_paths=PackedStringArray("LevelSlot")]
 layout_mode = 3
@@ -28,7 +28,7 @@ grow_vertical = 2
 size_flags_horizontal = 6
 size_flags_vertical = 6
 stretch = true
-stretch_shrink = 7
+stretch_shrink = 5
 
 [node name="MainViewport" type="SubViewport" parent="MainViewportContainer"]
 handle_input_locally = false
@@ -38,7 +38,7 @@ use_occlusion_culling = true
 canvas_item_default_texture_filter = 0
 audio_listener_enable_2d = true
 audio_listener_enable_3d = true
-size = Vector2i(365, 205)
+size = Vector2i(384, 216)
 render_target_update_mode = 4
 
 [node name="LevelSlot" type="Node3D" parent="MainViewportContainer/MainViewport"]
