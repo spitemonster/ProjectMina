@@ -47,6 +47,7 @@ Swing = true
 AnimPlayer = NodePath("AnimPlayer")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
+shadow_enabled = true
 
 [node name="AnimPlayer" type="AnimationPlayer" parent="."]
 unique_name_in_owner = true

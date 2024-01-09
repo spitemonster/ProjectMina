@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://bh46fjrbb6mui"]
+
+[ext_resource type="Shader" path="res://clouds.gdshader" id="1_dk1bg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wyc1o"]
+shader = ExtResource("1_dk1bg")
+shader_parameter/cloudscale = 1.1
+shader_parameter/speed = 0.01
+shader_parameter/clouddark = 0.5
+shader_parameter/cloudlight = 0.3
+shader_parameter/cloudcover = 0.2
+shader_parameter/cloudalpha = 8.0
+shader_parameter/skytint = 0.5
+shader_parameter/skycolour1 = Vector3(0.2, 0.4, 0.6)
+shader_parameter/skycolour2 = Vector3(0.4, 0.7, 1)
+shader_parameter/m = Transform2D(1.6, -1.2, 1.2, 1.6, 0, 0)
+
+[node name="Control" type="Control"]
+material = SubResource("ShaderMaterial_wyc1o")
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

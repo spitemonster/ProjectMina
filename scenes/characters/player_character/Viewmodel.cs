@@ -7,7 +7,8 @@ public partial class Viewmodel : Node3D
 	[Export] public Node3D RightHandSocket { get; protected set; }
 	[Export] public Node3D LeftHandSocket { get; protected set; }
 	[Export] public Camera3D Camera { get; protected set; }
-	[Export] protected AnimationTree AnimTree;
+	[Export] public AnimationPlayer AnimPlayer { get; protected set; }
+	[Export] public AnimationTree AnimTree { get; protected set; }
 	[Export] protected SkeletonIK3D RightHandIK;
 	[Export] protected SkeletonIK3D LeftHandIK;
 	[Export] protected MovementComponent CharacterMovement;

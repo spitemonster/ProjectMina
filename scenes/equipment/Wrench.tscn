@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://dgrf4tsl4h7yo"]
+
+[ext_resource type="ArrayMesh" uid="uid://dysq8xhp84l2g" path="res://resources/models/wrench/mesh_wrench.res" id="1_clc1l"]
+[ext_resource type="PackedScene" uid="uid://dg2nuqly5n74l" path="res://scenes/components/equipment/WeaponComponent.tscn" id="3_qjobu"]
+[ext_resource type="AnimationLibrary" uid="uid://cn2tj12lhfmke" path="res://resources/animations/first_person/wrench/wrench_fp.tres" id="4_l5mdn"]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_oulut"]
+points = PackedVector3Array(0.0208961, 0.26235, 0.0115927, -0.066254, 0.141021, -0.0156342, 0.025073, -0.0644113, -0.00992681, 0.025073, 0.220905, -0.0213416, -0.00918354, -0.075854, 0.0128977, -0.0548381, 0.278011, 0.0128977, -0.0548381, 0.163835, 0.0243175, -0.0548381, 0.163835, -0.027054, 0.025073, 0.175277, 0.0186051, -0.0434222, 0.289454, -0.00992681, -0.0205905, -0.0644113, -0.00992681, 0.0193606, -0.0644113, 0.0128977, 0.0136571, 0.289454, 0.0128977, -0.0605416, 0.141021, 0.0186051, 0.025073, 0.272326, -0.0156342, -0.0205905, 0.192406, 0.0243175, -0.0205905, 0.192406, -0.027054, -0.0205905, -0.0644113, 0.0128977, -0.0605416, 0.215219, -0.0213416, -0.0205905, 0.163835, -0.027054, 0.025073, -0.0644113, 0.0071903, -0.0205905, 0.163835, 0.0243175, 0.025073, 0.175277, -0.0213416, -0.0434222, 0.289454, 0.0128977, -0.0320063, 0.272326, -0.0156342, 0.0136571, 0.289454, -0.00992681, -0.0548381, 0.278011, -0.00992681, -0.0607, 0.197039, 0.0111625, 0.00794473, -0.075854, 0.0128977, -0.0605416, 0.141021, -0.0213416, 0.00680744, -0.0685742, -0.0095857, -0.00976845, -0.0664882, -0.00948796)
+
+[node name="Wrench" type="RigidBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_clc1l")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_oulut")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"wrench_fp": ExtResource("4_l5mdn")
+}
+
+[node name="Weapon" parent="." instance=ExtResource("3_qjobu")]
+Type = 0
+FirstPersonUseAnimationLibrary = ExtResource("4_l5mdn")

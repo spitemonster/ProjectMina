@@ -56,6 +56,15 @@ public partial class AttentionComponent : ComponentBase
 			return;
 		}
 
+		if (CurrentFocus != null && colliderResults.Contains(CurrentFocus))
+		{
+			// GD.Print("have a focus and that focus is in our collider results");
+		} else if (CurrentFocus != null && !colliderResults.Contains(CurrentFocus))
+		{
+			LoseFocus();
+			// GD.Print("have a focus but we're not colliding with it");
+		}
+
 		foreach (var node in colliderResults)
 		{
 			if (!CanFocus(node)) continue;
@@ -82,7 +91,10 @@ public partial class AttentionComponent : ComponentBase
 
 		EmitSignal(SignalName.FocusChanged, newFocus, CurrentFocus);
 		CurrentFocus = newFocus;
-		GD.Print("set focus: ", newFocus);
+		if (newFocus != null)
+		{
+			GD.Print("set focus: ", newFocus.Name);
+		}
 		return true;
 	}
 

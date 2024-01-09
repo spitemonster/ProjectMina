@@ -221,13 +221,13 @@ public partial class MovementComponent : ComponentBase
 				case Enums.DirectionHorizontal.Right:
 					if (end)
 					{
-						_character.AnimPlayer.PlayBackwards("lean_right");
+						_character.CharacterAnimationPlayer.PlayBackwards("lean_right");
 						_leaning = false;
 						_leanDirection = Enums.DirectionHorizontal.None;
 					}
 					else
 					{
-						_character.AnimPlayer.Play("lean_right");
+						_character.CharacterAnimationPlayer.Play("lean_right");
 						_leaning = true;
 						_leanDirection = dir;
 					}
@@ -235,13 +235,13 @@ public partial class MovementComponent : ComponentBase
 				default:
 					if (end)
 					{
-						_character.AnimPlayer.PlayBackwards("lean_left");
+						_character.CharacterAnimationPlayer.PlayBackwards("lean_left");
 						_leaning = false;
 						_leanDirection = Enums.DirectionHorizontal.None;
 					}
 					else
 					{
-						_character.AnimPlayer.Play("lean_left");
+						_character.CharacterAnimationPlayer.Play("lean_left");
 						_leaning = true;
 						_leanDirection = dir;
 					}

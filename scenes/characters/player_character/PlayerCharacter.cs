@@ -8,15 +8,12 @@ public partial class PlayerCharacter : CharacterBase
 	[ExportGroup("PlayerCharacter")]
 	[Export] public Camera3D PrimaryCamera { get; protected set; }
 	[Export] public Viewmodel PlayerViewmodel { get; protected set; }
-	
-	[Export] protected EquipmentManager _equipmentManager;
+	[Export] public GrabbingComponent GrabComponent { get; protected set; }
 	
 	[Export] protected Node3D _head;
-
 	[ExportGroup("Grabbing")]
-	[Export] public GrabbingComponent GrabComponent { get; protected set; }
-	[Export] protected double CarryGrabSpeedMultiplier = 1.0f;
 	
+	[Export] protected double CarryGrabSpeedMultiplier = 1.0f;
 	[Export] protected SoundComponent _soundComponent;
 
 	[ExportGroup("Combat")]
@@ -29,6 +26,11 @@ public partial class PlayerCharacter : CharacterBase
 	private bool _isStealthMode = false;
 	private float _defaultCapsuleHeight;
 	private Vector3 _defaultCapsulePosition;
+
+	private AnimationLibrary _attackAnimations;
+	private AnimationLibrary _idleAnimations;
+
+	private AnimationNodeBlendTree _animTreeRoot;
 
 	private Godot.Collections.Array<Rid> x = new();
 	public override void _Ready()
@@ -49,24 +51,33 @@ public partial class PlayerCharacter : CharacterBase
 		var bodyCapsule = (CapsuleShape3D)CharacterBody.Shape;
 		_defaultCapsuleHeight = bodyCapsule.Height;
 		_defaultCapsulePosition = CharacterBody.Position;
+		_animTreeRoot = (AnimationNodeBlendTree)PlayerViewmodel.AnimTree.TreeRoot;
 	}
 
 	private void InitEvents()
 	{
 		PlayerInput.Manager.MouseMove += HandleMouseMove;
-		PlayerInput.Manager.ActionPressed += OnActionPressed;
-		PlayerInput.Manager.ActionReleased += OnActionReleased;
-		PlayerInput.Manager.ActionHoldStarted += OnActionHoldStarted;
-		PlayerInput.Manager.ActionHoldCompleted += OnActionHoldCompleted;
-		PlayerInput.Manager.ActionHoldCanceled += OnActionHoldCanceled;
-		CharacterMovement.SneakStarted += StartStealth;
-		CharacterMovement.SneakEnded += EndStealth;
+		PlayerInput.Manager.ActionPressed += _OnActionPressed;
+		PlayerInput.Manager.ActionReleased += _OnActionReleased;
+		PlayerInput.Manager.ActionHoldStarted += _OnActionHoldStarted;
+		PlayerInput.Manager.ActionHoldCompleted += _OnActionHoldCompleted;
+		PlayerInput.Manager.ActionHoldCanceled += _OnActionHoldCanceled;
+		CharacterMovement.SneakStarted += _StartStealth;
+		CharacterMovement.SneakEnded += _EndStealth;
+		CharacterEquipment.WeaponEquipped += _OnWeaponEquipped;
+		CharacterEquipment.WeaponUnequipped += _OnWeaponUnequipped;
 	}
 
-	private void OnActionPressed(StringName action)
+	private void _OnActionPressed(StringName action)
 	{
 		switch (action)
 		{
+			case "use":
+				if (CharacterEquipment.HasWeapon())
+				{
+					Attack();
+				}
+				break;
 			case "run":
 				CharacterMovement.ToggleSprint();
 				break;
@@ -89,23 +100,24 @@ public partial class PlayerCharacter : CharacterBase
 		}
 	}
 
-	private void OnActionHoldStarted(StringName action)
+	private void _OnActionHoldStarted(StringName action)
 	{
 		// if the character is holding on interact it means they're trying to grab something
 		if (action == "interact" && CharacterAttention.CurrentFocus != null)
 		{
+			GD.Print();
 			// if we can't grab the item, interact with it as normal and prevent the hold from executing
 			if (!GrabbingComponent.CanGrab(CharacterAttention.CurrentFocus) &&
-			    CharacterInteraction.CanInteract(CharacterAttention.CurrentFocus))
+			    CharacterInteraction.CanInteract())
 			{
-				CharacterInteraction.Interact(CharacterAttention.CurrentFocus);
+				CharacterInteraction.Interact();
 				PlayerInput.Manager.ClearActionHold(action);
 			}
 
 		}
 	}
 
-	private void OnActionHoldCompleted(StringName action)
+	private void _OnActionHoldCompleted(StringName action)
 	{
 		if (action == "interact")
 		{
@@ -122,7 +134,7 @@ public partial class PlayerCharacter : CharacterBase
 		}
 	}
 
-	private void OnActionReleased(StringName action, bool actionCompleted)
+	private void _OnActionReleased(StringName action, bool actionCompleted)
 	{
 		switch (action)
 		{
@@ -132,7 +144,7 @@ public partial class PlayerCharacter : CharacterBase
 		}
 	}
 
-	private void OnActionHoldCanceled(StringName action, float completedRatio)
+	private void _OnActionHoldCanceled(StringName action, float completedRatio)
 	{
 		if (action == "interact")
 		{
@@ -162,17 +174,7 @@ public partial class PlayerCharacter : CharacterBase
 		base._PhysicsProcess(delta);
 
 		var spaceState = GetWorld3D().DirectSpaceState;
-
-		// if (_equipmentManager.EquippedItem is RangedWeapon w && _equipmentManager.EquippedItemType == Equipment.EquipmentType.Weapon)
-		// {
-		// 	var traceStart = PrimaryCamera.GlobalPosition;
-		// 	var traceEnd = PrimaryCamera.GlobalPosition + PrimaryCamera.GlobalTransform.Basis.Z * -100.0f;
-		// 	var aimTraceResult = Cast.Ray(spaceState, traceStart, traceEnd, x);
-		// 	var aimPosition = aimTraceResult?.HitPosition ?? traceEnd;
-		//
-		// 	w.Aim(aimPosition);
-		// }
-
+		
 		if (!IsOnFloor())
 		{
 			if (_currentFloor is RigidBody3D r)
@@ -232,25 +234,57 @@ public partial class PlayerCharacter : CharacterBase
 		}
 
 		RotateY(headRelative);
-		PlayerViewmodel.Camera.RotateX(cameraRelative);
+		_head.RotateX(cameraRelative);
 
 		Vector3 clampedCameraRotation = new()
 		{
-			X = Mathf.Clamp(PlayerViewmodel.Camera.Rotation.X, Mathf.DegToRad(-80), Mathf.DegToRad(80))
+			X = Mathf.Clamp(_head.Rotation.X, Mathf.DegToRad(-80), Mathf.DegToRad(80))
 		};
 
-		PlayerViewmodel.Camera.Rotation = clampedCameraRotation;
+		_head.Rotation = clampedCameraRotation;
 	}
 
-	private void StartStealth()
+	private void _StartStealth()
 	{
-		AnimPlayer.Play("crouch");
+		CharacterAnimationPlayer.Play("crouch");
 		CharacterBody.Disabled = true;
 	}
 
-	private void EndStealth()
+	private void _EndStealth()
 	{
-		AnimPlayer.PlayBackwards("crouch");
+		CharacterAnimationPlayer.PlayBackwards("crouch");
 		CharacterBody.Disabled = false;
+	}
+
+	public override void Attack()
+	{
+		AnimationNodeAnimation attackNode = (AnimationNodeAnimation)_animTreeRoot.GetNode("attack");
+		attackNode.Animation = _GetAttackAnimation();
+		PlayerViewmodel.AnimTree.Set("parameters/right_arm_one_shot/request", (int)AnimationNodeOneShot.OneShotRequest.Fire);
+	}
+	
+	private void _OnWeaponEquipped(EquippableComponent weapon)
+	{
+		_attackAnimations = weapon.GetFirstPersonAnimations();
+		PlayerViewmodel.AnimPlayer.AddAnimationLibrary("weapon", _attackAnimations);
+		// PlayerViewmodel.AnimPlayer.AddAnimationLibrary("idle", _idleAnimations);
+	}
+
+	private void _OnWeaponUnequipped()
+	{
+		PlayerViewmodel.AnimPlayer.RemoveAnimationLibrary("weapon");
+		_attackAnimations = null;
+	}
+
+	private StringName _GetAttackAnimation()
+	{
+		if (_attackAnimations != null)
+		{
+			var animName = "weapon/" + PlayerViewmodel.AnimPlayer.GetAnimationLibrary("weapon").GetAnimationList().PickRandom();
+			return animName;
+		}
+
+		GD.Print("no anim found");
+		return "";
 	}
 }

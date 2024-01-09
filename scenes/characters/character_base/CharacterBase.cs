@@ -16,10 +16,12 @@ public partial class CharacterBase : CharacterBody3D
 	[Export] public AttentionComponent CharacterAttention { get; protected set; }
 	[Export] public MovementComponent CharacterMovement { get; protected set; }
 	[Export] public InteractionComponent CharacterInteraction { get; protected set; }
+	[Export] public EquipmentComponent CharacterEquipment { get; protected set; }
 	[Export] public SoundComponent CharacterSound { get; protected set; }
+	[Export] public AnimationPlayer CharacterAnimationPlayer { get; protected set; }
+	[Export] public AnimationTree CharacterAnimationTree { get; protected set; }
 	[Export] public Marker3D Eyes { get; protected set; }
 	[Export] public Marker3D Chest { get; protected set; }
-	[Export] public AnimationPlayer AnimPlayer { get; protected set; }
 
 	[Export] protected double RotationRate = 6.0;
 

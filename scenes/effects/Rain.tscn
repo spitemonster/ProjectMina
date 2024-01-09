@@ -51,7 +51,7 @@ section_length = 1.0
 section_segments = 1
 curve = SubResource("Curve_7xq0f")
 
-[node name="GPUParticles3D" type="GPUParticles3D"]
+[node name="Rain" type="GPUParticles3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.062, 0)
 cast_shadow = 0
 gi_mode = 0
