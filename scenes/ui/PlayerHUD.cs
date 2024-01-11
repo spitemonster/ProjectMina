@@ -35,7 +35,7 @@ public partial class PlayerHUD : Control
 		if (_interactionComponent != null)
 		{
 			GD.Print("have interaction component in player hud");
-			_interactionComponent.InteractionStateChanged += UpdateReticleInteractionState;
+			// _interactionComponent.InteractionStateChanged += UpdateReticleInteractionState;
 		}
 
 		Debug.Assert(_interactionComponent != null, "no interaction component");

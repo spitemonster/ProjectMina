@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dgrf4tsl4h7yo"]
+[gd_scene load_steps=6 format=3 uid="uid://dgrf4tsl4h7yo"]
 
 [ext_resource type="ArrayMesh" uid="uid://dysq8xhp84l2g" path="res://resources/models/wrench/mesh_wrench.res" id="1_clc1l"]
 [ext_resource type="PackedScene" uid="uid://dg2nuqly5n74l" path="res://scenes/components/equipment/WeaponComponent.tscn" id="3_qjobu"]
+[ext_resource type="AnimationLibrary" uid="uid://b3yckb6crks41" path="res://resources/animations/first_person/wrench/wrench_equipped_fp.res" id="4_acfc2"]
 [ext_resource type="AnimationLibrary" uid="uid://cn2tj12lhfmke" path="res://resources/animations/first_person/wrench/wrench_fp.tres" id="4_l5mdn"]
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_oulut"]
@@ -23,3 +24,4 @@ libraries = {
 [node name="Weapon" parent="." instance=ExtResource("3_qjobu")]
 Type = 0
 FirstPersonUseAnimationLibrary = ExtResource("4_l5mdn")
+FirstPersonEquippedAnimationLibrary = ExtResource("4_acfc2")

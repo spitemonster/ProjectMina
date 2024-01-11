@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 using Godot.Collections;
 
@@ -32,6 +33,8 @@ public partial class CharacterBase : CharacterBody3D
 	protected double _footstepTimeout = .1;
 	protected bool _canFootstep = true;
 	private Timer _footstepTimer;
+
+	protected PhysicsMaterial _floorSurface;
 
 	public override void _Ready()
 	{
@@ -96,5 +99,31 @@ public partial class CharacterBase : CharacterBody3D
 	public virtual void Footstep()
 	{
 		GD.Print("footstep!");
+	}
+
+	protected virtual PhysicsMaterial GetFloorSurface(Vector3 traceOrigin = new())
+	{
+		var spaceState = GetWorld3D().DirectSpaceState;
+		if (traceOrigin == Vector3.Zero)
+		{
+			traceOrigin = GlobalPosition;
+		}
+		
+		Vector3 traceEnd = traceOrigin + (Vector3.Down * 2);
+		HitResult res = Cast.Ray(spaceState, traceOrigin, traceEnd, new() { this.GetRid() });
+
+		PhysicsMaterial surfaceMaterial = new();
+		
+		switch (res.Collider)
+		{
+			case StaticBody3D staticBody:
+				surfaceMaterial = staticBody.PhysicsMaterialOverride;
+				break;
+			case RigidBody3D rigidBody:
+				surfaceMaterial = rigidBody.PhysicsMaterialOverride;
+				break;
+		}
+
+		return surfaceMaterial;
 	}
 }

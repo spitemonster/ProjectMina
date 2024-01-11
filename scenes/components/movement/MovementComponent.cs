@@ -68,8 +68,16 @@ public partial class MovementComponent : ComponentBase
 
 	private Enums.DirectionHorizontal _leanDirection;
 
-	public Vector3 GetCharacterVelocity(Vector3 movementDirection, double delta, PhysicsDirectSpaceState3D spaceState)
+	public Vector3 GetCharacterVelocity(Vector3 movementDirection, double delta, PhysicsDirectSpaceState3D spaceState, PhysicsMaterial currentFloor = null)
 	{
+		float frictionMultiplier = 1.0f;
+
+		if (currentFloor != null)
+		{
+			frictionMultiplier = currentFloor.Friction;
+		}
+
+		frictionMultiplier = Mathf.Clamp(frictionMultiplier, 0.1f, 1.0f);
 
 		Vector3 currentVelocity = _character.Velocity;
 		float movementSpeed = CalculateMovementSpeed();
@@ -116,13 +124,13 @@ public partial class MovementComponent : ComponentBase
 
 			if (movementDirection.Length() > 0.05)
 			{
-				currentVelocity.X = Mathf.MoveToward(currentVelocity.X, movementDirection.X * movementSpeed, AccelerationForce);
-				currentVelocity.Z = Mathf.MoveToward(currentVelocity.Z, movementDirection.Z * movementSpeed, AccelerationForce);
+				currentVelocity.X = Mathf.MoveToward(currentVelocity.X, movementDirection.X * movementSpeed, AccelerationForce * frictionMultiplier);
+				currentVelocity.Z = Mathf.MoveToward(currentVelocity.Z, movementDirection.Z * movementSpeed, AccelerationForce * frictionMultiplier);
 			}
 			else
 			{
-				currentVelocity.X = Mathf.MoveToward(currentVelocity.X, 0.0f, BrakingForce);
-				currentVelocity.Z = Mathf.MoveToward(currentVelocity.Z, 0.0f, BrakingForce);
+				currentVelocity.X = Mathf.MoveToward(currentVelocity.X, 0.0f, BrakingForce * frictionMultiplier);
+				currentVelocity.Z = Mathf.MoveToward(currentVelocity.Z, 0.0f, BrakingForce * frictionMultiplier);
 			}
 		}
 

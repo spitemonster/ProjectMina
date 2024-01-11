@@ -18,11 +18,20 @@ public partial class Viewmodel : Node3D
 
 	public float MovementSpeed = 0.0f;
 	public float LookVerticalOffset = 0.0f;
+
+	private PlayerCharacter _player;
+	private MovementComponent _playerMovementComponent;
 	
 	private MovementComponent.MovementState _playerMovementState;
-	
+
 	public override void _Ready()
 	{
+		_player = GetOwner<PlayerCharacter>();
+	}
+
+	public void CallFootstep()
+	{
+		_player.Footstep();
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -45,23 +54,23 @@ public partial class Viewmodel : Node3D
 		float nextLean = (float)Mathf.Lerp((double)previousLean, (double)MovementSpeed * inputDirection.X, LeanRate);
 		float nextLook = (float)Mathf.Lerp(previousLook, vLook, LookRate);
 		
-		AnimTree?.Set("parameters/look_lean/blend_position", new Vector2(nextLean, nextLook));
-		var characterMovementStateMachine = (AnimationNodeStateMachinePlayback)AnimTree?.Get("parameters/character_movement/playback");
-
-		switch (_playerMovementState)
-		{
-			case MovementComponent.MovementState.WALKING:
-				characterMovementStateMachine.Travel("walk");
-				break;
-			case MovementComponent.MovementState.SPRINTING:
-				characterMovementStateMachine.Travel("walk");
-				break;
-			case MovementComponent.MovementState.SNEAKING:
-				characterMovementStateMachine.Travel("walk");
-				break;
-			default:
-				characterMovementStateMachine.Travel("idle");
-				break;
-		}
+		// AnimTree?.Set("parameters/look_lean/blend_position", new Vector2(nextLean, nextLook));
+		// var characterMovementStateMachine = (AnimationNodeStateMachinePlayback)AnimTree?.Get("parameters/character_movement/playback");
+		//
+		// switch (_playerMovementState)
+		// {
+		// 	case MovementComponent.MovementState.WALKING:
+		// 		characterMovementStateMachine.Travel("walk");
+		// 		break;
+		// 	case MovementComponent.MovementState.SPRINTING:
+		// 		characterMovementStateMachine.Travel("walk");
+		// 		break;
+		// 	case MovementComponent.MovementState.SNEAKING:
+		// 		characterMovementStateMachine.Travel("walk");
+		// 		break;
+		// 	default:
+		// 		characterMovementStateMachine.Travel("idle");
+		// 		break;
+		// }
 	}
 }

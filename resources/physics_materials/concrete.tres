@@ -1,0 +1,5 @@
+[gd_resource type="PhysicsMaterial" format=3 uid="uid://ci4nl541kjurt"]
+
+[resource]
+resource_name = "Concrete"
+rough = true

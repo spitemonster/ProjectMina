@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 using Godot.Collections;
 
@@ -28,9 +29,16 @@ public partial class PlayerCharacter : CharacterBase
 	private Vector3 _defaultCapsulePosition;
 
 	private AnimationLibrary _attackAnimations;
+	private AnimationLibrary _weaponEquippedAnimations;
+	private AnimationLibrary _toolEquippedAnimations;
 	private AnimationLibrary _idleAnimations;
 
 	private AnimationNodeBlendTree _animTreeRoot;
+
+	private AnimationNodeAnimation _rightArmBasePose;
+	private AnimationNodeAnimation _rightHandBasePose;
+	private AnimationNodeAnimation _leftArmBasePose;
+	private AnimationNodeAnimation _leftHandBasePose;
 
 	private Godot.Collections.Array<Rid> x = new();
 	public override void _Ready()
@@ -66,6 +74,10 @@ public partial class PlayerCharacter : CharacterBase
 		CharacterMovement.SneakEnded += _EndStealth;
 		CharacterEquipment.WeaponEquipped += _OnWeaponEquipped;
 		CharacterEquipment.WeaponUnequipped += _OnWeaponUnequipped;
+		CharacterMovement.Landed += (float fallDuration, Vector3 position) =>
+		{
+			_floorSurface = GetFloorSurface(CharacterBody.GlobalPosition);
+		};
 	}
 
 	private void _OnActionPressed(StringName action)
@@ -213,7 +225,7 @@ public partial class PlayerCharacter : CharacterBase
 
 		var controlInput = PlayerInput.GetInputDirection();
 		var direction = (GlobalTransform.Basis * new Vector3(controlInput.X, 0, controlInput.Y)).Normalized();
-		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, spaceState);
+		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, spaceState, _floorSurface);
 
 		_ = MoveAndSlide();
 
@@ -262,11 +274,43 @@ public partial class PlayerCharacter : CharacterBase
 		attackNode.Animation = _GetAttackAnimation();
 		PlayerViewmodel.AnimTree.Set("parameters/right_arm_one_shot/request", (int)AnimationNodeOneShot.OneShotRequest.Fire);
 	}
+
+	public override void Footstep()
+	{
+		_floorSurface = GetFloorSurface(CharacterBody.GlobalPosition);
+		
+		DebugDraw.Sphere(GlobalTransform, new SphereShape3D(), Colors.Red, 3.0f);
+
+		if (_floorSurface != default)
+		{
+			switch (_floorSurface.ResourceName)
+			{
+				case "Grass":
+					GD.Print("surface is grass");
+					break;
+				case "Wood":
+					GD.Print("surface is wood");
+					break;
+				case "Ice":
+					GD.Print("surface is ice");
+					break;
+				default:
+					GD.Print("no surface");
+					break;
+			}
+		}
+	}
 	
 	private void _OnWeaponEquipped(EquippableComponent weapon)
 	{
-		_attackAnimations = weapon.GetFirstPersonAnimations();
-		PlayerViewmodel.AnimPlayer.AddAnimationLibrary("weapon", _attackAnimations);
+		_rightHandBasePose = (AnimationNodeAnimation)_animTreeRoot.GetNode("right_hand_base_pose");
+		_attackAnimations = weapon.GetUseAnimations(true);
+		_weaponEquippedAnimations = weapon.GetEquippedAnimations(true);
+		
+		PlayerViewmodel.AnimPlayer.AddAnimationLibrary("weapon_attacks", _attackAnimations);
+		PlayerViewmodel.AnimPlayer.AddAnimationLibrary("weapon_equipped", _weaponEquippedAnimations);
+
+		_InitWeaponAnimations();
 		// PlayerViewmodel.AnimPlayer.AddAnimationLibrary("idle", _idleAnimations);
 	}
 
@@ -274,17 +318,30 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		PlayerViewmodel.AnimPlayer.RemoveAnimationLibrary("weapon");
 		_attackAnimations = null;
+		PlayerViewmodel.AnimTree.Set("parameters/right_hand_one_shot/blend_amount", 0.0f);
+		_rightHandBasePose.Animation = null;
+	}
+
+	private void _GetWeaponIdleAnimation()
+	{
 	}
 
 	private StringName _GetAttackAnimation()
 	{
 		if (_attackAnimations != null)
 		{
-			var animName = "weapon/" + PlayerViewmodel.AnimPlayer.GetAnimationLibrary("weapon").GetAnimationList().PickRandom();
+			var animName = "weapon_attacks/" + _attackAnimations.GetAnimationList().PickRandom();
 			return animName;
 		}
 
 		GD.Print("no anim found");
 		return "";
+	}
+
+	private void _InitWeaponAnimations()
+	{
+		_rightHandBasePose.Animation = "weapon_equipped/idle";
+		
+		PlayerViewmodel.AnimTree.Set("parameters/right_hand/blend_amount", 1.0);
 	}
 }

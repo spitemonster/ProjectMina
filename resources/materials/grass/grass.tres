@@ -7,13 +7,13 @@
 [ext_resource type="Texture2D" uid="uid://bwqwypopokii4" path="res://resources/materials/grass/grass_emission.png" id="5"]
 
 [resource]
+diffuse_mode = 1
 albedo_color = Color(0.254902, 0.254902, 0.254902, 1)
 albedo_texture = ExtResource("1")
 metallic_texture = ExtResource("2")
 metallic_texture_channel = 2
 roughness_texture = ExtResource("2")
 roughness_texture_channel = 1
-emission_enabled = true
 emission_texture = ExtResource("5")
 normal_enabled = true
 normal_scale = 0.2

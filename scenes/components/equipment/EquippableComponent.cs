@@ -20,12 +20,26 @@ public partial class EquippableComponent : InteractableComponent
 	public bool CanEquip = true;
 	public bool CanUse = true;
 	
-	[Export] protected Array<StringName> FirstPersonUseAnimations = new();
+	/// <summary>
+	/// for weapons these are attack animations; the more you have the more varied your attacks are. this is more relevant to melee weapons.
+	/// for tools this would be your tool use animations
+	/// </summary>
 	[Export] protected AnimationLibrary FirstPersonUseAnimationLibrary;
-	[Export] protected Array<StringName> FirstPersonEquipAnimations = new();
+	/// <summary>
+	///  third person/ai
+	/// </summary>
+	[Export] protected AnimationLibrary UseAnimationLibrary;
+	/// <summary>
+	/// we should expect the first person equipped animation library to include these four animations:
+	/// 1. hand_pose
+	/// 2. idle
+	/// 3. walk
+	/// 4. run
+	/// </summary>
+	[Export] protected AnimationLibrary FirstPersonEquippedAnimationLibrary;
+	[Export] protected AnimationLibrary EquippedAnimationLibrary;
 
 	private CharacterBase _wielder;
-
 	private RigidBody3D _parent;
 
 	public void Equip(CharacterBase character, Node3D slot)
@@ -47,29 +61,19 @@ public partial class EquippableComponent : InteractableComponent
 		EquipmentSlot = null;
 	}
 
-	public AnimationLibrary GetFirstPersonAnimations()
+	public AnimationLibrary GetUseAnimations(bool firstPerson = false)
+	{
+		return firstPerson ? FirstPersonUseAnimationLibrary : UseAnimationLibrary;
+	}
+
+	public AnimationLibrary GetEquippedAnimations(bool firstPerson = false)
+	{
+		return firstPerson ? FirstPersonEquippedAnimationLibrary : EquippedAnimationLibrary;
+	}
+
+	public AnimationLibrary GetFirstPersonUseAnimations()
 	{
 		return FirstPersonUseAnimationLibrary;
-	}
-
-	public StringName GetUseAnim(bool firstPerson = false)
-	{
-		if (firstPerson)
-		{
-			return FirstPersonUseAnimations.PickRandom();
-		}
-
-		return "";
-	}
-
-	public StringName GetEquipAnim(bool firstPerson = false)
-	{
-		if (firstPerson)
-		{
-			return FirstPersonEquipAnimations.PickRandom();
-		}
-
-		return "";
 	}
 
 	private void _EnableEquip()
@@ -103,7 +107,7 @@ public partial class EquippableComponent : InteractableComponent
 			
 			// var currentPosition = _parent.GlobalPosition;
 			// var targetPosition = EquipmentSlot.GlobalPosition;
-			// var targetLinearVelocity = (targetPosition - currentPosition) * 10.0f;
+			// var targetLinearVelocity = (targetPosition - currentPosition) * 100.0f;
 			//
 			// _parent.LinearVelocity = targetLinearVelocity;
 			
