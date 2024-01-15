@@ -9,13 +9,12 @@ namespace ProjectMina;
 
 public partial class AIBrainComponent : ControllerComponent
 {
-	[Export] public NavigationAgent3D NavigationAgent { get; protected set; }
-	[Export] protected AISightComponent SightComponent;
-	[Export] protected AIHearingComponent HearingComponent;
-	[Export] protected BlackboardComponent Blackboard;
-	[Export] protected AttentionComponent AttentionComponent;
+	// [Export] public NavigationAgent3D NavigationAgent { get; protected set; }
+	// [Export] protected AISightComponent SightComponent;
+	// [Export] protected AIHearingComponent HearingComponent;
+	[Export] public BlackboardComponent Blackboard { get; protected set; }
 
-	public CharacterBase Pawn { get; private set; }
+	public AICharacter Pawn { get; private set; }
 	public Vector2 MovementDirection { get; protected set; }
 
 	private CombatGridPoint currentGridPoint;
@@ -23,9 +22,11 @@ public partial class AIBrainComponent : ControllerComponent
 
 	private BlackboardAsset _blackboardAsset;
 
+	private Node3D _currentTarget = null;
+
 	public Node3D GetCurrentFocus()
 	{
-		return AttentionComponent.CurrentFocus;
+		return Pawn.CharacterAttention.CurrentFocus;
 	}
 
 	public Vector3 GetTargetPosition()
@@ -40,13 +41,8 @@ public partial class AIBrainComponent : ControllerComponent
 			return;
 		}
 		
-		// all these components are required for the ai brain to function, so pitch a fit right a way
 		if (EnableDebug)
 		{
-			System.Diagnostics.Debug.Assert(AttentionComponent != null, "no attention component");
-			System.Diagnostics.Debug.Assert(SightComponent != null, "no ai sight component");
-			System.Diagnostics.Debug.Assert(HearingComponent != null, "no ai hearing component");
-			System.Diagnostics.Debug.Assert(NavigationAgent != null, "no navigation component");
 			System.Diagnostics.Debug.Assert(Blackboard != null, "no blackboard component");
 		}
 
@@ -65,11 +61,11 @@ public partial class AIBrainComponent : ControllerComponent
 		
 		base._Ready();
 
-		Pawn = GetOwner<CharacterBase>();
+		Pawn = GetOwner<AICharacter>();
 
 		if (EnableDebug)
 		{
-			System.Diagnostics.Debug.Assert(Pawn != null, "No controlled character");
+			System.Diagnostics.Debug.Assert(Pawn != null, "No Pawn");
 		}
 
 		if (Blackboard.Blackboard is BlackboardAsset bb)
@@ -89,56 +85,56 @@ public partial class AIBrainComponent : ControllerComponent
 			}
 		};
 
-		SightComponent.CharacterEnteredSightRadius += (character) =>
-		{
-			// if (character is PlayerCharacter p)
-			// {
-			// 	SeeEnemy(p);
-			// }
-		};
-
-		SightComponent.CharacterEnteredLineOfSight += (character) =>
-		{
-			if (GetCurrentFocus() == null)
-			{
-				AttentionComponent?.SetFocus(character);
-
-				if (character is PlayerCharacter p)
-				{
-					Blackboard.SetValue("enemy_visible", true);
-				}
-			}
-		};
-
-		SightComponent.CharacterExitedSightRadius += (character) =>
-		{
-
-		};
-
-		SightComponent.CharacterExitedLineOfSight += (character) =>
-		{
-			if (character.Equals(GetCurrentFocus()))
-			{
-				AttentionComponent?.LoseFocus();
-
-				if (character is PlayerCharacter p)
-				{
-					Blackboard.SetValue("enemy_visible", false);
-				}
-			}
-		};
+		// SightComponent.CharacterEnteredSightRadius += (character) =>
+		// {
+		// 	// if (character is PlayerCharacter p)
+		// 	// {
+		// 	// 	SeeEnemy(p);
+		// 	// }
+		// };
+		//
+		// SightComponent.CharacterEnteredLineOfSight += (character) =>
+		// {
+		// 	// if (GetCurrentFocus() == null)
+		// 	// {
+		// 	// 	AttentionComponent?.SetFocus(character);
+		// 	//
+		// 	// 	if (character is PlayerCharacter p)
+		// 	// 	{
+		// 	// 		Blackboard.SetValue("enemy_visible", true);
+		// 	// 	}
+		// 	// }
+		// };
+		//
+		// SightComponent.CharacterExitedSightRadius += (character) =>
+		// {
+		//
+		// };
+		//
+		// SightComponent.CharacterExitedLineOfSight += (character) =>
+		// {
+		// 	// if (character.Equals(GetCurrentFocus()))
+		// 	// {
+		// 	// 	AttentionComponent?.LoseFocus();
+		// 	//
+		// 	// 	if (character is PlayerCharacter p)
+		// 	// 	{
+		// 	// 		Blackboard.SetValue("enemy_visible", false);
+		// 	// 	}
+		// 	// }
+		// };
 
 		Pawn.CharacterMovement.MovementStateChanged += (MovementComponent.MovementState newState) =>
 		{
 			Blackboard?.SetValue("movement_state", (int)newState);
 		};
 
-		NavigationAgent.TargetReached += () =>
+		Pawn.NavigationAgent.TargetReached += () =>
 		{
-			GD.Print("position_reached");
+			
 		};
 
-		AttentionComponent.FocusChanged += (Node3D newFocus, Node3D previousFocus) =>
+		Pawn.CharacterAttention.FocusChanged += (Node3D newFocus, Node3D previousFocus) =>
 		{
 			bool addToBlackboard = Blackboard?.SetValue("current_focus", newFocus?.GetPath()) ?? false;
 
@@ -157,18 +153,6 @@ public partial class AIBrainComponent : ControllerComponent
 		{
 			// Blackboard?.SetValue("current_health", Pawn.CharacterHealth.CurrentHealth);
 			Blackboard?.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
-		}
-	}
-
-	public override void _Process(double delta)
-	{
-		base._Process(delta);
-
-		if (Pawn is AICharacter a)
-		{
-			Label3D enemySeen = a.GetNode<Label3D>("%enemy_seen_label");
-
-			enemySeen.Text = "Enemy Visible: " + Blackboard.GetValue("enemy_visible");
 		}
 	}
 }

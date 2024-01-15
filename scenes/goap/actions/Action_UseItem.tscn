@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://c3d6c6tvrabfc"]
-
-[ext_resource type="Script" path="res://scenes/goap/actions/UseItem.cs" id="1_rqcmg"]
-
-[node name="Action_UseItem" type="Node"]
-script = ExtResource("1_rqcmg")
-Preconditions = {
-"target_movement_position_reached": true
-}

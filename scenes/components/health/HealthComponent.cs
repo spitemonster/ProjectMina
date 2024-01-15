@@ -16,6 +16,21 @@ public partial class HealthComponent : ComponentBase
 		CurrentHealth = MaxHealth;
 	}
 
+	public void FullyHeal()
+	{
+		CurrentHealth = MaxHealth;
+		
+		_ = EmitSignal(SignalName.HealthMaxed);
+		_ = EmitSignal(SignalName.HealthChanged, CurrentHealth, false);
+	}
+
+	public void FullyHurt(bool isDamage = true)
+	{
+		CurrentHealth = 0;
+		_ = EmitSignal(SignalName.HealthDepleted);
+		_ = EmitSignal(SignalName.HealthChanged, CurrentHealth, isDamage);
+	}
+
 	// force overwrites the health entirely
 	public void ChangeHealth(double amount, bool isDamage = false, double force = -1.0)
 	{

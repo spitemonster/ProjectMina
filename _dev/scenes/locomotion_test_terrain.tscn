@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://csk4clx01hnh5"]
 
-[ext_resource type="PackedScene" uid="uid://3wpmgphjun27" path="res://resources/models/LocomotionTestTerrain.blend" id="1_8r6rx"]
+[ext_resource type="PackedScene" uid="uid://3wpmgphjun27" path="res://resources/blender/LocomotionTestTerrain.blend" id="1_8r6rx"]
 [ext_resource type="Material" uid="uid://y1imndgpvmdx" path="res://resources/materials/grass/grass.tres" id="2_g5oh3"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_0mm26"]

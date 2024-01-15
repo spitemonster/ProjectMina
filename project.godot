@@ -51,7 +51,7 @@ project/assembly_name="ProjectMina"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/debug_drawing/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/imjp94.yafsm/plugin.cfg", "res://addons/imrp/plugin.cfg", "res://addons/qodot/plugin.cfg")
+enabled=PackedStringArray("res://addons/csg_mesher/plugin.cfg", "res://addons/debug_drawing/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/imjp94.yafsm/plugin.cfg", "res://addons/imrp/plugin.cfg", "res://addons/qodot/plugin.cfg")
 
 [filesystem]
 
@@ -194,6 +194,7 @@ test={
 3d/run_on_separate_thread=true
 common/physics_ticks_per_second=240
 3d/physics_engine="JoltPhysics3D"
+jolt_3d/collisions/areas_detect_static_bodies=true
 
 [rendering]
 

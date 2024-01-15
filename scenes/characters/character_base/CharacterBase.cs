@@ -26,7 +26,7 @@ public partial class CharacterBase : CharacterBody3D
 
 	[Export] protected double RotationRate = 6.0;
 
-	[Export] private bool _debug = false;
+	[Export] protected bool _debug = false;
 
 	public Vector3 ForwardVector { get; protected set; }
 

@@ -43,9 +43,14 @@ public partial class PlayerCharacter : CharacterBase
 	private Godot.Collections.Array<Rid> x = new();
 	public override void _Ready()
 	{
+		// setup player in global data
+		if (Global.Data.Player != null)
+		{
+			QueueFree();
+		}
+		
 		base._Ready();
 		
-		// setup player in global data
 		Global.Data.Player = this;
 
 		x.Add(GetRid());
@@ -225,6 +230,7 @@ public partial class PlayerCharacter : CharacterBase
 
 		var controlInput = PlayerInput.GetInputDirection();
 		var direction = (GlobalTransform.Basis * new Vector3(controlInput.X, 0, controlInput.Y)).Normalized();
+		
 		Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, spaceState, _floorSurface);
 
 		_ = MoveAndSlide();
@@ -279,23 +285,17 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		_floorSurface = GetFloorSurface(CharacterBody.GlobalPosition);
 		
-		DebugDraw.Sphere(GlobalTransform, new SphereShape3D(), Colors.Red, 3.0f);
-
 		if (_floorSurface != default)
 		{
 			switch (_floorSurface.ResourceName)
 			{
 				case "Grass":
-					GD.Print("surface is grass");
 					break;
 				case "Wood":
-					GD.Print("surface is wood");
 					break;
 				case "Ice":
-					GD.Print("surface is ice");
 					break;
 				default:
-					GD.Print("no surface");
 					break;
 			}
 		}

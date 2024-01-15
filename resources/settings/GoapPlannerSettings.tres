@@ -5,4 +5,4 @@
 [resource]
 script = ExtResource("1_ha87v")
 EnableDebug = true
-MaxPlanSteps = 5
+MaxPlanSteps = 10

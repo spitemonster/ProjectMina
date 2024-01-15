@@ -11,14 +11,12 @@ public partial class MoveToTargetPosition : GoapActionBase
         // don't run if we don't have the key
         if (!worldState.ContainsKey("target_movement_position"))
         {
-            GD.Print("world state doesn't contain target movement position key");
             return false;
         }
 
         // don't run if the target position isn't a vector
         if (worldState["target_movement_position"].VariantType != Variant.Type.Vector3)
         {
-            GD.Print("target movement position isn't a vector");
             return false;
         }
 
@@ -28,18 +26,18 @@ public partial class MoveToTargetPosition : GoapActionBase
 
     public override ActionStatus Run(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
     {
-        agent.Pawn.Brain.NavigationAgent.TargetPosition = (Vector3)worldState["target_movement_position"];
-        // GD.Print("target movement position: ", (Vector3)worldState["target_movement_position"]);
         
-        if (agent.Pawn.Brain.NavigationAgent.IsTargetReached())
+        if (agent.Pawn.NavigationAgent.IsTargetReached() && (Vector3)worldState["target_movement_position"] == agent.Pawn.NavigationAgent.TargetPosition)
         {
-            GD.Print("reached");
+            GD.PrintRich("[color=yellow]TARGET REACHED AND TARGET POSITION IS THE SAME[/color]");
             agent.Blackboard.SetValue("target_movement_position_reached", true);
             agent.Blackboard.SetValue("target_movement_position", Vector3.Zero);
             Status = ActionStatus.Succeeded;
         }
         else
         {
+            agent.Pawn.NavigationAgent.TargetPosition = (Vector3)worldState["target_movement_position"];
+
             Status = ActionStatus.Running;
         }
 

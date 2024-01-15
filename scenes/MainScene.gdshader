@@ -2,12 +2,13 @@ shader_type canvas_item;
 
 render_mode unshaded;
 
-#define MAXCOLORS 16
+#define MAXCOLORS 24
 
 uniform bool enabled = true;
 uniform bool dithering = true;
 uniform int colors : hint_range(1, MAXCOLORS) = 12;
 uniform int dither_size: hint_range(1, 8) = 2;
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
 
 float dithering_pattern(ivec2 fragcoord) {
 	const float pattern[] = {
@@ -52,7 +53,7 @@ float reduce_color(float raw, float dither, int depth) {
 }
 
 void fragment() {
-	vec4 raw = texture(TEXTURE, SCREEN_UV);
+	vec4 raw = texture(screen_texture, SCREEN_UV);
 	ivec2 uv = ivec2(FRAGCOORD.xy / float(dither_size));
 
 	if (enabled == true){

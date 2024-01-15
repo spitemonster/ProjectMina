@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://xojgn6m8e5bn"]
+
+[ext_resource type="AnimationLibrary" uid="uid://dpsnox5rohloc" path="res://resources/animations/third_person/AnimLibrary_interactable.res" id="1_ncd2d"]
+
+[node name="AnimationPlayer" type="AnimationPlayer"]
+libraries = {
+"interactable": ExtResource("1_ncd2d")
+}

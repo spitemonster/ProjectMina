@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Godot;
 using ProjectMina.BehaviorTree;
 namespace ProjectMina;
@@ -22,27 +23,55 @@ public partial class AICharacter : CharacterBase
 {
 	[Export] public AIBrainComponent Brain;
 	[Export] public float BrakingDistance = 1.0f;
-	[Export] public SearchComponent searchComponent { get; protected set; }
-	[Export] protected AnimationPlayer _animPlayer;
-	[Export] protected MeleeWeapon TempWeapon;
-	[Export] protected AnimationTree _animationTree;
-	[Export] protected BehaviorTreeComponent _behaviorTree;
-	
-
-	public Node3D _dtc;
+	[Export] public SearchComponent SearchComponent { get; protected set; }
+	[Export] public NavigationAgent3D NavigationAgent { get; protected set; }
 	
 	private Vector3 _direction = new();
 	private Vector3 _lookTarget = new();
+
+	public void EquipWeapon(EquippableComponent weapon)
+	{
+		CharacterEquipment.Equip(weapon);
+	}
+
+	public bool HasLineOfSight(Node3D target)
+	{
+		// if (_debug)
+		// {
+		// 	GD.Print("testing AI line of sight to: ", target.Name);	
+		// }
+		
+		HitResult res = Cast.Ray(GetWorld3D().DirectSpaceState, Eyes.GlobalPosition, target.GlobalPosition, new() { this.GetRid() });
+
+		if (res.Collider == null || res.Collider == target)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	public void UseFocusedInteractable()
+	{
+		var focus = (Node3D)Brain.Blackboard.GetValue("current_focus");
+		var interactable = focus.GetNode<InteractableComponent>("Interactable");
+		interactable.Interact(this);
+	}
+
+	public void FinishInteractableAnim()
+	{
+		CharacterAnimationTree.RemoveAnimationLibrary("interactable");
+	}
 
 	public override void _Ready()
 	{
 		base._Ready();
 		
 		System.Diagnostics.Debug.Assert(Brain != null, "no brain component");
-		System.Diagnostics.Debug.Assert(Brain.NavigationAgent != null, "No navigation agent");
+		System.Diagnostics.Debug.Assert(NavigationAgent != null, "No navigation agent");
 		System.Diagnostics.Debug.Assert(CharacterMovement != null, "No movement component");
 		
-		Brain.NavigationAgent.DebugEnabled = true;
+		NavigationAgent.DebugEnabled = true;
 		
 		CharacterHealth.HealthChanged += (double newHealth, bool wasDamage) =>
 		{
@@ -52,10 +81,8 @@ public partial class AICharacter : CharacterBase
 		CharacterMovement.EnableClimbing = false;
 		CharacterMovement.EnableJumping = false;
 		CharacterMovement.EnableSneaking = false;
-
-		_dtc = GetNodeOrNull<Node3D>("%dtc");
 		
-		Brain.NavigationAgent.VelocityComputed += SetVelocity;
+		NavigationAgent.VelocityComputed += SetVelocity;
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -78,37 +105,41 @@ public partial class AICharacter : CharacterBase
 			r.ApplyImpulse(-collision3D.GetNormal() * 0.01f * angleFactor, collision3D.GetPosition());
 		}
 
-		_direction = (Brain.NavigationAgent.TargetPosition - GlobalPosition).Normalized();
-		_lookTarget = Brain.NavigationAgent.TargetPosition;
+		_direction = (NavigationAgent.TargetPosition - GlobalPosition).Normalized();
+		_lookTarget = NavigationAgent.TargetPosition;
 		
-		var dist = (Brain.NavigationAgent.TargetPosition - GlobalPosition).Length() - .5f;
+		var dist = (NavigationAgent.TargetPosition - GlobalPosition).Length() - .5f;
 		var mult = Mathf.Clamp((dist / BrakingDistance), 0.0f, 1.0f);
 
-		if (!Brain.NavigationAgent.IsTargetReached())
+		if (!NavigationAgent.IsTargetReached())
 		{
 			// Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, GetWorld3D().DirectSpaceState) * mult;
-			Brain.NavigationAgent.Velocity = CharacterMovement.GetCharacterVelocity(_direction, delta, GetWorld3D().DirectSpaceState) * mult; 
+			NavigationAgent.Velocity = CharacterMovement.GetCharacterVelocity(_direction, delta, GetWorld3D().DirectSpaceState); 
 		}
 		else
 		{
 			// Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState) * mult;
-			Brain.NavigationAgent.Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState) * mult;
+			NavigationAgent.Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState);
 		}
 	}
 
 	private void SetVelocity(Vector3 safeVelocity)
 	{
 		Velocity = safeVelocity;
-		_animationTree.Set("parameters/test/blend_position", Velocity.Length());
+		CharacterAnimationTree.Set("parameters/test/blend_position", Velocity.Length());
 		
-		var t = GlobalTransform;
-		t = t.InterpolateWith(t.LookingAt(_lookTarget, Vector3.Up), 0.05f);
-		GlobalTransform = t;
+		if (_lookTarget != null)
+		{
+			var t = GlobalTransform;
+			t = t.InterpolateWith(t.LookingAt(_lookTarget, Vector3.Up), 0.05f);
+			GlobalTransform = t;
 
-		var gr = GlobalRotation;
-		gr.X = 0;
-		gr.Z = 0;
-		GlobalRotation = gr;
+			var gr = GlobalRotation;
+			gr.X = 0;
+			gr.Z = 0;
+			GlobalRotation = gr;
+		}
+		
 		MoveAndSlide();
 	}
 }

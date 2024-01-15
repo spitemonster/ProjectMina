@@ -1,6 +1,5 @@
 using System.Linq;
 using Godot; 
-using Godot.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -57,15 +56,6 @@ public partial class GoapPlanner : Node
 
 			Queue<GoapActionBase> planQueue = _BuildPlan(planRequest.Agent, planRequest.Goal);
 
-			if (planQueue.Count > 0)
-			{
-				GD.Print("have a plan request in the queue: ");
-			}
-			else
-			{
-				GD.Print("don't have any requests in the queue");
-			}
-
 			GoapPlan plan = new()
 			{
 				ID = planRequest.ID,
@@ -76,8 +66,8 @@ public partial class GoapPlanner : Node
 			
 			planRequest.Agent.ReceivePlan(plan);
 			
-			// need to manually free godot objets
-			planRequest.Free();
+			// need to manually free godotobjets
+			planRequest.Complete();
 		}
 	}
 
@@ -85,29 +75,14 @@ public partial class GoapPlanner : Node
 	{
 		Stack<GoapActionBase> plan = new();
 		
-		var agentState = agent.GetState();
-		Godot.Collections.Dictionary<Godot.StringName, Godot.Variant> localWs = WorldState.Duplicate();
+		var agentState = agent.GetAgentState();
+		
+		// we don't want to touch our actual world state so we clone it and work with that for this process
+		var localWs = WorldState.Duplicate();
+		// merge our agent's state. agents and the world should never have the same states
 		localWs.Merge(agentState.Duplicate(), true);
-		
-		#if DEBUG
-			if (primaryGoal.Satisfied(localWs))
-			{
-				if (_settings.EnableDebug)
-				{
-					GD.Print(agent.Name, "'s primary goal: ", primaryGoal.GoalName ," for their plan request has already been satisfied. Returning an empty plan.");
-				}
-			}
-		
-			if (agent.GetActions(localWs).Count < 1)
-			{
-				if (_settings.EnableDebug)
-				{
-					GD.Print(agent.Name, " has no available actions.");
-				}
-			}
-		#endif
 
-		// if the goal was satisfied in the time it took to get the plan or the agent has no available actionsZ, return an empty plan and the agent will figure it out
+		// if the goal was satisfied in the time it took to get the plan or the agent has no available actions, return an empty plan and the agent will figure it out
 		if (primaryGoal.Satisfied(localWs) || agent.GetActions(localWs).Count < 1)
 		{
 			return new Queue<GoapActionBase>(plan);
@@ -117,94 +92,84 @@ public partial class GoapPlanner : Node
 		var hasNextStep = true;
 		var currentGoal = primaryGoal;
 		
+		// outline of the below to make sure it makes sense to me
+		// hasNextStep represents whether or not we have reached the conclusion of our plan;
+		// i.e. whether or not the original goal for which we are building the plan is satisfied or not
+		// _maxPlanSteps is basically just to cap how many levels deep the plan should get
+		// using _FindAction gets an action for us that achieves our current goal
 		while (hasNextStep && currentPlanStep < _maxPlanSteps)
 		{
-			// find action
-			// update local world state
-			GD.Print("CURRENT GOAL: ", currentGoal.GoalName, " IS NOT SATISFIED. SEARCHING FOR ACTION.");
-			
 			var action = _FindAction(agent, currentGoal, primaryGoal, localWs);
-			
-			GD.Print("selected action: ", action.Name);
+
+			if (action == null)
+			{
+				return new Queue<GoapActionBase>();
+			}
 			
 			plan.Push(action);
 			
 			var actionEffects = action.GetEffects(agent, primaryGoal, localWs);
-			
-			localWs[actionEffects.Keys.First()] = actionEffects.Values.First();
-			
+
+			// accommodate actions that have multiple effects. most do not and generally should not but I expect future me (hi!) will appreciate this
+			foreach (var effect in actionEffects)
+			{
+				localWs[effect.Key] = effect.Value;
+			}
+
 			if (action.GetPreconditions(agent, primaryGoal, localWs).Keys.Count > 0)
 			{
-				GD.Print("action has precondition");
 				
-			
 				currentGoal = new()
 				{
 					GoalName = action.GetPreconditions(agent, primaryGoal, localWs).Keys.First(),
 					BaseDesiredValue = new() { action.GetPreconditions(agent, primaryGoal, localWs).Values.First() }
 				};
+
+				if (currentGoal.Satisfied(localWs))
+				{
+					hasNextStep = false;
+				}
+				
 				currentPlanStep++;	
 			}
 			else
 			{
-				GD.Print("action has no precondition");
 				hasNextStep = false;
 			}
 		}
-		
-		GD.Print("GOAL FINALLY SATISFIED");
-		GD.Print("========== plan ==========");
-		GD.Print("goal: ", primaryGoal.GoalName);
-		
-		foreach (GoapActionBase step in plan)
-		{
-			GD.Print(step.Name);
-		}
-		
-		GD.Print("========== plan ==========");
 
 		return new(plan);
 	}
 
 	private GoapActionBase _FindAction(GoapAgentComponent agent, GoapGoalBase currentGoal, GoapGoalBase primaryGoal, Godot.Collections.Dictionary<StringName, Variant> worldState)
 	{
-		GD.Print("=========== FINDING ACTION ==========");
 		var actions = agent.GetActions(worldState);
-		GD.Print("target goal: ", currentGoal.GoalName);
-		GD.Print("target goal value: ", currentGoal.DesiredValue(worldState));
 
 		foreach (var action in actions)
 		{
-			GD.Print("    action name: ", action.Name);
-			GD.Print("    action effects: ", action.GetEffects(agent, primaryGoal, worldState));
-			GD.Print("    goal satisfied by action: ", currentGoal.Satisfied(action.GetEffects(agent, primaryGoal, worldState)));
-			GD.Print("    action is valid: ", action.IsValid(agent, primaryGoal, worldState));
-			
 			// we are asking if
 			// the current goal is satisfied by the outcome of the action given the primary goal
 			if (currentGoal.Satisfied(action.GetEffects(agent, primaryGoal, worldState)) && action.IsValid(agent, primaryGoal, worldState))
 			{
-				GD.Print("    seeking action and selected ", action.Name, " to satisfy ", currentGoal.GoalName);
-				GD.Print("=========== FOUND ACTION ==========");
 				return action;
 			}
 		}
-		
-		GD.Print("Could not find suitable action");
 		
 		return null;
 	}
 
 	public static bool VariantsEqual(Variant variantOne, Variant variantTwo)
 	{
+		// return variantOne.Equals(variantTwo);
+		
 		switch (variantOne.VariantType)
 		{
+			case Variant.Type.Bool:
+				return variantOne.AsBool().Equals(variantTwo.AsBool());
 			case Variant.Type.NodePath:
 				return variantOne.AsNodePath() == variantTwo.AsNodePath();
 			case Variant.Type.Float:
 				return variantOne.As<float>() == variantTwo.As<float>();
-			case Variant.Type.Bool:
-				return variantOne.AsBool() == variantTwo.AsBool();
 			case Variant.Type.Vector3:
 				return variantOne.AsVector3() == variantTwo.AsVector3();
 			case Variant.Type.Int:
@@ -212,7 +177,6 @@ public partial class GoapPlanner : Node
 			case Variant.Type.Array:
 				return variantOne.AsStringArray() == variantTwo.AsStringArray();
 			default:
-				GD.PushError("goap planner states are equal comparison checking a variant type not accounted for in code");
 				return false;
 		}
 	}
@@ -227,7 +191,6 @@ public partial class GoapPlanner : Node
 	{
 		if (stateOne.Count != stateTwo.Count)
 		{
-			GD.Print("states are not equal because the count is not the same");
 			return false;
 		} 
 		
@@ -235,13 +198,11 @@ public partial class GoapPlanner : Node
 		{
 			if (!stateOne.TryGetValue(pair.Key, out Variant value1))
 			{
-				GD.Print("state one doesn't have a value for this key: ", pair.Key);
 				return false;
 			}
 			
 			if (!stateTwo.TryGetValue(pair.Key, out Variant value2))
 			{
-				GD.Print("State Two did not have: ", pair.Key);
 				return false;
 			}
 
@@ -258,8 +219,7 @@ public partial class GoapPlanner : Node
 	{
 		// default settings exist but 
 		_settings = ResourceLoader.Load<GoapPlannerSettings>("res://resources/settings/GoapPlannerSettings.tres");
-		System.Diagnostics.Debug.Assert(_settings != null, "Goap planner singleton missing settings");
-
+		
 		if (_settings != null)
 		{
 			_maxPlanSteps = _settings.MaxPlanSteps;

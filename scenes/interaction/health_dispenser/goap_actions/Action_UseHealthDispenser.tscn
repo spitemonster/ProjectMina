@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://s30xb8bx6gko"]
+
+[ext_resource type="Script" path="res://scenes/interaction/health_dispenser/goap_actions/UseHealthDispenser.cs" id="1_y78gk"]
+
+[node name="Action_UseHealthDispenser" type="Node"]
+script = ExtResource("1_y78gk")
+Preconditions = {
+"target_location_reached": true
+}
+Effects = {
+"current_health": 100.0
+}

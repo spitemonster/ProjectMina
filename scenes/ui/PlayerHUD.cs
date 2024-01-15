@@ -25,12 +25,13 @@ public partial class PlayerHUD : Control
 
 	public override void _Ready()
 	{
+		return;
 		base._Ready();
 
-		_player = Global.Data.Player;
-
-		_interactionComponent = _player.CharacterInteraction;
-		_healthComponent = _player.CharacterHealth;
+		// _player = Global.Data.Player;
+		//
+		// _interactionComponent = _player.CharacterInteraction;
+		// _healthComponent = _player.CharacterHealth;
 
 		if (_interactionComponent != null)
 		{

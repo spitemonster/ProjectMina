@@ -12,8 +12,13 @@ public partial class GoapAgentComponent : ComponentBase
 	[Signal] public delegate void PlanCompletedEventHandler();
 	[Signal] public delegate void ActionCompletedEventHandler();
 	[Export] public BlackboardComponent Blackboard { get; protected set; }
+	
+	// goals are resources that allow for simple setup and tweaking in the editor
 	[Export] public Array<GoapGoalBase> Goals = new();
+	
+	// actions are scripts that are run by and on this agent
 	[Export] public Array<GoapActionBase> Actions = new();
+	
 	[Export] public float PlanCheckFrequency = 1.0f;
 	
 	// temporary for development
@@ -26,11 +31,9 @@ public partial class GoapAgentComponent : ComponentBase
 	
 	private int _currentPlanRequest;
 
-	
-
 	private GoapActionBase _currentAction;
 
-	public Dictionary<StringName, Variant> GetState()
+	public Dictionary<StringName, Variant> GetAgentState()
 	{
 		return Blackboard.GetBlackboard().Duplicate();
 	}
@@ -52,8 +55,14 @@ public partial class GoapAgentComponent : ComponentBase
 
 	public void ReceivePlan(GoapPlan plan)
 	{
-		_currentPlanRequest = 0;
+		GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+		GD.PrintRich("[color=magenta]RECEIVED PLAN[/color]");
 		
+		foreach (var step in plan.Steps)
+		{
+			GD.PrintRich("[color=magenta]	", step.Name, "[/color]");
+		}
+		_currentPlanRequest = 0;
 		CurrentPlan = plan;
 	}
 
@@ -80,73 +89,108 @@ public partial class GoapAgentComponent : ComponentBase
 
 		PlanTimer.Timeout += _CheckPlanStatus;
 		AddChild(PlanTimer);
-		// PlanTimer.Start();
-		//
-		// PlanTimer.CallDeferred("Start");
 	}
 
 	public override void _Process(double delta)
 	{
-		if (CurrentPlan != null)
+		if (CurrentPlan == null)
+		{
+			GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+			GD.PrintRich("[color=magenta]Plan Empty[/color]");
+			// wait for a new plan
+			return;
+		}
+
+		if (_currentAction == null)
 		{
 			if (CurrentPlan.Steps.Count == 0)
 			{
-				_CompletePlan();
+				GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+				GD.PrintRich("[color=magenta]Plan Steps Count == 0[/color]");
+				// plan has expired so we should just wait for a new plan
 				return;
 			}
 			
-			if (_currentAction == null || _currentAction.Status != GoapActionBase.ActionStatus.Running)
-			{
-				_currentAction = CurrentPlan.Steps.Dequeue();
-			}
+			_currentAction = CurrentPlan.Steps.Dequeue();
 			
-			if (_currentAction != null)
-			{
-				Dictionary<StringName, Variant> ws = GoapPlanner.Instance.WorldState;
-				ws.Merge(GetState(), true);
+			GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+			GD.PrintRich("[color=magenta]NEW ACTION[/color]");
+			GD.PrintRich("[color=magenta]", _currentAction.Name, "[/color]");
+		}
+
+		if (_currentAction.Status == ActionStatus.Failed || _currentAction.Status == ActionStatus.Succeeded)
+		{
+			GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+			GD.PrintRich("[color=magenta]Current action status failed or succeeded[/color]");
+			GD.PrintRich("[color=magenta]", _currentAction.Name, "[/color]");
+			GD.PrintRich("[color=magenta]", _currentAction.Status, "[/color]");
+			return;
+		}
 		
-				if (_currentAction.Run(this, CurrentPlan.Goal, ws) == GoapActionBase.ActionStatus.Succeeded)
-				{
-					_CompleteAction(_currentAction);
-				}
-			}
+		var ws = GoapPlanner.Instance.WorldState.Duplicate();
+		ws.Merge(GetAgentState(), true);
+		
+		ActionStatus result = _currentAction.Run(this, CurrentPlan.Goal, ws);
+
+		switch (result)
+		{
+			case ActionStatus.Running:
+				GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+				GD.PrintRich("[color=magenta]Current action status running[/color]");
+				GD.PrintRich("[color=magenta]", _currentAction.Name, "[/color]");
+				break;
+			case ActionStatus.Failed:
+				break;
+			case ActionStatus.Succeeded:
+				_CompleteAction(_currentAction);
+				break;
 		}
 	}
 
 	private void _CompleteAction(GoapActionBase action)
 	{
+		GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+		GD.PrintRich("[color=magenta]Action Completed: ", action.Name, "[/color]");
 		EmitSignal(SignalName.ActionCompleted);
+
+		_currentAction.Complete();
 		_currentAction = null;
+		
+		if (CurrentPlan.Steps.Count == 0)
+		{
+			_CompletePlan();
+		}
 	}
 
 	private void _CompletePlan()
 	{
-		GD.Print("plan completed");
+		GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+		GD.PrintRich("[color=magenta]Plan Completed[/color]");
 		EmitSignal(SignalName.PlanCompleted);
 		CurrentPlan = null;
 	}
 
 	private void _CheckPlanStatus()
 	{
-		if (CurrentPlan == null)
-		{
-			GD.Print("Requesting new plan!");
-			_RequestNewPlan();
-		}
-		// if the agent doesn't already have a plan, request a new one
-		// CallDeferred("_RequestNewPlan");
+		if (CurrentPlan != null || _currentPlanRequest != 0) return;
+		
+		GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+		GD.PrintRich("[color=magenta]REQUESTING A NEW PLAN BECAUSE CURRENT PLAN IS EMPTY[/color]");
+		_RequestNewPlan();
 	}
 
 	private void _RequestNewPlan()
 	{
-		GoapPlanner.Instance.RequestPlan(this, _GetCurrentHighestPriorityGoal());
+		_currentPlanRequest = GoapPlanner.Instance.RequestPlan(this, _GetCurrentHighestPriorityGoal());
 	}
 	
 	private GoapGoalBase _GetCurrentHighestPriorityGoal()
 	{
-		GD.Print("getting current highest priority goal");
+		GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
+		GD.PrintRich("[color=magenta]Getting Highest Priority Goal[/color]");
 		Goals = new Array<GoapGoalBase>(Goals.OrderByDescending(g => g.Priority(Blackboard.GetBlackboard().Duplicate())));
-		GD.Print(Goals);
+		GD.PrintRich("[color=magenta]Highest Priority Goal: ", Goals[0].GoalName, "[/color]");
+		GD.PrintRich("[color=magenta]||=====GOAP AGENT=====||[/color]");
 		return Goals[0];
 	}
 }

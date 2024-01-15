@@ -72,7 +72,6 @@ public partial class AIPerceptionComponent : ComponentBase3D
 
     private void _Setup()
     {
-        GD.Print("perception component set up");
         GetTree().Root.AddChild(_perceptionTimer);
         _perceptionTimer.Timeout += _Perceive;
         PerceptionRadius.BodyEntered += _CheckAddBody;

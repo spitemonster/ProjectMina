@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://c41bwm4c1ahen"]
+
+[ext_resource type="Script" path="res://scenes/goap/actions/AttackEnemy.cs" id="1_vhnas"]
+
+[node name="AttackEnemy" type="Node"]
+script = ExtResource("1_vhnas")
+Preconditions = {
+"enemy_visible": true
+}
+Effects = {
+"enemy_health": 0.0
+}

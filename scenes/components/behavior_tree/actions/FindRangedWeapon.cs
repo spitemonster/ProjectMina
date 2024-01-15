@@ -44,7 +44,7 @@ public partial class FindRangedWeapon : Action
 		// {
 		// 	blackboard.SetValue("target_movement_position", p.GlobalPosition);
 		//
-		// 	character.Brain.NavigationAgent.TargetReached += () =>
+		// 	character.NavigationAgent.TargetReached += () =>
 		// 	{
 		// 		GD.Print("character can equip weapon now");
 		// 		Succeed();

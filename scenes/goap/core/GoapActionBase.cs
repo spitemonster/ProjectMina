@@ -3,6 +3,14 @@ using Godot.Collections;
 
 namespace ProjectMina.Goap;
 
+public enum ActionStatus : uint
+{
+	Ready,
+	Failed,
+	Succeeded,
+	Running
+}
+
 [GlobalClass]
 public partial class GoapActionBase : Node
 {
@@ -10,27 +18,18 @@ public partial class GoapActionBase : Node
 	[Export] protected Dictionary<StringName, Variant> Effects = new();
 	[Export] public double BaseCost = 1.0;
 
-	public ActionStatus Status = ActionStatus.None;
+	public ActionStatus Status = ActionStatus.Ready;
 	
-	public enum ActionStatus : uint
-	{
-		None,
-		Failed,
-		Succeeded,
-		Running
-	}
+	
 	
 	public virtual bool IsValid(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
 	{
 		foreach (var condition in Preconditions)
 		{
 			Variant worldStateValue = worldState[condition.Key];
-
-			GD.Print("attempting to check the validity of: ", Name, " - ", condition.Key);
 			
-			if (!GoapPlanner.VariantsEqual(worldStateValue, condition.Value)) ;
+			if (!worldStateValue.Equals(condition.Value))
 			{
-				GD.Print("values do not match.");
 				return false;
 			}
 		}
@@ -53,12 +52,28 @@ public partial class GoapActionBase : Node
 	}
 
 	/// <summary>
-	/// 
+	/// should return the state of the world after this action is successfully completed
 	/// </summary>
 	/// <returns></returns>
 	public virtual Dictionary<StringName, Variant> GetEffects(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
 	{
 		return Effects;
+		
+		var localWs = worldState.Duplicate();
+		foreach (var worldEffect in Effects)
+		{
+			if (localWs.ContainsKey(worldEffect.Key))
+			{
+				localWs[worldEffect.Key] = worldEffect.Value;
+			}
+		}
+
+		return localWs;
+	}
+
+	public virtual void Complete()
+	{
+		Status = ActionStatus.Ready;
 	}
 	
 	public virtual ActionStatus Run(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)

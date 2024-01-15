@@ -1,15 +1,24 @@
-[gd_scene load_steps=27 format=3 uid="uid://c45weam7tjqmw"]
+[gd_scene load_steps=37 format=3 uid="uid://c45weam7tjqmw"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b5t2"]
 [ext_resource type="Script" path="res://scenes/characters/player_character/PlayerCharacter.cs" id="2_7uq42"]
 [ext_resource type="Script" path="res://scenes/components/interaction/InteractionComponent.cs" id="3_3gtcp"]
 [ext_resource type="PackedScene" uid="uid://c0jcco70wga31" path="res://scenes/characters/player_character/Viewmodel.tscn" id="3_o3bbs"]
+[ext_resource type="Animation" uid="uid://cbkfqdgu4b3fw" path="res://resources/models/fps_arms/anims/anim_fp_base_pose.res" id="4_2i1au"]
 [ext_resource type="PackedScene" uid="uid://lw8xaecvvi5q" path="res://scenes/components/sound/SoundComponent.tscn" id="5_a402o"]
+[ext_resource type="Animation" uid="uid://cj5f36ow5s1ew" path="res://resources/models/fps_arms/anims/anim_fp_idle_01.res" id="5_x6r8s"]
+[ext_resource type="Animation" uid="uid://c8wfyqqv3jg86" path="res://resources/models/fps_arms/anims/anim_fp_punch_r_01.res" id="6_7esvv"]
+[ext_resource type="Animation" uid="uid://4uuep1o6b203" path="res://resources/models/fps_arms/anims/anim_fp_run.res" id="7_1cxti"]
 [ext_resource type="PackedScene" uid="uid://b3rq16aalq4c2" path="res://scenes/components/movement/MovementComponent.tscn" id="8_8i55q"]
+[ext_resource type="Animation" uid="uid://n6hnrumweicv" path="res://resources/models/fps_arms/anims/anim_fp_walk.res" id="8_g2ldw"]
+[ext_resource type="Animation" uid="uid://ciorfad3jrafw" path="res://resources/animations/first_person/wrench/anim_fp_wrench_attack_01.res" id="9_da55r"]
 [ext_resource type="Script" path="res://scenes/components/attention/AttentionComponent.cs" id="9_nqsj2"]
 [ext_resource type="PackedScene" uid="uid://bcoh7w5yjacxw" path="res://scenes/effects/Rain.tscn" id="10_1an2w"]
+[ext_resource type="Animation" uid="uid://d34ybvnunu6yv" path="res://resources/animations/first_person/wrench/anim_fp_wrench_attack_02.res" id="10_2lwyu"]
 [ext_resource type="Script" path="res://scenes/components/grabbing/GrabbingComponent.cs" id="10_8ufgj"]
+[ext_resource type="Animation" uid="uid://ocq4dyxhlasd" path="res://resources/animations/first_person/wrench/anim_fp_wrench_base_pose.res" id="11_4pfdd"]
 [ext_resource type="PackedScene" uid="uid://biyhjr2oyae4e" path="res://scenes/components/equipment/EquipmentComponent.tscn" id="11_wh707"]
+[ext_resource type="Animation" uid="uid://ctsg5ho5beyi" path="res://resources/animations/first_person/wrench/anim_fp_wrench_idle.res" id="12_y3aej"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vqwtx"]
 radius = 0.3
@@ -25,6 +34,19 @@ radius = 0.01
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wd6j7"]
 radius = 0.05
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_a3tp8"]
+_data = {
+"Idle_01": ExtResource("5_x6r8s"),
+"base_pose": ExtResource("4_2i1au"),
+"punch_r_01": ExtResource("6_7esvv"),
+"run": ExtResource("7_1cxti"),
+"walk": ExtResource("8_g2ldw"),
+"wrench_attack_01": ExtResource("9_da55r"),
+"wrench_attack_02": ExtResource("10_2lwyu"),
+"wrench_base_pose": ExtResource("11_4pfdd"),
+"wrench_idle": ExtResource("12_y3aej")
+}
 
 [sub_resource type="Animation" id="Animation_wn5pa"]
 length = 0.001
@@ -344,7 +366,7 @@ Eyes = NodePath("CharacterBody/Hips/HeadAnim/Head/Eyes")
 Chest = NodePath("Chest")
 
 [node name="CrouchCapsule" type="CollisionShape3D" parent="." index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
 shape = SubResource("CapsuleShape3D_vqwtx")
 
 [node name="CharacterBody" parent="." index="1"]
@@ -398,6 +420,9 @@ target_position = Vector3(0, 0, -100)
 collision_mask = 255
 
 [node name="AnimationTree" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel" index="1"]
+libraries = {
+"": SubResource("AnimationLibrary_a3tp8")
+}
 parameters/hands_blend/blend_amount = 0
 parameters/left_arm/blend_amount = 0
 parameters/left_hand/blend_amount = 0
@@ -412,30 +437,44 @@ transform = Transform3D(-0.564066, -0.142209, -0.813391, 0.785706, 0.210527, -0.
 transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, 0)
 
 [node name="Skeleton3D" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms" index="0"]
-bones/0/position = Vector3(-0.30468, 0.0147725, 0.000977147)
-bones/0/rotation = Quaternion(0.90554, -0.350212, -0.178023, 0.160178)
-bones/12/position = Vector3(0.308503, 0.0147412, -0.00358424)
-bones/12/rotation = Quaternion(0.906848, 0.351371, 0.171277, 0.157573)
-bones/24/position = Vector3(0.609712, -0.211625, -0.333773)
-bones/24/rotation = Quaternion(-0.504156, -0.492103, 0.499145, 0.504495)
-bones/25/position = Vector3(-0.610768, -0.211562, -0.324694)
-bones/25/rotation = Quaternion(-0.507843, 0.495855, -0.495394, 0.500808)
-bones/26/position = Vector3(0.392417, 0.0192767, 0.364564)
-bones/26/rotation = Quaternion(0.542673, 0.199036, 0.272913, 0.769031)
-bones/27/position = Vector3(-0.383108, 0.0193163, 0.370333)
-bones/27/rotation = Quaternion(0.540623, -0.193324, -0.276962, 0.770484)
+bones/0/position = Vector3(-0.308249, 0.0147258, -0.00326919)
+bones/0/rotation = Quaternion(0.906766, -0.351287, -0.171748, 0.157717)
+bones/1/rotation = Quaternion(-0.802025, -6.28363e-05, 0.368844, 0.469798)
+bones/2/rotation = Quaternion(0.300068, 0.225157, -0.164695, 0.912217)
+bones/3/rotation = Quaternion(0.0363687, 0.00818229, -0.107629, 0.993492)
+bones/4/rotation = Quaternion(-0.0135752, 0.00949801, -0.185766, 0.982454)
+bones/6/rotation = Quaternion(-0.0093011, 0.00110479, 0.0848438, 0.99635)
+bones/7/rotation = Quaternion(0.00936279, 0.000265342, -0.229471, 0.97327)
+bones/8/rotation = Quaternion(0.0151306, 0.00465101, -0.0996782, 0.994894)
+bones/12/position = Vector3(0.304945, 0.0147507, 0.000673005)
+bones/12/rotation = Quaternion(0.905636, 0.350285, 0.177578, 0.159969)
+bones/13/rotation = Quaternion(-0.802025, 6.28075e-05, -0.368844, 0.469798)
+bones/14/rotation = Quaternion(0.300068, -0.225157, 0.164695, 0.912217)
+bones/15/rotation = Quaternion(0.0363687, -0.00818229, 0.107629, 0.993492)
+bones/17/rotation = Quaternion(0.00579102, 0.00794873, 0.101178, 0.99482)
+bones/18/rotation = Quaternion(-0.0093011, -0.00110479, -0.0848438, 0.99635)
+bones/19/rotation = Quaternion(0.00936279, -0.000265343, 0.229471, 0.97327)
+bones/20/rotation = Quaternion(0.0151306, -0.00465101, 0.0996782, 0.994894)
+bones/24/position = Vector3(0.610701, -0.211558, -0.325327)
+bones/24/rotation = Quaternion(-0.507576, -0.495619, 0.495631, 0.501078)
+bones/25/position = Vector3(-0.609792, -0.211616, -0.333174)
+bones/25/rotation = Quaternion(-0.504389, 0.492376, -0.498873, 0.504264)
+bones/26/position = Vector3(0.383744, 0.0192698, 0.369945)
+bones/26/rotation = Quaternion(0.540791, 0.193702, 0.276694, 0.770367)
+bones/27/position = Vector3(-0.391789, 0.0192322, 0.364959)
+bones/27/rotation = Quaternion(0.542563, -0.198639, -0.273196, 0.769111)
 
 [node name="FPS_Arms_Mesh" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D" index="0"]
 cast_shadow = 0
 
 [node name="RightHandAttachment" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D" index="1"]
-transform = Transform3D(0.771837, 0.217758, -0.597369, -0.635819, 0.262038, -0.725996, -0.00155842, 0.940169, 0.340705, -0.383101, 0.0193552, 0.370437)
+transform = Transform3D(0.771813, 0.204687, -0.602003, -0.635784, 0.261979, -0.726048, 0.00909948, 0.943117, 0.332335, -0.391786, 0.0192778, 0.365068)
 
 [node name="RightHandSocket" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D/RightHandAttachment" index="0"]
 transform = Transform3D(0.0201643, -0.602196, -0.798093, 0.938355, 0.286921, -0.192787, 0.345085, -0.745008, 0.570859, 0.0638688, 0.00408357, -0.0524669)
 
 [node name="LeftHandAttachment" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D" index="2"]
-transform = Transform3D(0.771806, -0.203734, 0.602336, 0.635781, 0.262048, -0.726026, -0.0099251, 0.943304, 0.33178, 0.392412, 0.0193199, 0.364668)
+transform = Transform3D(0.77184, -0.216808, 0.59771, 0.635816, 0.26197, -0.726023, 0.000825286, 0.940408, 0.340049, 0.383739, 0.0193062, 0.370054)
 
 [node name="InteractionComponent" type="Node" parent="." index="2"]
 script = ExtResource("3_3gtcp")

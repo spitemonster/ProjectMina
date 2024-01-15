@@ -23,7 +23,7 @@ public partial class PowerSwitch : Node3D
 	{
 	}
 
-	private void _SwitchOn()
+	private void _SwitchOn(CharacterBase character)
 	{
 		if (!SwitchState)
 		{
@@ -33,7 +33,7 @@ public partial class PowerSwitch : Node3D
 		}
 	}
 
-	private void _SwitchOff()
+	private void _SwitchOff(CharacterBase character)
 	{
 		if (SwitchState)
 		{

@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://mo2gs5u183mp"]
+
+[ext_resource type="Script" path="res://scenes/interaction/health_dispenser/HealthDispenser.cs" id="1_1bb3c"]
+[ext_resource type="ArrayMesh" uid="uid://3v2ge5wfx6nk" path="res://_dev/resources/meshes/dispenser.tres" id="2_c71k2"]
+[ext_resource type="PackedScene" uid="uid://swtfjtba482x" path="res://scenes/components/interaction/InteractableComponent.tscn" id="3_vvnd4"]
+[ext_resource type="PackedScene" uid="uid://s30xb8bx6gko" path="res://scenes/interaction/health_dispenser/goap_actions/Action_UseHealthDispenser.tscn" id="4_whfx0"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_07741"]
+data = PackedVector3Array(0.375, 2, 0.25, 0.375, 2, -0.25, 0.375, 0, -0.25, 0.375, 0, -0.25, 0.375, 0, 0.25, 0.375, 2, 0.25, 0.375, 2, 0.25, -0.375, 2, 0.25, -0.375, 2, -0.25, -0.375, 2, -0.25, 0.375, 2, -0.25, 0.375, 2, 0.25, 0.375, 2, 0.25, 0.375, 0, 0.25, 0.1979, 1.4218, 0.25, 0.1979, 1.5276, 0.25, 0.375, 2, 0.25, 0.1979, 1.4218, 0.25, 0.375, 0, 0.25, -0.375, 0, 0.25, 0.1979, 0.298, 0.25, 0.1979, 1.4218, 0.25, 0.375, 0, 0.25, 0.1979, 0.298, 0.25, -0.1064, 0.298, 0.25, 0.1979, 0.298, 0.25, -0.375, 0, 0.25, -0.375, 0, 0.25, -0.2021, 0.298, 0.25, -0.1064, 0.298, 0.25, -0.2021, 0.461, 0.25, -0.2021, 0.298, 0.25, -0.375, 0, 0.25, -0.375, 2, 0.25, 0.375, 2, 0.25, 0.1979, 1.7752, 0.25, 0.1979, 1.7752, 0.25, 0.375, 2, 0.25, 0.1979, 1.5276, 0.25, -0.375, 0, 0.25, -0.375, 2, 0.25, -0.2021, 1.7752, 0.25, 0.1022, 1.7752, 0.25, -0.2021, 1.7752, 0.25, -0.375, 2, 0.25, -0.375, 2, 0.25, 0.1979, 1.7752, 0.25, 0.1022, 1.7752, 0.25, -0.375, 0, 0.25, -0.2021, 1.7752, 0.25, -0.2021, 0.6514, 0.25, -0.2021, 0.6514, 0.25, -0.2021, 0.461, 0.25, -0.375, 0, 0.25, -0.375, 2, -0.25, -0.375, 2, 0.25, -0.375, 0, 0.25, -0.375, 0, 0.25, -0.375, 0, -0.25, -0.375, 2, -0.25, -0.375, 0, 0.25, 0.375, 0, 0.25, 0.375, 0, -0.25, 0.375, 0, -0.25, -0.375, 0, -0.25, -0.375, 0, 0.25, 0.375, 0, -0.25, 0.375, 2, -0.25, -0.375, 2, -0.25, -0.375, 2, -0.25, -0.375, 0, -0.25, 0.375, 0, -0.25, 0.1979, 1.5276, 0.25, 0.1979, 1.7752, 0.3457, 0.1979, 1.7752, 0.25, 0.1979, 1.4218, 0.25, 0.1979, 1.7752, 0.3457, 0.1979, 1.5276, 0.25, 0.1979, 0.298, 0.25, 0.1979, 0.298, 0.3457, 0.1979, 1.7752, 0.3457, 0.1979, 0.298, 0.25, 0.1979, 1.7752, 0.3457, 0.1979, 1.4218, 0.25, 0.1022, 1.7752, 0.25, 0.1979, 1.7752, 0.3457, -0.2021, 1.7752, 0.25, 0.1979, 1.7752, 0.3457, -0.2021, 1.7752, 0.3457, -0.2021, 1.7752, 0.25, 0.1979, 1.7752, 0.25, 0.1979, 1.7752, 0.3457, 0.1022, 1.7752, 0.25, 0.1979, 1.7752, 0.3457, 0.1979, 0.298, 0.3457, -0.2021, 0.298, 0.3457, -0.2021, 0.298, 0.3457, -0.2021, 1.7752, 0.3457, 0.1979, 1.7752, 0.3457, -0.2021, 1.7752, 0.25, -0.2021, 1.7752, 0.3457, -0.2021, 0.298, 0.3457, -0.2021, 1.7752, 0.25, -0.2021, 0.298, 0.3457, -0.2021, 0.6514, 0.25, -0.2021, 0.461, 0.25, -0.2021, 0.298, 0.3457, -0.2021, 0.298, 0.25, -0.2021, 0.6514, 0.25, -0.2021, 0.298, 0.3457, -0.2021, 0.461, 0.25, -0.1064, 0.298, 0.25, -0.2021, 0.298, 0.3457, 0.1979, 0.298, 0.25, -0.2021, 0.298, 0.3457, 0.1979, 0.298, 0.3457, 0.1979, 0.298, 0.25, -0.2021, 0.298, 0.25, -0.2021, 0.298, 0.3457, -0.1064, 0.298, 0.25)
+
+[node name="HealthDispenser" type="StaticBody3D" groups=["healing"]]
+collision_layer = 135
+collision_mask = 135
+script = ExtResource("1_1bb3c")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2_c71k2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConcavePolygonShape3D_07741")
+
+[node name="Interactable" parent="." node_paths=PackedStringArray("Actions", "ActionPosition") instance=ExtResource("3_vvnd4")]
+Actions = [NodePath("Action_UseHealthDispenser")]
+UseState = {
+"current_health": 100.0
+}
+ThirdPersonInteractionAnimName = &"interactable/push_button"
+ActionPosition = NodePath("../Marker3D")
+
+[node name="Action_UseHealthDispenser" parent="Interactable" instance=ExtResource("4_whfx0")]
+
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.75)

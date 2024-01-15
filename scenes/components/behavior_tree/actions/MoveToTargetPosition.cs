@@ -10,16 +10,16 @@ public partial class MoveToTargetPosition : Action
 	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
 	{
 		GD.Print("moving to target position");
-		character.Brain.NavigationAgent.TargetPosition = (Vector3)blackboard.GetValue("target_movement_position");
+		character.NavigationAgent.TargetPosition = (Vector3)blackboard.GetValue("target_movement_position");
 
-		if (!character.Brain.NavigationAgent.IsTargetReachable())
+		if (!character.NavigationAgent.IsTargetReachable())
 		{
 			GD.Print("unable to reach destination for some reason");
 			Fail();
 			return Status;
 		}
 
-		await ToSignal(character.Brain.NavigationAgent, NavigationAgent3D.SignalName.TargetReached);
+		await ToSignal(character.NavigationAgent, NavigationAgent3D.SignalName.TargetReached);
 		GD.Print("moved to target position");
 
 		Succeed();

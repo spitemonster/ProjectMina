@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://by04pa4fvqmgg"]
-
-[ext_resource type="Script" path="res://scenes/goap/actions/LocateItem.cs" id="1_s4px5"]
-
-[node name="Action_LocateItem" type="Node"]
-script = ExtResource("1_s4px5")

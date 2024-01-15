@@ -34,7 +34,7 @@ public partial class FindRandomTargetPositionInRadius : Action
 		newPosition.Z = z;
 		newPosition.Y = characterPosition.Y;
 
-		Vector3 pos = NavigationServer3D.MapGetClosestPoint(character.Brain.NavigationAgent.GetNavigationMap(), newPosition);
+		Vector3 pos = NavigationServer3D.MapGetClosestPoint(character.NavigationAgent.GetNavigationMap(), newPosition);
 
 		_newTarget = pos;
 		blackboard.SetValue("target_movement_position", _newTarget);
