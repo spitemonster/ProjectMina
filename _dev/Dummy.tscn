@@ -1,20 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://b6me6mg5eidr0"]
+[gd_scene load_steps=3 format=3 uid="uid://b6me6mg5eidr0"]
 
-[ext_resource type="Script" path="res://scenes/characters/ai_character/AICharacter.cs" id="1_cg8rf"]
+[ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b7mb"]
 [ext_resource type="PackedScene" uid="uid://c3scrb5uv6qhp" path="res://resources/models/Paladin.glb" id="2_csysi"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fj7lt"]
-radius = 0.25
-height = 1.67425
+[node name="Dummy" node_paths=PackedStringArray("CharacterBody", "CharacterHealth", "Eyes", "Chest") instance=ExtResource("1_5b7mb")]
+CharacterBody = NodePath("CharacterBody")
+CharacterHealth = NodePath("HealthComponent")
+Eyes = NodePath("Eyes")
+Chest = NodePath("Chest")
+Faction = 2
 
-[node name="AICharacter" type="CharacterBody3D" node_paths=PackedStringArray("CharacterBody")]
-script = ExtResource("1_cg8rf")
-CharacterBody = NodePath("CollisionShape3D")
+[node name="Paladin" parent="." index="2" instance=ExtResource("2_csysi")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.856255, 0)
-shape = SubResource("CapsuleShape3D_fj7lt")
+[node name="Eyes" type="Marker3D" parent="." index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62066, 0)
 
-[node name="Paladin" parent="." instance=ExtResource("2_csysi")]
-
-[editable path="Paladin"]
+[node name="Chest" type="Marker3D" parent="." index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.29296, 0)

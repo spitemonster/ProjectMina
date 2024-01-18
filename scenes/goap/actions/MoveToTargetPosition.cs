@@ -27,18 +27,27 @@ public partial class MoveToTargetPosition : GoapActionBase
     public override ActionStatus Run(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
     {
         
-        if (agent.Pawn.NavigationAgent.IsTargetReached() && (Vector3)worldState["target_movement_position"] == agent.Pawn.NavigationAgent.TargetPosition)
+        if (agent.Pawn.NavigationAgent.IsTargetReached())
         {
-            GD.PrintRich("[color=yellow]TARGET REACHED AND TARGET POSITION IS THE SAME[/color]");
-            agent.Blackboard.SetValue("target_movement_position_reached", true);
-            agent.Blackboard.SetValue("target_movement_position", Vector3.Zero);
-            Status = ActionStatus.Succeeded;
+            if ((Vector3)worldState["target_movement_position"] == agent.Pawn.NavigationAgent.TargetPosition)
+            {
+                agent.Blackboard.SetValue("target_movement_position_reached", true);
+                agent.Blackboard.SetValue("target_movement_position", Vector3.Zero);
+                Status = ActionStatus.Succeeded;
+            }
+            else
+            {
+                agent.Pawn.NavigationAgent.TargetPosition = (Vector3)worldState["target_movement_position"];
+                Status = ActionStatus.Running;    
+            }
+        } else if (agent.Pawn.NavigationAgent.TargetPosition != (Vector3)worldState["target_movement_position"])
+        {
+            agent.Pawn.NavigationAgent.TargetPosition = (Vector3)worldState["target_movement_position"];
+            Status = ActionStatus.Running;
         }
         else
         {
-            agent.Pawn.NavigationAgent.TargetPosition = (Vector3)worldState["target_movement_position"];
-
-            Status = ActionStatus.Running;
+            
         }
 
         return Status;

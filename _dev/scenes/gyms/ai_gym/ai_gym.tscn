@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://rkyi61f30ql0"]
+[gd_scene load_steps=14 format=3 uid="uid://rkyi61f30ql0"]
 
 [ext_resource type="PackedScene" uid="uid://c37sghih0u831" path="res://scenes/levels/level_base/LevelBase.tscn" id="1_pvykt"]
 [ext_resource type="PackedScene" uid="uid://cmjhf16ocrx1k" path="res://_dev/LevelBox.tscn" id="2_abotg"]
@@ -6,6 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://6mn1c1k3x6w5" path="res://scenes/characters/ai_character/AICharacter.tscn" id="3_l4kxa"]
 [ext_resource type="PackedScene" uid="uid://mo2gs5u183mp" path="res://scenes/interaction/health_dispenser/health_dispenser.tscn" id="6_34s14"]
 [ext_resource type="PackedScene" uid="uid://wg5qwywu5abp" path="res://_dev/TestWeapon.tscn" id="6_c7bbx"]
+[ext_resource type="PackedScene" uid="uid://b6me6mg5eidr0" path="res://_dev/Dummy.tscn" id="7_uk7ho"]
+[ext_resource type="PackedScene" uid="uid://bycj2qoglbpn1" path="res://scenes/patrol_path/PatrolPath.tscn" id="8_bm0o6"]
+[ext_resource type="PackedScene" uid="uid://cfbsu1i7xyqy5" path="res://scenes/patrol_path/PatrolPoint.tscn" id="9_j6s3l"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_8hssn"]
+vertices = PackedVector3Array(-27.6281, 15, -27.8017, -27.6281, 15, 35.1983, -27.1281, 15, 35.1983, -27.1281, 15, -27.8017, -0.378099, 0.5, -13.3017, 0.621901, 0.5, -13.5517, 0.621901, 0.5, -26.5517, -26.3781, 0.5, -26.5517, -26.3781, 0.5, -12.3017, -26.3781, 0.5, -12.3017, -0.378099, 0.5, -12.3017, -0.378099, 0.5, -13.3017, 0.621901, 0.5, -26.5517, 0.621901, 0.5, -13.5517, 1.6219, 0.5, -13.3017, 34.3719, 0.5, -26.5517, 1.6219, 0.5, -12.0517, 0.621901, 0.5, 34.1983, 34.3719, 0.5, 34.1983, 34.3719, 0.5, -26.5517, 34.3719, 0.5, -26.5517, 1.6219, 0.5, -13.3017, 1.6219, 0.5, -12.0517, 1.6219, 0.5, -12.0517, 0.621901, 0.5, -11.8017, 0.621901, 0.5, 34.1983, -0.128099, 0.5, -11.8017, -0.378099, 0.5, -12.3017, -26.3781, 0.5, -12.3017, -26.3781, 0.5, 34.1983, 0.621901, 0.5, 34.1983, 0.621901, 0.5, 34.1983, 0.621901, 0.5, -11.8017, -0.128099, 0.5, -11.8017)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 7), PackedInt32Array(7, 4, 8), PackedInt32Array(11, 10, 9), PackedInt32Array(13, 12, 14), PackedInt32Array(14, 12, 15), PackedInt32Array(17, 16, 18), PackedInt32Array(18, 16, 19), PackedInt32Array(22, 21, 20), PackedInt32Array(25, 24, 23), PackedInt32Array(27, 26, 28), PackedInt32Array(28, 26, 29), PackedInt32Array(29, 26, 30), PackedInt32Array(33, 32, 31)]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_trh7r"]
 
@@ -17,28 +24,68 @@ background_mode = 2
 sky = SubResource("Sky_m7uk7")
 volumetric_fog_density = 0.01
 
-[node name="LevelBase" instance=ExtResource("1_pvykt")]
+[node name="LevelBase" node_paths=PackedStringArray("NavigationRegion") instance=ExtResource("1_pvykt")]
+NavigationRegion = NodePath("NavigationRegion3D")
 PlayerClass = ExtResource("2_tth1r")
 
 [node name="PlayerStart" parent="." index="0"]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 5.65771, 3.8841, -2)
 
-[node name="AICharacter" parent="NavigationRegion3D" index="0" instance=ExtResource("3_l4kxa")]
+[node name="AICharacter" parent="." index="1" node_paths=PackedStringArray("Brain", "SearchComponent", "NavigationAgent", "CharacterBody", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterEquipment", "CharacterAnimationPlayer", "CharacterAnimationTree", "Eyes", "Chest") instance=ExtResource("3_l4kxa")]
 transform = Transform3D(-0.0859907, 0, -0.996296, 0, 1, 0, 0.996296, 0, -0.0859907, 0.42159, 0, -7.39021)
+Brain = NodePath("Agent")
+SearchComponent = NodePath("SearchComponent")
+NavigationAgent = NodePath("NavigationAgent3D")
+CharacterBody = NodePath("CollisionShape3D")
+CharacterHealth = NodePath("HealthComponent")
+CharacterAttention = NodePath("AttentionComponent")
+CharacterMovement = NodePath("MovementComponent")
+CharacterEquipment = NodePath("EquipmentComponent")
+CharacterAnimationPlayer = NodePath("AnimationPlayer")
+CharacterAnimationTree = NodePath("AnimationTree")
+Eyes = NodePath("GeneralSkeleton/HeadCollision/Eyes")
+Chest = NodePath("GeneralSkeleton/TorsoCollision/Chest")
 
-[node name="DirectionalLight3D" parent="." index="2"]
+[node name="NavigationRegion3D" parent="." index="2"]
+navigation_mesh = SubResource("NavigationMesh_8hssn")
+
+[node name="LevelBox" parent="NavigationRegion3D" index="0" instance=ExtResource("2_abotg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8719, 0, 3.69827)
+
+[node name="Dummy" parent="NavigationRegion3D" index="1" node_paths=PackedStringArray("CharacterBody", "CharacterHealth", "Eyes", "Chest") instance=ExtResource("7_uk7ho")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -5.43301, 4.76837e-07, -5.14644)
+CharacterBody = NodePath("CharacterBody")
+CharacterHealth = NodePath("HealthComponent")
+Eyes = NodePath("Eyes")
+Chest = NodePath("Chest")
+
+[node name="PatrolPath" parent="NavigationRegion3D" index="2" node_paths=PackedStringArray("Points") instance=ExtResource("8_bm0o6")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.38756)
+Points = [NodePath("PatrolPoint"), NodePath("PatrolPoint2"), NodePath("PatrolPoint3"), NodePath("PatrolPoint4")]
+
+[node name="PatrolPoint" parent="NavigationRegion3D/PatrolPath" index="0" instance=ExtResource("9_j6s3l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9902, 0, 0)
+
+[node name="PatrolPoint2" parent="NavigationRegion3D/PatrolPath" index="1" instance=ExtResource("9_j6s3l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.23542, 0, 0)
+
+[node name="PatrolPoint3" parent="NavigationRegion3D/PatrolPath" index="2" instance=ExtResource("9_j6s3l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.23542, 0, 3.99597)
+
+[node name="PatrolPoint4" parent="NavigationRegion3D/PatrolPath" index="3" instance=ExtResource("9_j6s3l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.32071, 0, 3.99597)
+
+[node name="HealthDispenser" parent="NavigationRegion3D" index="3" instance=ExtResource("6_34s14")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.601291, 9.53674e-07, -12.6512)
+collision_layer = 131
+
+[node name="DirectionalLight3D" parent="." index="3"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 light_energy = 3.0
-
-[node name="LevelBox" parent="." index="3" instance=ExtResource("2_abotg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8719, 0, 3.69827)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="4"]
 environment = SubResource("Environment_cqtbf")
 
-[node name="HealthDispenser" parent="." index="5" instance=ExtResource("6_34s14")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.601291, 9.53674e-07, -12.6512)
-collision_layer = 131
-
-[node name="TestWeapon" parent="." index="6" instance=ExtResource("6_c7bbx")]
+[node name="TestWeapon" parent="." index="5" instance=ExtResource("6_c7bbx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7665, -4.76837e-07, -8.52079)

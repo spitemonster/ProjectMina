@@ -17,24 +17,26 @@ public partial class LocateInteractable : GoapActionBase
         if (interactable != null)
         {
             agent.Blackboard.SetValue("has_target_movement_position", true);
-            
             agent.Blackboard.SetValue("current_focus", interactable.GetOwner<Node3D>());
-
+            agent.Blackboard.SetValue("target_movement_position_reached", false);
+            
             if (interactable.ActionPosition != null && interactable.ActionPosition.GlobalPosition != Vector3.Zero)
             {
-                agent.Blackboard.SetValue("target_movement_position", interactable.ActionPosition.GlobalPosition);    
+                agent.Blackboard.SetValue("target_movement_position", interactable.ActionPosition.GlobalPosition);
             }
             else
             {
                 agent.Blackboard.SetValue("target_movement_position", interactable.GetOwner<Node3D>().GlobalPosition);
             }
             
-            return ActionStatus.Succeeded;
+            Status = ActionStatus.Succeeded;
         }
         else
         {
-            return ActionStatus.Running;
+            Status = ActionStatus.Running;
         }
+
+        return Status;
     }
 
     private static InteractableComponent _LocateInteractable(GoapAgentComponent agent, GoapGoalBase primaryGoal)

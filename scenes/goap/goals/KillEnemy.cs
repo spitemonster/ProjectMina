@@ -18,6 +18,6 @@ public partial class KillEnemy : GoapGoalBase
             return 0;
         }
 
-        return ((double)worldState["current_health"] / (double)worldState["max_health"]) * (double)worldState["enemy_health"];
+        return BasePriority;
     }
 }

@@ -24,15 +24,17 @@ public partial class GoapActionBase : Node
 	
 	public virtual bool IsValid(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
 	{
-		foreach (var condition in Preconditions)
-		{
-			Variant worldStateValue = worldState[condition.Key];
-			
-			if (!worldStateValue.Equals(condition.Value))
-			{
-				return false;
-			}
-		}
+		// foreach (var condition in Preconditions)
+		// {
+		// 	GD.PrintRich("[color=pink]", Name, " looking for action, checking condition: ", condition.Key, "[/color]");
+		// 	Variant worldStateValue = worldState[condition.Key];
+		// 	
+		// 	if (!worldStateValue.Equals(condition.Value))
+		// 	{
+		// 		GD.PrintRich("[color=pink]Not equal[/color]");
+		// 		return false;
+		// 	}
+		// }
 		
 		return true;
 	}

@@ -1,8 +1,16 @@
-using System.Diagnostics;
 using Godot;
-using Godot.Collections;
 
 namespace ProjectMina;
+
+// got this trick from GTAIII source code
+// placing count at the end of the enum lets us easily keep track of the count without storing another variable
+public enum CharacterFaction : int
+{
+	Civ,
+	Guard,
+	Thief,
+	Count
+}
 
 [GlobalClass]
 public partial class CharacterBase : CharacterBody3D
@@ -23,6 +31,7 @@ public partial class CharacterBase : CharacterBody3D
 	[Export] public AnimationTree CharacterAnimationTree { get; protected set; }
 	[Export] public Marker3D Eyes { get; protected set; }
 	[Export] public Marker3D Chest { get; protected set; }
+	[Export] public CharacterFaction Faction { get; protected set; }
 
 	[Export] protected double RotationRate = 6.0;
 

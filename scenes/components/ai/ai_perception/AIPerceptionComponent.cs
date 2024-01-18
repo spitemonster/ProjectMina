@@ -1,10 +1,13 @@
 using System.Diagnostics;
+using System.Linq;
 using Godot;
 using Godot.Collections;
+using ProjectMina.Goap;
 
 namespace ProjectMina;
 
-public partial class AIPerceptionComponent : ComponentBase3D
+[GlobalClass]
+public partial class AIPerceptionComponent : ComponentBase
 {
     // characters within perception radius
     public Array<CharacterBase> CharactersInPerceptionRadius = new();
@@ -25,6 +28,9 @@ public partial class AIPerceptionComponent : ComponentBase3D
     [Signal] public delegate void CharacterExitedPerceptionRadiusEventHandler(CharacterBase character);
     [Signal] public delegate void CharacterEnteredFieldOfViewEventHandler(CharacterBase character);
     [Signal] public delegate void CharacterExitedFieldOfViewEventHandler(CharacterBase character);
+    [Signal] public delegate void CharacterEnteredLineOfSightEventHandler(CharacterBase character);
+    [Signal] public delegate void CharacterExitedLineOfSightEventHandler(CharacterBase character);
+    [Signal] public delegate void VisibleCharactersUpdatedEventHandler(Array<CharacterBase> visibleCharacters);
     
     [Signal] public delegate void SoundHeardEventHandler(SoundSourceComponent source);
 
@@ -49,6 +55,14 @@ public partial class AIPerceptionComponent : ComponentBase3D
     private float _angle;
     private float _roundedAngle;
     private float _clampedRange;
+
+    public CharacterBase GetNearestVisibleCharacter()
+    {
+        VisibleCharacters = new Array<CharacterBase>(VisibleCharacters.OrderByDescending(c => (c.GlobalPosition - _owner.GlobalPosition).Length()));
+
+        return VisibleCharacters[0];
+    }
+    
     public override void _Ready()
     {
         base._Ready();
@@ -76,6 +90,11 @@ public partial class AIPerceptionComponent : ComponentBase3D
         _perceptionTimer.Timeout += _Perceive;
         PerceptionRadius.BodyEntered += _CheckAddBody;
         PerceptionRadius.BodyExited += _CheckRemoveBody;
+
+        foreach (var body in PerceptionRadius.GetOverlappingBodies())
+        {
+            _CheckAddBody(body);
+        }
     }
 
     private void _Perceive()
@@ -126,12 +145,30 @@ public partial class AIPerceptionComponent : ComponentBase3D
         SightableCharacters.Remove(character);
         EmitSignal(SignalName.CharacterExitedFieldOfView, character);
         GD.Print("removed sighted character: ", character);
+
+        if (VisibleCharacters.Contains(character))
+        {
+            _RemoveVisibleCharacter(character);
+        }
+    }
+    
+    private void _AddVisibleCharacter(CharacterBase character)
+    {
+        VisibleCharacters.Add(character);
+        EmitSignal(SignalName.CharacterEnteredLineOfSight, character);
+        GD.Print("added visible character: ", character);
+    }
+
+    private void _RemoveVisibleCharacter(CharacterBase character)
+    {
+        VisibleCharacters.Remove(character);
+        EmitSignal(SignalName.CharacterExitedLineOfSight, character);
+        GD.Print("removed visible character: ", character);
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        var spaceState = GetWorld3D().DirectSpaceState;
-        var forwardVector = -GlobalBasis.Z;
+        var forwardVector = -_owner.GlobalBasis.Z;
         
         foreach (var character in CharactersInPerceptionRadius)
         {
@@ -147,6 +184,20 @@ public partial class AIPerceptionComponent : ComponentBase3D
             } else if (_clampedRange <= 0 && SightableCharacters.Contains(character))
             {
                 _RemoveSightableCharacter(character);
+            }
+        }
+
+        foreach (var character in SightableCharacters)
+        {
+            if (_owner.HasLineOfSight(character.Chest))
+            {
+                if (!VisibleCharacters.Contains(character))
+                {
+                    _AddVisibleCharacter(character);
+                }
+            } else if (VisibleCharacters.Contains(character))
+            {
+                _RemoveVisibleCharacter(character);
             }
         }
     }

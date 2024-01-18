@@ -3,26 +3,28 @@ using Godot.Collections;
 
 
 namespace ProjectMina;
+
+public enum AIAwarenessState : uint
+{
+	Dead,
+	Idle,
+	Suspicious,
+	Alerted
+}
+
 /// <summary>
 /// 	Functions as the AI stand in for a player. Controls a CharacterBase Pawn in the world, makes decisions based on its knowledge and sensory data and directs its pawn to action.
 /// </summary>
 
 public partial class AIBrainComponent : ControllerComponent
 {
-	// [Export] public NavigationAgent3D NavigationAgent { get; protected set; }
-	// [Export] protected AISightComponent SightComponent;
-	// [Export] protected AIHearingComponent HearingComponent;
-	[Export] public BlackboardComponent Blackboard { get; protected set; }
-
 	public AICharacter Pawn { get; private set; }
-	public Vector2 MovementDirection { get; protected set; }
+	[Export] public BlackboardComponent Blackboard { get; protected set; }
+	[Export] public AIPerceptionComponent Perception { get; protected set; }
 
-	private CombatGridPoint currentGridPoint;
-	private bool _avoidanceEnabledDefault = false;
+	public AIAwarenessState AwarenessLevel = AIAwarenessState.Idle;
 
 	private BlackboardAsset _blackboardAsset;
-
-	private Node3D _currentTarget = null;
 
 	public Node3D GetCurrentFocus()
 	{
@@ -36,16 +38,7 @@ public partial class AIBrainComponent : ControllerComponent
 
 	public override void _Ready()
 	{
-		if (!Active)
-		{
-			return;
-		}
 		
-		if (EnableDebug)
-		{
-			System.Diagnostics.Debug.Assert(Blackboard != null, "no blackboard component");
-		}
-
 		// none of this needs to run in the editor and it DEFINITELY does not need to tick in the editor
 		if (Engine.IsEditorHint())
 		{
@@ -54,26 +47,31 @@ public partial class AIBrainComponent : ControllerComponent
 			return;
 		}
 		
-		if (Blackboard == null)
+		Pawn = GetOwner<AICharacter>();
+		
+		if (EnableDebug)
+		{
+			System.Diagnostics.Debug.Assert(Blackboard != null, "AI Brain Component does not have Blackboard");
+			System.Diagnostics.Debug.Assert(Pawn != null, "AI Brain Component not attached to AI Character.");
+		}
+		
+		if (!Active || Blackboard == null || Pawn == null)
 		{
 			return;
 		}
 		
 		base._Ready();
-
-		Pawn = GetOwner<AICharacter>();
-
-		if (EnableDebug)
-		{
-			System.Diagnostics.Debug.Assert(Pawn != null, "No Pawn");
-		}
+		
 
 		if (Blackboard.Blackboard is BlackboardAsset bb)
 		{
 			_blackboardAsset = bb;
 		}
+		
+		GD.Print("[color=pink]should set max health[/color]");
+		GD.Print("[color=pink]", Pawn.CharacterHealth.MaxHealth, "[/color]");
 
-		// Blackboard?.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
+		Blackboard.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
 
 		Pawn.CharacterHealth.HealthChanged += (double newHealth, bool wasDamage) =>
 		{
@@ -85,44 +83,32 @@ public partial class AIBrainComponent : ControllerComponent
 			}
 		};
 
-		// SightComponent.CharacterEnteredSightRadius += (character) =>
-		// {
-		// 	// if (character is PlayerCharacter p)
-		// 	// {
-		// 	// 	SeeEnemy(p);
-		// 	// }
-		// };
-		//
-		// SightComponent.CharacterEnteredLineOfSight += (character) =>
-		// {
-		// 	// if (GetCurrentFocus() == null)
-		// 	// {
-		// 	// 	AttentionComponent?.SetFocus(character);
-		// 	//
-		// 	// 	if (character is PlayerCharacter p)
-		// 	// 	{
-		// 	// 		Blackboard.SetValue("enemy_visible", true);
-		// 	// 	}
-		// 	// }
-		// };
-		//
-		// SightComponent.CharacterExitedSightRadius += (character) =>
-		// {
-		//
-		// };
-		//
-		// SightComponent.CharacterExitedLineOfSight += (character) =>
-		// {
-		// 	// if (character.Equals(GetCurrentFocus()))
-		// 	// {
-		// 	// 	AttentionComponent?.LoseFocus();
-		// 	//
-		// 	// 	if (character is PlayerCharacter p)
-		// 	// 	{
-		// 	// 		Blackboard.SetValue("enemy_visible", false);
-		// 	// 	}
-		// 	// }
-		// };
+		Perception.VisibleCharactersUpdated += characters =>
+		{
+			Blackboard.SetValue("visible_characters", characters);
+		};
+
+		Perception.CharacterEnteredPerceptionRadius += (CharacterBase character) =>
+		{
+			// switch (character.Faction)
+			// {
+			// 	case CharacterFaction.Thief:
+			// 		GD.Print("[color=red]AI Brain component added seen character: ", character.Name, "[/color]");
+			// 		break;
+			// }
+		};
+		
+		Perception.CharacterExitedPerceptionRadius += (CharacterBase character) =>
+		{
+			// switch (character.Faction)
+			// {
+			// 	case CharacterFaction.Thief:
+			// 		GD.Print("[color=red]AI Brain component added seen character: ", character.Name, "[/color]");
+			// 		Blackboard.SetValue("enemy_visible", true);
+			// 		Blackboard.SetValue("target_enemy", character);
+			// 		break;
+			// }
+		};
 
 		Pawn.CharacterMovement.MovementStateChanged += (MovementComponent.MovementState newState) =>
 		{
@@ -136,23 +122,17 @@ public partial class AIBrainComponent : ControllerComponent
 
 		Pawn.CharacterAttention.FocusChanged += (Node3D newFocus, Node3D previousFocus) =>
 		{
-			bool addToBlackboard = Blackboard?.SetValue("current_focus", newFocus?.GetPath()) ?? false;
-
-			if (addToBlackboard)
-			{
-				GD.Print("successfully changed focus: ", newFocus?.Name);
-			}
-
-			if (newFocus == null)
-			{
-				GD.Print("lost focus!");
-			}
+			// bool addToBlackboard = Blackboard?.SetValue("current_focus", newFocus?.GetPath()) ?? false;
+			//
+			// if (addToBlackboard)
+			// {
+			// 	GD.Print("successfully changed focus: ", newFocus?.Name);
+			// }
+			//
+			// if (newFocus == null)
+			// {
+			// 	GD.Print("lost focus!");
+			// }
 		};
-
-		if (Pawn.CharacterHealth != null)
-		{
-			// Blackboard?.SetValue("current_health", Pawn.CharacterHealth.CurrentHealth);
-			Blackboard?.SetValue("max_health", Pawn.CharacterHealth.MaxHealth);
-		}
 	}
 }

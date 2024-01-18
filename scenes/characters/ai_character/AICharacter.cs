@@ -43,10 +43,11 @@ public partial class AICharacter : CharacterBase
 		
 		HitResult res = Cast.Ray(GetWorld3D().DirectSpaceState, Eyes.GlobalPosition, target.GlobalPosition, new() { this.GetRid() });
 
-		if (res.Collider == null || res.Collider == target)
+		if (res.Collider == null || res.Collider == target || res.Collider == target.GetOwner<Node3D>())
 		{
 			return true;
 		}
+		
 
 		return false;
 	}
@@ -81,8 +82,6 @@ public partial class AICharacter : CharacterBase
 		CharacterMovement.EnableClimbing = false;
 		CharacterMovement.EnableJumping = false;
 		CharacterMovement.EnableSneaking = false;
-		
-		NavigationAgent.VelocityComputed += SetVelocity;
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -104,27 +103,37 @@ public partial class AICharacter : CharacterBase
 			r.ApplyCentralImpulse(-collision3D.GetNormal() * 4.0f * angleFactor);
 			r.ApplyImpulse(-collision3D.GetNormal() * 0.01f * angleFactor, collision3D.GetPosition());
 		}
-
-		_direction = (NavigationAgent.TargetPosition - GlobalPosition).Normalized();
+		
+		_direction = (NavigationAgent.GetNextPathPosition() - GlobalPosition).Normalized();
 		_lookTarget = NavigationAgent.TargetPosition;
 		
-		var dist = (NavigationAgent.TargetPosition - GlobalPosition).Length() - .5f;
-		var mult = Mathf.Clamp((dist / BrakingDistance), 0.0f, 1.0f);
+		Vector3 localVelocity;
+		
 
 		if (!NavigationAgent.IsTargetReached())
 		{
 			// Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, GetWorld3D().DirectSpaceState) * mult;
-			NavigationAgent.Velocity = CharacterMovement.GetCharacterVelocity(_direction, delta, GetWorld3D().DirectSpaceState); 
+			localVelocity = CharacterMovement.GetCharacterVelocity(_direction, delta, GetWorld3D().DirectSpaceState);
 		}
 		else
 		{
 			// Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState) * mult;
-			NavigationAgent.Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState);
+			localVelocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState);
+		}
+
+		if (NavigationAgent.AvoidanceEnabled)
+		{
+			NavigationAgent.Velocity = localVelocity;
+		}
+		else
+		{
+			SetVelocity(localVelocity);
 		}
 	}
 
 	private void SetVelocity(Vector3 safeVelocity)
 	{
+		// GD.Print("AI character move and slide: ", safeVelocity.Length());
 		Velocity = safeVelocity;
 		CharacterAnimationTree.Set("parameters/test/blend_position", Velocity.Length());
 		

@@ -7,18 +7,19 @@ script = ExtResource("1_00urv")
 Entries = {
 "current_focus": NodePath(""),
 "current_health": 0.0,
+"current_patrol_path": null,
+"current_patrol_path_point": 0,
 "enemy_health": 100.0,
-"enemy_visible": true,
+"enemy_visible": false,
 "has_melee_weapon": false,
+"has_patrol_path": false,
 "has_ranged_weapon": false,
 "has_target_movement_position": false,
 "has_weapon": false,
-"healing_located": false,
-"healing_position": Vector3(0, 0, 0),
-"last_received_damage": 0,
+"last_received_damage": 0.0,
 "max_health": 0.0,
-"seen_characters": [],
+"occupied": false,
+"target_enemy": null,
 "target_movement_position": Vector3(0, 0, 0),
-"target_movement_position_reached": false,
-"visible_characters": []
+"target_movement_position_reached": false
 }

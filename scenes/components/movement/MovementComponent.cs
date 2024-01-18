@@ -84,12 +84,10 @@ public partial class MovementComponent : ComponentBase
 
 		if (_wishClimb && CanClimb(spaceState) && CharacterMovementState != MovementState.CLIMBING)
 		{
-			GD.Print("can climb and wants to");
 			StartClimb(spaceState);
 		}
 		else if (_wishJump && CanJump(spaceState) && CharacterMovementState != MovementState.CLIMBING)
 		{
-			GD.Print("can jump and wants to");
 			currentVelocity = Jump(currentVelocity);
 		}
 

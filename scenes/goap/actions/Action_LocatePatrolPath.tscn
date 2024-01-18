@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dem7bt58gwuhy"]
+
+[ext_resource type="Script" path="res://scenes/goap/actions/LocatePatrolPath.cs" id="1_5yaun"]
+
+[node name="Action_LocatePatrolPath" type="Node"]
+script = ExtResource("1_5yaun")
+Effects = {
+"has_patrol_path": true
+}

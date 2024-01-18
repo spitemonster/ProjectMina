@@ -47,7 +47,7 @@ namespace ProjectMina
 
 			PlayerInput.SetMouseCapture(true);
 
-			LoadLevel(StartingLevel);
+			CallDeferred("LoadLevel", StartingLevel);
 		}
 
 		private bool UnloadCurrentLevel()
