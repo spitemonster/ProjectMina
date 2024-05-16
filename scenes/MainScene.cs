@@ -1,71 +1,122 @@
+using System;
 using Godot;
 
 
-namespace ProjectMina
+namespace ProjectMina;
+
+public partial class MainScene : Control
 {
-	public partial class MainScene : Control
+
+	[Export] protected bool EnableDebug = true;
+	[Export] protected Node3D LevelSlot;
+	[Export] protected PackedScene StartingLevel;
+	public LevelBase CurrentLevel { get; private set; }
+
+	public void Save(SavedGame savedGame)
 	{
-
-		[Export] protected bool EnableDebug = false;
-		[Export] protected Node3D LevelSlot;
-		[Export] protected Resource StartingLevel;
-		
-		public LevelBase CurrentLevel { get; private set; }
-
-		public bool LoadLevel(Resource level)
+		SaveDataGlobal global = new()
 		{
-			if (LevelSlot == null || level == null)
-			{
-				if (EnableDebug) GD.PushError("Main scene missing slot or level is null");
-				return false;
-			}
+			CurrentLevel = CurrentLevel.SceneFilePath,
+		};
 
-			if (!UnloadCurrentLevel())
-			{
-				if (EnableDebug) GD.PushError("Main scene failed unloading the current level");
-			}
+		savedGame.GlobalData = global;
+	}
 
-			PackedScene levelScene = GD.Load<PackedScene>(level.ResourcePath);
+	public void BeforeLoad()
+	{
+		// UnloadCurrentLevel();
+	}
 
-			if (levelScene.Instantiate() is LevelBase l)
-			{
-				LevelSlot.AddChild(l);
-				CurrentLevel = l;
-				Global.Data.CurrentLevel = CurrentLevel;
-				return true;
-			}
-			else
-			{
-				if (EnableDebug) GD.PushError("Attempted to load a non LevelBase level with the main scene.");
-				return false;
-			}
-		}
-		
-		public override void _Ready()
+	public void Load(SavedGame savedGame)
+	{
+		LoadLevel(GD.Load<PackedScene>(savedGame.GlobalData.CurrentLevel));
+	}
+
+	public bool LoadLevel(PackedScene levelScene)
+	{
+		if (LevelSlot == null || levelScene == null)
 		{
-			Global.Data.MainScene = this;
-
-			PlayerInput.SetMouseCapture(true);
-
-			CallDeferred("LoadLevel", StartingLevel);
+			if (EnableDebug) GD.PushError("Main scene missing slot or level is null");
+			return false;
 		}
 
-		private bool UnloadCurrentLevel()
+		if (!UnloadCurrentLevel())
 		{
-			if (!IsInstanceValid(CurrentLevel) && CurrentLevel != null)
-			{
-				if (EnableDebug) GD.PushError("Attempted to unload an invalid level from main scene.");
-				return false;
-			}
+			if (EnableDebug) GD.PushError("Main scene failed unloading the current level");
+		}
 
-			if (CurrentLevel != null)
-			{
-				LevelSlot.RemoveChild(CurrentLevel);
-				CurrentLevel.QueueFree();
-				CurrentLevel = null;
-			}
-			
+		if (levelScene.Instantiate() is LevelBase l)
+		{
+			LevelSlot.AddChild(l);
+			CurrentLevel = l;
+			Global.Data.CurrentLevel = CurrentLevel;
+			GD.Print("level base loaded");
 			return true;
 		}
+
+		if (EnableDebug) GD.PushError("Attempted to load a non LevelBase level with the main scene.");
+		return false;
+	}
+
+	public bool UnloadCurrentLevel()
+	{
+		if (!IsInstanceValid(CurrentLevel) && CurrentLevel != null)
+		{
+			if (EnableDebug) GD.PushError("Attempted to unload an invalid level from main scene.");
+			return false;
+		}
+
+		if (CurrentLevel != null)
+		{
+			CurrentLevel.GetParent().RemoveChild(CurrentLevel);
+			CurrentLevel.QueueFree();
+			CurrentLevel = null;
+		}
+		
+		return true;
+	}
+	
+	public override void _Ready()
+	{
+		Global.Data.MainScene = this;
+
+		PlayerInput.SetMouseCapture(true);
+
+		CallDeferred("_Init");
+	}
+
+	public override void _PhysicsProcess(double delta)
+	{
+	}
+
+	private void _Init()
+	{
+		if (StartingLevel == null)
+		{
+			GD.Print("ISSUE WITH STARTING LEVEL");
+		}
+		
+		GD.Print(StartingLevel);
+
+		if (LoadLevel(StartingLevel))
+		{
+			if (Global.Data.CurrentLevel.PlayerClass != null)
+			{
+				_SpawnPlayer(Global.Data.CurrentLevel.PlayerClass, Global.Data.CurrentLevel.PlayerStart.GlobalTransform);
+			} 
+		}
+	}
+	
+	private bool _SpawnPlayer(PackedScene playerClass, Transform3D transform)
+	{
+		if (Global.Data.CurrentLevel.PlayerClass.Instantiate() is CharacterBody3D c)
+		{
+			Global.Data.CurrentLevel.AddChild(c);
+			c.GlobalTransform = transform;
+
+			return true;
+		}
+	
+		return false;
 	}
 }

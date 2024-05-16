@@ -25,6 +25,7 @@ public partial class AICharacter : CharacterBase
 	[Export] public float BrakingDistance = 1.0f;
 	[Export] public SearchComponent SearchComponent { get; protected set; }
 	[Export] public NavigationAgent3D NavigationAgent { get; protected set; }
+	[Export] public SteeringComponent Steering { get; protected set; }
 	
 	private Vector3 _direction = new();
 	private Vector3 _lookTarget = new();
@@ -32,24 +33,6 @@ public partial class AICharacter : CharacterBase
 	public void EquipWeapon(EquippableComponent weapon)
 	{
 		CharacterEquipment.Equip(weapon);
-	}
-
-	public bool HasLineOfSight(Node3D target)
-	{
-		// if (_debug)
-		// {
-		// 	GD.Print("testing AI line of sight to: ", target.Name);	
-		// }
-		
-		HitResult res = Cast.Ray(GetWorld3D().DirectSpaceState, Eyes.GlobalPosition, target.GlobalPosition, new() { this.GetRid() });
-
-		if (res.Collider == null || res.Collider == target || res.Collider == target.GetOwner<Node3D>())
-		{
-			return true;
-		}
-		
-
-		return false;
 	}
 
 	public void UseFocusedInteractable()
@@ -64,15 +47,21 @@ public partial class AICharacter : CharacterBase
 		CharacterAnimationTree.RemoveAnimationLibrary("interactable");
 	}
 
+	public void SetTargetPosition(Vector3 targetPosition)
+	{
+		NavigationAgent.TargetPosition = targetPosition;
+	}
+
 	public override void _Ready()
 	{
 		base._Ready();
 		
-		System.Diagnostics.Debug.Assert(Brain != null, "no brain component");
-		System.Diagnostics.Debug.Assert(NavigationAgent != null, "No navigation agent");
-		System.Diagnostics.Debug.Assert(CharacterMovement != null, "No movement component");
-		
+		// System.Diagnostics.Debug.Assert(Brain != null, "no brain component");
+		// System.Diagnostics.Debug.Assert(NavigationAgent != null, "No navigation agent");
+		// System.Diagnostics.Debug.Assert(CharacterMovement != null, "No movement component");
+		//
 		NavigationAgent.DebugEnabled = true;
+		NavigationAgent.VelocityComputed += SetVelocity;
 		
 		CharacterHealth.HealthChanged += (double newHealth, bool wasDamage) =>
 		{
@@ -82,6 +71,8 @@ public partial class AICharacter : CharacterBase
 		CharacterMovement.EnableClimbing = false;
 		CharacterMovement.EnableJumping = false;
 		CharacterMovement.EnableSneaking = false;
+
+		Global.Data.AddAICharacter(this);
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -106,9 +97,8 @@ public partial class AICharacter : CharacterBase
 		
 		_direction = (NavigationAgent.GetNextPathPosition() - GlobalPosition).Normalized();
 		_lookTarget = NavigationAgent.TargetPosition;
-		
+
 		Vector3 localVelocity;
-		
 
 		if (!NavigationAgent.IsTargetReached())
 		{
@@ -127,6 +117,11 @@ public partial class AICharacter : CharacterBase
 		}
 		else
 		{
+			if (Steering != null)
+			{
+				localVelocity = Steering.CalculateSteeringVelocity(localVelocity);
+			}
+			
 			SetVelocity(localVelocity);
 		}
 	}
@@ -137,7 +132,7 @@ public partial class AICharacter : CharacterBase
 		Velocity = safeVelocity;
 		CharacterAnimationTree.Set("parameters/test/blend_position", Velocity.Length());
 		
-		if (_lookTarget != null)
+		if (_lookTarget != Vector3.Zero)
 		{
 			var t = GlobalTransform;
 			t = t.InterpolateWith(t.LookingAt(_lookTarget, Vector3.Up), 0.05f);

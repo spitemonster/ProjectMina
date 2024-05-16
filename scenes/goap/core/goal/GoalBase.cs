@@ -4,11 +4,11 @@ using Godot.Collections;
 namespace ProjectMina.Goap;
 
 [GlobalClass]
-public partial class GoapGoalBase : Resource
+public partial class GoalBase : Resource
 {
 	[Export] public StringName GoalName { get; set; }
 	// provided as an array here for better use and type setting in the editor
-	[Export] public Array<Variant> BaseDesiredValue { get; set; } = new();
+	[Export] public int BaseDesiredValue { get; set; }
 	[Export] public double BasePriority { get; protected set; } = 1.0;
 	
 	/// <summary>
@@ -16,7 +16,7 @@ public partial class GoapGoalBase : Resource
 	/// </summary>
 	/// <param name="worldState"></param>
 	/// <returns></returns>
-	public virtual double Priority(Dictionary<StringName, Variant> worldState)
+	public virtual double Priority(Dictionary<StringName, int> worldState)
 	{
 		return BasePriority;
 	}
@@ -26,14 +26,14 @@ public partial class GoapGoalBase : Resource
 	/// </summary>
 	/// <param name="worldState"></param>
 	/// <returns></returns>
-	public virtual bool Satisfied(Dictionary<StringName, Variant> worldState)
+	public virtual bool Satisfied(Dictionary<StringName, int> worldState)
 	{
 		if (!worldState.ContainsKey(GoalName))
 		{
 			return false;
 		}
-		
-		return GoapPlanner.VariantsEqual(worldState[GoalName], DesiredValue(worldState));
+
+		return worldState[GoalName] == DesiredValue(worldState);
 	}
 
 	/// <summary>
@@ -43,8 +43,8 @@ public partial class GoapGoalBase : Resource
 	/// </summary>
 	/// <param name="worldState"></param>
 	/// <returns></returns>
-	public virtual Variant DesiredValue(Dictionary<StringName, Variant> worldState)
+	public virtual int DesiredValue(Dictionary<StringName, int> worldState)
 	{
-		return BaseDesiredValue[0];
+		return BaseDesiredValue;
 	}
 }

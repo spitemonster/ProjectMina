@@ -5,15 +5,10 @@ using ProjectMina.Goap;
 namespace ProjectMina;
 
 [GlobalClass]
-public partial class Idle : GoapGoalBase
+public partial class Idle : GoalBase
 {
-    public override double Priority(Dictionary<StringName, Variant> worldState)
+    public override double Priority(Dictionary<StringName, int> worldState)
     {
-        if ((bool)worldState["occupied"] == true)
-        {
-            return 0;
-        }
-
         return BasePriority;
     }
 }

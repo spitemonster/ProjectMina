@@ -5,10 +5,10 @@ using ProjectMina.Goap;
 namespace ProjectMina;
 
 [GlobalClass]
-public partial class AttackEnemy : GoapActionBase
+public partial class AttackEnemy : ActionBase
 {
-    public override ActionStatus Run(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
+    public override EActionStatus Run(AgentComponent agent, GoalBase primaryGoal, Dictionary<StringName, int> worldState)
     {
-        return ActionStatus.Running;
+        return EActionStatus.Running;
     }
 }

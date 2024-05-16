@@ -1,14 +1,32 @@
 using Godot;
-
+using Godot.Collections;
 namespace ProjectMina;
 public partial class Global : Node
 {
 	public static Global Data { get; private set; }
-	public PlayerCharacter Player { get; set; }
+	public CharacterBody3D Player { get; set; }
+
+	public Array<AICharacter> AICharacters { get; set; }
 	public MainScene MainScene { get; set; }
 	public LevelBase CurrentLevel { get; set; }
 	public DevUI DevLog { get; set; }
 	public AudioManager AudioManager { get; set; }
+
+	public override void _Ready()
+	{
+		AICharacters = new();
+	}
+
+	public bool AddAICharacter(AICharacter newCharacter)
+	{
+		if (AICharacters.Contains(newCharacter))
+		{
+			return false;
+		}
+
+		AICharacters.Add(newCharacter);
+		return true;
+	}
 
 	public override void _EnterTree()
 	{

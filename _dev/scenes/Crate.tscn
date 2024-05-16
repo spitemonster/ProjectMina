@@ -36,8 +36,8 @@ collision_mask = 11
 mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_xmm4g")
 continuous_cd = true
-max_contacts_reported = 16
 contact_monitor = true
+max_contacts_reported = 16
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_16s4j")
@@ -46,9 +46,6 @@ mesh = SubResource("BoxMesh_16s4j")
 shape = SubResource("ConvexPolygonShape3D_crahu")
 
 [node name="Gizmo" parent="." instance=ExtResource("5_wlyjh")]
-
-[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
-radius = 0.7
 
 [node name="ImpactSoundComponent" parent="." node_paths=PackedStringArray("Body") instance=ExtResource("5_dsyg4")]
 Body = NodePath("..")

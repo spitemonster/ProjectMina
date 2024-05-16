@@ -5,26 +5,25 @@ using ProjectMina.Goap;
 namespace ProjectMina;
 
 [GlobalClass]
-public partial class EquipItem : GoapActionBase
+public partial class EquipItem : ActionBase
 {
-    public override Dictionary<StringName, Variant> GetEffects(GoapAgentComponent agent, GoapGoalBase primaryGoal,
-        Dictionary<StringName, Variant> worldState)
+    public override Dictionary<StringName, int> GetEffects(AgentComponent agent, GoalBase primaryGoal, Dictionary<StringName, int> worldState)
     {
-        Dictionary<StringName, Variant> effect = new();
+        Dictionary<StringName, int> effect = new();
         switch (primaryGoal.GoalName)
         {
             case "has_weapon":
-                effect.Add("has_weapon", true);
+                effect.Add("has_weapon", 1);
                 break;
             case "has_equipment":
-                effect.Add("has_equipment", true);
+                effect.Add("has_equipment", 1);
                 break;
         }
 
         return effect;
     }
     
-    public override bool IsValid(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
+    public override bool IsValid(AgentComponent agent, GoalBase primaryGoal, Dictionary<StringName, int> worldState)
     {
         switch (primaryGoal.GoalName)
         {
@@ -37,7 +36,7 @@ public partial class EquipItem : GoapActionBase
         }
     }
 
-    public override ActionStatus Run(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
+    public override EActionStatus Run(AgentComponent agent, GoalBase primaryGoal, Dictionary<StringName, int> worldState)
     {
         var focus = (Node3D)agent.Blackboard.GetValue("current_focus");
         var equippable = focus.GetNodeOrNull<EquippableComponent>("Equippable") ??
@@ -61,10 +60,10 @@ public partial class EquipItem : GoapActionBase
                     {
                         switch (weapon.Range)
                         {
-                            case WeaponRange.Melee:
+                            case EWeaponRange.Melee:
                                 agent.Blackboard.SetValue("has_melee_weapon", true);
                                 break;
-                            case WeaponRange.Ranged:
+                            case EWeaponRange.Ranged:
                                 agent.Blackboard.SetValue("has_ranged_weapon", true);
                                 break;
                         }
@@ -73,9 +72,13 @@ public partial class EquipItem : GoapActionBase
                     break;
             }
             
-            return ActionStatus.Succeeded;
+            Status = EActionStatus.Succeeded;
         }
-        
-        return ActionStatus.Failed;
+        else
+        {
+            Status = EActionStatus.Failed;
+        }
+
+        return Status;
     }
 }

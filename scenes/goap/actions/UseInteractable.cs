@@ -4,20 +4,19 @@ using Godot.Collections;
 namespace ProjectMina.Goap;
 
 [GlobalClass]
-public partial class UseInteractable : GoapActionBase
+public partial class UseInteractable : ActionBase
 {
 
     private bool _animPlaying = false;
     private bool _interactionStarted = false;
     
-    public override Dictionary<StringName, Variant> GetEffects(GoapAgentComponent agent, GoapGoalBase primaryGoal,
-        Dictionary<StringName, Variant> worldState)
+    public override Dictionary<StringName, int> GetEffects(AgentComponent agent, GoalBase primaryGoal, Dictionary<StringName, int> worldState)
     {
-        Dictionary<StringName, Variant> effect = new();
+        Dictionary<StringName, int> effect = new();
         switch (primaryGoal.GoalName)
         {
             case "current_health":
-                effect.Add("current_health", 100.0f);
+                effect.Add("current_health", 100);
                 break;
             default:
                 break;
@@ -26,7 +25,7 @@ public partial class UseInteractable : GoapActionBase
         return effect;
     }
     
-    public override bool IsValid(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
+    public override bool IsValid(AgentComponent agent, GoalBase primaryGoal, Dictionary<StringName, int> worldState)
     {
         switch (primaryGoal.GoalName)
         {
@@ -37,12 +36,12 @@ public partial class UseInteractable : GoapActionBase
         }
     }
     
-    public override ActionStatus Run(GoapAgentComponent agent, GoapGoalBase primaryGoal, Dictionary<StringName, Variant> worldState)
+    public override EActionStatus Run(AgentComponent agent, GoalBase primaryGoal, Dictionary<StringName, int> worldState)
     {
         
         if (_animPlaying)
         {
-            return Status = ActionStatus.Running;
+            return Status = EActionStatus.Running;
         }
         
         if (_interactionStarted)
@@ -51,7 +50,7 @@ public partial class UseInteractable : GoapActionBase
             agent.Blackboard.SetValue("target_movement_position", new Vector3());
             agent.Blackboard.SetValue("has_target_movement_position", false);
             agent.Blackboard.SetValue("current_focus", default);
-            return Status = ActionStatus.Succeeded;
+            return Status = EActionStatus.Succeeded;
         }
 
         Node3D focus = (Node3D)agent.Blackboard.GetValue("current_focus");
@@ -79,7 +78,7 @@ public partial class UseInteractable : GoapActionBase
         }
         else
         {
-            Status = ActionStatus.Failed;
+            Status = EActionStatus.Failed;
         }
         
         return Status;

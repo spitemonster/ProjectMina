@@ -109,6 +109,14 @@ public partial class CharacterBase : CharacterBody3D
 	{
 		GD.Print("footstep!");
 	}
+	
+	public bool HasLineOfSight(Node3D target)
+	{
+		
+		var res = Cast.Ray(GetWorld3D().DirectSpaceState, Eyes.GlobalPosition, target.GlobalPosition, new() { this.GetRid() });
+
+		return res?.Collider == null || res.Collider == target || res.Collider == target.GetOwner<Node3D>();
+	}
 
 	protected virtual PhysicsMaterial GetFloorSurface(Vector3 traceOrigin = new())
 	{
@@ -122,6 +130,11 @@ public partial class CharacterBase : CharacterBody3D
 		HitResult res = Cast.Ray(spaceState, traceOrigin, traceEnd, new() { this.GetRid() });
 
 		PhysicsMaterial surfaceMaterial = new();
+
+		if (res != null)
+		{
+			return surfaceMaterial;
+		}
 		
 		switch (res.Collider)
 		{

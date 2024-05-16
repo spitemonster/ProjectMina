@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://qs22y507arl5"]
 
 [ext_resource type="Script" path="res://scenes/MainScene.cs" id="1_i74qh"]
-[ext_resource type="PackedScene" uid="uid://rkyi61f30ql0" path="res://_dev/scenes/gyms/ai_gym/ai_gym.tscn" id="2_pptag"]
+[ext_resource type="PackedScene" uid="uid://rkyi61f30ql0" path="res://_dev/scenes/gyms/ai_gym/ai_gym.tscn" id="2_i3knj"]
 [ext_resource type="Shader" path="res://scenes/MainScene.gdshader" id="3_m3efq"]
 [ext_resource type="PackedScene" uid="uid://waxi0ov75vye" path="res://scenes/ui/MainMenu.tscn" id="4_hgum0"]
 [ext_resource type="PackedScene" uid="uid://8l8u7s0m7awg" path="res://scenes/ui/PlayerHUD.tscn" id="5_o2pxt"]
@@ -15,7 +15,7 @@ shader_parameter/dithering = true
 shader_parameter/colors = 24
 shader_parameter/dither_size = 6
 
-[node name="MainScene" type="Control" node_paths=PackedStringArray("LevelSlot")]
+[node name="MainScene" type="Control" node_paths=PackedStringArray("LevelSlot") groups=["GameEvents"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,9 +23,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_i74qh")
-EnableDebug = true
 LevelSlot = NodePath("MainViewportContainer/MainViewport/LevelSlot")
-StartingLevel = ExtResource("2_pptag")
+StartingLevel = ExtResource("2_i3knj")
 
 [node name="MainViewportContainer" type="SubViewportContainer" parent="."]
 material = SubResource("ShaderMaterial_7jasg")
@@ -71,6 +70,8 @@ reticleEquipColor = Color(0, 0, 0, 0)
 _reticle = NodePath("Panel/Reticle")
 _healthBar = NodePath("AspectRatioContainer/ProgressBar")
 
-[node name="MainMenu" parent="UI" node_paths=PackedStringArray("_returnButton", "_quitButton") instance=ExtResource("4_hgum0")]
-_returnButton = NodePath("ColorRect/MarginContainer/VBoxContainer/ReturnButton")
-_quitButton = NodePath("ColorRect/MarginContainer/VBoxContainer/QuitButton")
+[node name="MainMenu" parent="UI" node_paths=PackedStringArray("ReturnButton", "QuitButton", "SaveButton", "LoadButton") instance=ExtResource("4_hgum0")]
+ReturnButton = NodePath("ColorRect/MarginContainer/VBoxContainer/ReturnButton")
+QuitButton = NodePath("ColorRect/MarginContainer/VBoxContainer/QuitButton")
+SaveButton = NodePath("ColorRect/MarginContainer/VBoxContainer/HBoxContainer/SaveButton")
+LoadButton = NodePath("ColorRect/MarginContainer/VBoxContainer/HBoxContainer/LoadButton")

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 
@@ -10,6 +11,7 @@ public partial class PlayerCharacter : CharacterBase
 	[Export] public Camera3D PrimaryCamera { get; protected set; }
 	[Export] public Viewmodel PlayerViewmodel { get; protected set; }
 	[Export] public GrabbingComponent GrabComponent { get; protected set; }
+	[Export] public VisibilityComponent VisibilityComponent { get; protected set; }
 	
 	[Export] protected Node3D _head;
 	[ExportGroup("Grabbing")]
@@ -19,6 +21,8 @@ public partial class PlayerCharacter : CharacterBase
 
 	[ExportGroup("Combat")]
 	[Export] public CombatGridComponent CombatGrid { get; protected set; }
+
+	[Export] public AICharacter TestAiCharacter;
 
 	public Vector3 CameraForwardVector;
 	
@@ -41,18 +45,36 @@ public partial class PlayerCharacter : CharacterBase
 	private AnimationNodeAnimation _leftHandBasePose;
 
 	private Godot.Collections.Array<Rid> x = new();
+
+	public float GetVisibility()
+	{
+		if (VisibilityComponent != null)
+		{
+			return VisibilityComponent.GetVisibility();
+		}
+
+		return 1;
+	}
 	public override void _Ready()
 	{
 		// setup player in global data
 		if (Global.Data.Player != null)
 		{
+			GD.Print("this is the culprit, isn't it");
 			QueueFree();
+			return;
 		}
+
+		if (Global.Data.AICharacters.Count > 0)
+		{
+			TestAiCharacter = Global.Data.AICharacters[0];
+			GD.Print("added test ai character");
+		}
+
+		Global.Data.Player = this;
 		
 		base._Ready();
 		
-		Global.Data.Player = this;
-
 		x.Add(GetRid());
 
 		CallDeferred("InitEvents");		
@@ -65,6 +87,8 @@ public partial class PlayerCharacter : CharacterBase
 		_defaultCapsuleHeight = bodyCapsule.Height;
 		_defaultCapsulePosition = CharacterBody.Position;
 		_animTreeRoot = (AnimationNodeBlendTree)PlayerViewmodel.AnimTree.TreeRoot;
+		
+		PrimaryCamera.MakeCurrent();
 	}
 
 	private void InitEvents()
@@ -79,10 +103,6 @@ public partial class PlayerCharacter : CharacterBase
 		CharacterMovement.SneakEnded += _EndStealth;
 		CharacterEquipment.WeaponEquipped += _OnWeaponEquipped;
 		CharacterEquipment.WeaponUnequipped += _OnWeaponUnequipped;
-		CharacterMovement.Landed += (float fallDuration, Vector3 position) =>
-		{
-			_floorSurface = GetFloorSurface(CharacterBody.GlobalPosition);
-		};
 	}
 
 	private void _OnActionPressed(StringName action)
@@ -93,6 +113,15 @@ public partial class PlayerCharacter : CharacterBase
 				if (CharacterEquipment.HasWeapon())
 				{
 					Attack();
+				}
+				else
+				{
+					if (TestAiCharacter == null && Global.Data.AICharacters.Count > 0)
+					{
+						TestAiCharacter = Global.Data.AICharacters[0];
+					}
+					GD.Print("tested and working");
+					TestAiCharacter?.SetTargetPosition(GlobalPosition);
 				}
 				break;
 			case "run":
@@ -199,11 +228,13 @@ public partial class PlayerCharacter : CharacterBase
 				r.Sleeping = false;
 			}
 			_currentFloor = null;
+			_floorSurface = null;
 		}
 		else
 		{
 			var traceResult = Cast.Ray(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, x);
-
+			_floorSurface = GetFloorSurface(CharacterBody.GlobalPosition);
+			
 			if (traceResult is { Collider: RigidBody3D r })
 			{
 				r.Sleeping = true;
@@ -262,18 +293,6 @@ public partial class PlayerCharacter : CharacterBase
 		_head.Rotation = clampedCameraRotation;
 	}
 
-	private void _StartStealth()
-	{
-		CharacterAnimationPlayer.Play("crouch");
-		CharacterBody.Disabled = true;
-	}
-
-	private void _EndStealth()
-	{
-		CharacterAnimationPlayer.PlayBackwards("crouch");
-		CharacterBody.Disabled = false;
-	}
-
 	public override void Attack()
 	{
 		AnimationNodeAnimation attackNode = (AnimationNodeAnimation)_animTreeRoot.GetNode("attack");
@@ -283,7 +302,6 @@ public partial class PlayerCharacter : CharacterBase
 
 	public override void Footstep()
 	{
-		_floorSurface = GetFloorSurface(CharacterBody.GlobalPosition);
 		
 		if (_floorSurface != default)
 		{
@@ -299,6 +317,60 @@ public partial class PlayerCharacter : CharacterBase
 					break;
 			}
 		}
+	}
+
+	public void Save(SavedGame savedGame)
+	{
+		var characterSaveData = new SaveDataPlayer();
+
+		characterSaveData.ScenePath = SceneFilePath;
+		characterSaveData.Position = GlobalPosition;
+		characterSaveData.Transform = GlobalTransform;
+		characterSaveData.CameraTransform = _head.GlobalTransform;
+		
+		savedGame.GameData.Add(characterSaveData);
+	}
+
+	public void BeforeLoad()
+	{
+		PlayerInput.Manager.MouseMove -= HandleMouseMove;
+		PlayerInput.Manager.ActionPressed -= _OnActionPressed;
+		PlayerInput.Manager.ActionReleased -= _OnActionReleased;
+		PlayerInput.Manager.ActionHoldStarted -= _OnActionHoldStarted;
+		PlayerInput.Manager.ActionHoldCompleted -= _OnActionHoldCompleted;
+		PlayerInput.Manager.ActionHoldCanceled -= _OnActionHoldCanceled;
+		CharacterMovement.SneakStarted -= _StartStealth;
+		CharacterMovement.SneakEnded -= _EndStealth;
+		CharacterEquipment.WeaponEquipped -= _OnWeaponEquipped;
+		CharacterEquipment.WeaponUnequipped -= _OnWeaponUnequipped;
+		GD.Print("REMOVING PLAYER CHARACTER");
+		Global.Data.Player = null;
+		GetParent().RemoveChild(this);
+		QueueFree();
+	}
+
+	public void Load(SaveDataBase saveData)
+	{
+		if (saveData is SaveDataPlayer playerSave)
+		{
+			GlobalTransform = playerSave.Transform;
+			_head.GlobalTransform = playerSave.CameraTransform;
+		}
+	}
+	
+	
+	// TODO: when the player is crouching (actively moving between one state and another) line of sight detection doesn't work
+	// since it casts to character chest which is outside of the crouch capsule for a few frames.  
+	private void _StartStealth()
+	{
+		CharacterAnimationPlayer.Play("crouch");
+		CharacterBody.Disabled = true;
+	}
+
+	private void _EndStealth()
+	{
+		CharacterAnimationPlayer.PlayBackwards("crouch");
+		CharacterBody.Disabled = false;
 	}
 	
 	private void _OnWeaponEquipped(EquippableComponent weapon)

@@ -52,18 +52,18 @@ void sky() {
     }else if(add_clouds){
 		vec3 normal = normalize(EYEDIR);
 		vec3 plane_intersect = normal / (normal.y + height_offset);
-		
+
 		if(clouds_below){
 			plane_intersect = normal / -(normal.y - height_offset);
 		}
-		
+
 		vec2 p = plane_intersect.xz;
 		p.y *= -1.0;
 		vec2 uv = p;
-		
+
 		float time = TIME * speed;
 		float q = fbm(uv * cloud_scale * 0.5);
-		
+
 		//ridged noise shape
 		float r = 0.0;
 		uv *= cloud_scale;
@@ -74,7 +74,7 @@ void sky() {
 			uv = m*uv + time;
 			weight *= 0.7;
 		}
-		
+
 		//noise shape
 		float f = 0.0;
 		uv = p;
@@ -86,9 +86,9 @@ void sky() {
 			uv = m*uv + time;
 			weight *= 0.6;
 		}
-		
+
 		f *= r + f;
-		
+
 		//noise colour
 		float c = 0.0;
 		time = TIME * speed * 2.0;
@@ -101,7 +101,7 @@ void sky() {
 			uv = m*uv + time;
 			weight *= 0.6;
 		}
-		
+
 		//noise ridge colour
 		float c1 = 0.0;
 		time = TIME * speed * 3.0;
@@ -114,21 +114,21 @@ void sky() {
 			uv = m*uv + time;
 			weight *= 0.6;
 		}
-		
+
 		c += c1;
-		
+
 		vec3 skycolour = COLOR;
 		vec3 cloudcolour = vec3(1.1, 1.1, 0.9) * clamp((cloud_dark + cloud_light * c), 0.0, 1.0);
 		float horizon_fall_off = max(normal.y, 0.0);
-		
+
 		if(clouds_below){
 			horizon_fall_off = max(-normal.y, 0.0);
 		}
-		
+
 		f = cloud_cover + cloud_alpha * f * r;
-		
+
 		vec3 result = mix(skycolour, clamp(sky_tint * skycolour + cloudcolour, 0.0, 1.0), clamp(f + c, 0.0, 1.0) * horizon_fall_off);
-		
+
 		// Convert the color to black and white.
 		COLOR = result;
 	}

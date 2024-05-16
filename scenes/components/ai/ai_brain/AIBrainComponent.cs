@@ -83,10 +83,10 @@ public partial class AIBrainComponent : ControllerComponent
 			}
 		};
 
-		Perception.VisibleCharactersUpdated += characters =>
-		{
-			Blackboard.SetValue("visible_characters", characters);
-		};
+		// Perception.VisibleCharactersUpdated += characters =>
+		// {
+		// 	Blackboard.SetValue("visible_characters", characters);
+		// };
 
 		Perception.CharacterEnteredPerceptionRadius += (CharacterBase character) =>
 		{

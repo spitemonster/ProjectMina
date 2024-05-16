@@ -1,32 +1,20 @@
-[gd_scene load_steps=37 format=3 uid="uid://c45weam7tjqmw"]
+[gd_scene load_steps=27 format=3 uid="uid://c45weam7tjqmw"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b5t2"]
 [ext_resource type="Script" path="res://scenes/characters/player_character/PlayerCharacter.cs" id="2_7uq42"]
 [ext_resource type="Script" path="res://scenes/components/interaction/InteractionComponent.cs" id="3_3gtcp"]
 [ext_resource type="PackedScene" uid="uid://c0jcco70wga31" path="res://scenes/characters/player_character/Viewmodel.tscn" id="3_o3bbs"]
-[ext_resource type="Animation" uid="uid://cbkfqdgu4b3fw" path="res://resources/models/fps_arms/anims/anim_fp_base_pose.res" id="4_2i1au"]
 [ext_resource type="PackedScene" uid="uid://lw8xaecvvi5q" path="res://scenes/components/sound/SoundComponent.tscn" id="5_a402o"]
-[ext_resource type="Animation" uid="uid://cj5f36ow5s1ew" path="res://resources/models/fps_arms/anims/anim_fp_idle_01.res" id="5_x6r8s"]
-[ext_resource type="Animation" uid="uid://c8wfyqqv3jg86" path="res://resources/models/fps_arms/anims/anim_fp_punch_r_01.res" id="6_7esvv"]
-[ext_resource type="Animation" uid="uid://4uuep1o6b203" path="res://resources/models/fps_arms/anims/anim_fp_run.res" id="7_1cxti"]
 [ext_resource type="PackedScene" uid="uid://b3rq16aalq4c2" path="res://scenes/components/movement/MovementComponent.tscn" id="8_8i55q"]
-[ext_resource type="Animation" uid="uid://n6hnrumweicv" path="res://resources/models/fps_arms/anims/anim_fp_walk.res" id="8_g2ldw"]
-[ext_resource type="Animation" uid="uid://ciorfad3jrafw" path="res://resources/animations/first_person/wrench/anim_fp_wrench_attack_01.res" id="9_da55r"]
 [ext_resource type="Script" path="res://scenes/components/attention/AttentionComponent.cs" id="9_nqsj2"]
 [ext_resource type="PackedScene" uid="uid://bcoh7w5yjacxw" path="res://scenes/effects/Rain.tscn" id="10_1an2w"]
-[ext_resource type="Animation" uid="uid://d34ybvnunu6yv" path="res://resources/animations/first_person/wrench/anim_fp_wrench_attack_02.res" id="10_2lwyu"]
 [ext_resource type="Script" path="res://scenes/components/grabbing/GrabbingComponent.cs" id="10_8ufgj"]
-[ext_resource type="Animation" uid="uid://ocq4dyxhlasd" path="res://resources/animations/first_person/wrench/anim_fp_wrench_base_pose.res" id="11_4pfdd"]
+[ext_resource type="PackedScene" uid="uid://cx6iynawt4dlc" path="res://scenes/components/visibility/VisibilityComponent.tscn" id="11_2utyn"]
 [ext_resource type="PackedScene" uid="uid://biyhjr2oyae4e" path="res://scenes/components/equipment/EquipmentComponent.tscn" id="11_wh707"]
-[ext_resource type="Animation" uid="uid://ctsg5ho5beyi" path="res://resources/animations/first_person/wrench/anim_fp_wrench_idle.res" id="12_y3aej"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vqwtx"]
-radius = 0.3
+radius = 0.22
 height = 0.85
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u7t72"]
-radius = 0.025
-height = 1.5
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_ywvxe"]
 margin = 0.01
@@ -35,36 +23,23 @@ radius = 0.01
 [sub_resource type="SphereShape3D" id="SphereShape3D_wd6j7"]
 radius = 0.05
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_a3tp8"]
-_data = {
-"Idle_01": ExtResource("5_x6r8s"),
-"base_pose": ExtResource("4_2i1au"),
-"punch_r_01": ExtResource("6_7esvv"),
-"run": ExtResource("7_1cxti"),
-"walk": ExtResource("8_g2ldw"),
-"wrench_attack_01": ExtResource("9_da55r"),
-"wrench_attack_02": ExtResource("10_2lwyu"),
-"wrench_base_pose": ExtResource("11_4pfdd"),
-"wrench_idle": ExtResource("12_y3aej")
-}
-
 [sub_resource type="Animation" id="Animation_wn5pa"]
 length = 0.001
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CharacterBody/Hips/HeadAnim/Head/PrimaryCamera:rotation:x")
+tracks/0/path = NodePath("CharacterBody/Hips:rotation:z")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.5, 0.333465),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0)
 }
 tracks/1/type = "bezier"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("CharacterBody/Hips:rotation:z")
+tracks/1/path = NodePath("CharacterBody/Hips:position:y")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -75,7 +50,7 @@ tracks/1/keys = {
 tracks/2/type = "bezier"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("CharacterBody/Hips:position:y")
+tracks/2/path = NodePath("CharacterBody/Hips:position:x")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -86,18 +61,18 @@ tracks/2/keys = {
 tracks/3/type = "bezier"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("CharacterBody/Hips:position:x")
+tracks/3/path = NodePath("CharacterBody/Hips/HeadAnim/Head:position:x")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.001)
 }
 tracks/4/type = "bezier"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("CharacterBody/Hips/HeadAnim/Head:position:x")
+tracks/4/path = NodePath("CharacterBody/Hips/HeadAnim/Head:position:y")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
@@ -108,7 +83,7 @@ tracks/4/keys = {
 tracks/5/type = "bezier"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("CharacterBody/Hips/HeadAnim/Head:position:y")
+tracks/5/path = NodePath("CharacterBody/Hips/HeadAnim/Head:position:z")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
@@ -119,18 +94,18 @@ tracks/5/keys = {
 tracks/6/type = "bezier"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("CharacterBody/Hips/HeadAnim/Head:position:z")
+tracks/6/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:x")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.001)
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
 }
 tracks/7/type = "bezier"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:x")
+tracks/7/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:y")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -141,21 +116,10 @@ tracks/7/keys = {
 tracks/8/type = "bezier"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:y")
+tracks/8/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:z")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/9/type = "bezier"
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/path = NodePath("CharacterBody/Hips/HeadAnim/Head:rotation:z")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/keys = {
 "handle_modes": PackedInt32Array(0),
 "points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0)
@@ -335,6 +299,7 @@ animation = &"head_bob"
 filters = ["CharacterBody/Hips:position:y"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_vih8b"]
+graph_offset = Vector2(-3.84, 50.88)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_gqj8v")
 nodes/Animation/position = Vector2(30, 210)
 "nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_wc0nq")
@@ -344,17 +309,20 @@ nodes/crouch/position = Vector2(520, 280)
 nodes/output/position = Vector2(790, 220)
 node_connections = [&"crouch", 0, &"Animation", &"crouch", 1, &"Animation 2", &"output", 0, &"crouch"]
 
-[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "PlayerViewmodel", "GrabComponent", "_head", "_soundComponent", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterEquipment", "CharacterSound", "CharacterAnimationPlayer", "CharacterAnimationTree", "Eyes", "Chest") instance=ExtResource("1_5b5t2")]
+[node name="PlayerCharacter" node_paths=PackedStringArray("PrimaryCamera", "PlayerViewmodel", "GrabComponent", "VisibilityComponent", "_head", "_soundComponent", "CharacterBody", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterInteraction", "CharacterEquipment", "CharacterSound", "CharacterAnimationPlayer", "CharacterAnimationTree", "Eyes", "Chest") groups=["GameEvents"] instance=ExtResource("1_5b5t2")]
 collision_layer = 6
 collision_mask = 5
 wall_min_slide_angle = 0.523599
 script = ExtResource("2_7uq42")
-PrimaryCamera = NodePath("CharacterBody/Hips/HeadAnim/Head/PrimaryCamera")
+PrimaryCamera = NodePath("CharacterBody/Hips/HeadAnim/Head/Viewmodel/CameraSocket/Viewmodel_Camera")
 PlayerViewmodel = NodePath("CharacterBody/Hips/HeadAnim/Head/Viewmodel")
 GrabComponent = NodePath("GrabbingComponent")
+VisibilityComponent = NodePath("VisibilityComponent")
 _head = NodePath("CharacterBody/Hips/HeadAnim/Head")
 CarryGrabSpeedMultiplier = 1.0
 _soundComponent = NodePath("SoundComponent")
+CharacterBody = NodePath("CharacterBody")
+CharacterHealth = NodePath("HealthComponent")
 CharacterAttention = NodePath("AttentionComponent")
 CharacterMovement = NodePath("MovementComponent")
 CharacterInteraction = NodePath("InteractionComponent")
@@ -363,7 +331,7 @@ CharacterSound = NodePath("SoundComponent")
 CharacterAnimationPlayer = NodePath("AnimationPlayer")
 CharacterAnimationTree = NodePath("AnimationTree")
 Eyes = NodePath("CharacterBody/Hips/HeadAnim/Head/Eyes")
-Chest = NodePath("Chest")
+Chest = NodePath("CharacterBody/Hips/Chest")
 
 [node name="CrouchCapsule" type="CollisionShape3D" parent="." index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
@@ -374,7 +342,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.799724, 0)
 
 [node name="Hips" type="Node3D" parent="CharacterBody" index="0"]
 
-[node name="HeadAnim" type="Node3D" parent="CharacterBody/Hips" index="0"]
+[node name="Chest" type="Marker3D" parent="CharacterBody/Hips" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+
+[node name="HeadAnim" type="Node3D" parent="CharacterBody/Hips" index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 
 [node name="Head" type="Node3D" parent="CharacterBody/Hips/HeadAnim" index="0"]
@@ -382,24 +353,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 [node name="Eyes" type="Marker3D" parent="CharacterBody/Hips/HeadAnim/Head" index="0"]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="PrimaryCamera" type="Camera3D" parent="CharacterBody/Hips/HeadAnim/Head" index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.93391e-06, 0)
-visible = false
-fov = 75.0308
-
-[node name="FocusCollision" type="Area3D" parent="CharacterBody/Hips/HeadAnim/Head/PrimaryCamera" index="0"]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
-visible = false
-collision_layer = 0
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody/Hips/HeadAnim/Head/PrimaryCamera/FocusCollision" index="0"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.75)
-shape = SubResource("CapsuleShape3D_u7t72")
-
-[node name="Viewmodel" parent="CharacterBody/Hips/HeadAnim/Head" index="2" node_paths=PackedStringArray("CharacterMovement") instance=ExtResource("3_o3bbs")]
+[node name="Viewmodel" parent="CharacterBody/Hips/HeadAnim/Head" index="1" node_paths=PackedStringArray("Camera", "AnimPlayer", "AnimTree", "CharacterMovement") instance=ExtResource("3_o3bbs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+Camera = NodePath("CameraSocket/Viewmodel_Camera")
+AnimPlayer = NodePath("fps_arms/AnimationPlayer")
+AnimTree = NodePath("AnimationTree")
 CharacterMovement = NodePath("../../../../../MovementComponent")
+
+[node name="Viewmodel_Camera" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/CameraSocket" index="0"]
+cull_mask = 1048573
 
 [node name="GrabAnchor" type="StaticBody3D" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/CameraSocket/Viewmodel_Camera" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, -1.26)
@@ -420,12 +382,61 @@ target_position = Vector3(0, 0, -100)
 collision_mask = 255
 
 [node name="AnimationTree" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel" index="1"]
-libraries = {
-"": SubResource("AnimationLibrary_a3tp8")
-}
+active = false
+parameters/current_length = null
+parameters/current_position = null
+parameters/current_delta = null
+parameters/attack/current_length = null
+parameters/attack/current_position = null
+parameters/attack/current_delta = null
+parameters/hands_blend/current_length = 0
+parameters/hands_blend/current_position = 0
+parameters/hands_blend/current_delta = 0
 parameters/hands_blend/blend_amount = 0
+parameters/idle/current_length = null
+parameters/idle/current_position = null
+parameters/idle/current_delta = null
+"parameters/idle 2/current_length" = null
+"parameters/idle 2/current_position" = null
+"parameters/idle 2/current_delta" = null
+parameters/left_arm/current_length = 0
+parameters/left_arm/current_position = 0
+parameters/left_arm/current_delta = 0
 parameters/left_arm/blend_amount = 0
+parameters/left_arm_base_pose/current_length = null
+parameters/left_arm_base_pose/current_position = null
+parameters/left_arm_base_pose/current_delta = null
+parameters/left_arm_one_shot/current_length = 0.0
+parameters/left_arm_one_shot/current_position = 0.0
+parameters/left_arm_one_shot/current_delta = 0.0
+parameters/left_hand/current_length = 0
+parameters/left_hand/current_position = 0
+parameters/left_hand/current_delta = 0
 parameters/left_hand/blend_amount = 0
+parameters/left_hand_base_pose/current_length = null
+parameters/left_hand_base_pose/current_position = null
+parameters/left_hand_base_pose/current_delta = null
+parameters/output/current_length = null
+parameters/output/current_position = null
+parameters/output/current_delta = null
+parameters/right_arm/current_length = 0
+parameters/right_arm/current_position = 0
+parameters/right_arm/current_delta = 0
+parameters/right_arm_base_pose/current_length = null
+parameters/right_arm_base_pose/current_position = null
+parameters/right_arm_base_pose/current_delta = null
+parameters/right_arm_one_shot/current_length = 0.0
+parameters/right_arm_one_shot/current_position = 0.0
+parameters/right_arm_one_shot/current_delta = 0.0
+parameters/right_hand/current_length = 0
+parameters/right_hand/current_position = 0
+parameters/right_hand/current_delta = 0
+parameters/right_hand_base_pose/current_length = null
+parameters/right_hand_base_pose/current_position = null
+parameters/right_hand_base_pose/current_delta = null
+parameters/use_tool/current_length = null
+parameters/use_tool/current_position = null
+parameters/use_tool/current_delta = null
 
 [node name="RightHandTarget" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel" index="2"]
 transform = Transform3D(-0.459135, 0.12302, 0.879807, -0.849829, 0.227708, -0.47533, -0.258814, -0.965927, -3.08001e-06, 0.151362, -0.127785, -0.0300227)
@@ -437,50 +448,37 @@ transform = Transform3D(-0.564066, -0.142209, -0.813391, 0.785706, 0.210527, -0.
 transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, 0)
 
 [node name="Skeleton3D" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms" index="0"]
-bones/0/position = Vector3(-0.308249, 0.0147258, -0.00326919)
-bones/0/rotation = Quaternion(0.906766, -0.351287, -0.171748, 0.157717)
-bones/1/rotation = Quaternion(-0.802025, -6.28363e-05, 0.368844, 0.469798)
-bones/2/rotation = Quaternion(0.300068, 0.225157, -0.164695, 0.912217)
-bones/3/rotation = Quaternion(0.0363687, 0.00818229, -0.107629, 0.993492)
-bones/4/rotation = Quaternion(-0.0135752, 0.00949801, -0.185766, 0.982454)
-bones/6/rotation = Quaternion(-0.0093011, 0.00110479, 0.0848438, 0.99635)
-bones/7/rotation = Quaternion(0.00936279, 0.000265342, -0.229471, 0.97327)
-bones/8/rotation = Quaternion(0.0151306, 0.00465101, -0.0996782, 0.994894)
-bones/12/position = Vector3(0.304945, 0.0147507, 0.000673005)
-bones/12/rotation = Quaternion(0.905636, 0.350285, 0.177578, 0.159969)
-bones/13/rotation = Quaternion(-0.802025, 6.28075e-05, -0.368844, 0.469798)
-bones/14/rotation = Quaternion(0.300068, -0.225157, 0.164695, 0.912217)
-bones/15/rotation = Quaternion(0.0363687, -0.00818229, 0.107629, 0.993492)
-bones/17/rotation = Quaternion(0.00579102, 0.00794873, 0.101178, 0.99482)
-bones/18/rotation = Quaternion(-0.0093011, -0.00110479, -0.0848438, 0.99635)
-bones/19/rotation = Quaternion(0.00936279, -0.000265343, 0.229471, 0.97327)
-bones/20/rotation = Quaternion(0.0151306, -0.00465101, 0.0996782, 0.994894)
-bones/24/position = Vector3(0.610701, -0.211558, -0.325327)
-bones/24/rotation = Quaternion(-0.507576, -0.495619, 0.495631, 0.501078)
-bones/25/position = Vector3(-0.609792, -0.211616, -0.333174)
-bones/25/rotation = Quaternion(-0.504389, 0.492376, -0.498873, 0.504264)
-bones/26/position = Vector3(0.383744, 0.0192698, 0.369945)
-bones/26/rotation = Quaternion(0.540791, 0.193702, 0.276694, 0.770367)
-bones/27/position = Vector3(-0.391789, 0.0192322, 0.364959)
-bones/27/rotation = Quaternion(0.542563, -0.198639, -0.273196, 0.769111)
+bones/0/position = Vector3(-0.301486, 0.0180349, 0.00466688)
+bones/0/rotation = Quaternion(0.903346, -0.350344, -0.181428, 0.16825)
+bones/12/position = Vector3(0.311581, 0.0179731, -0.00737912)
+bones/12/rotation = Quaternion(0.906862, 0.353462, 0.163295, 0.161246)
+bones/24/position = Vector3(0.608957, -0.212368, -0.337613)
+bones/24/rotation = Quaternion(-0.504275, -0.485676, 0.505487, 0.50429)
+bones/25/position = Vector3(-0.611559, -0.212382, -0.314099)
+bones/25/rotation = Quaternion(-0.514187, 0.495762, -0.495401, 0.494378)
+bones/26/position = Vector3(0.40022, 0.0273436, 0.359485)
+bones/26/rotation = Quaternion(0.539372, 0.205632, 0.268204, 0.771272)
+bones/27/position = Vector3(-0.375195, 0.0274958, 0.374994)
+bones/27/rotation = Quaternion(0.53386, -0.190273, -0.279088, 0.775177)
 
 [node name="FPS_Arms_Mesh" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D" index="0"]
 cast_shadow = 0
 
 [node name="RightHandAttachment" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D" index="1"]
-transform = Transform3D(0.771813, 0.204687, -0.602003, -0.635784, 0.261979, -0.726048, 0.00909948, 0.943117, 0.332335, -0.391786, 0.0192778, 0.365068)
+transform = Transform3D(0.771813, 0.229526, -0.592978, -0.635843, 0.274205, -0.721467, -0.00299761, 0.933879, 0.357577, -0.375261, 0.0274194, 0.374992)
 
 [node name="RightHandSocket" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D/RightHandAttachment" index="0"]
 transform = Transform3D(0.0201643, -0.602196, -0.798093, 0.938355, 0.286921, -0.192787, 0.345085, -0.745008, 0.570859, 0.0638688, 0.00408357, -0.0524669)
 
 [node name="LeftHandAttachment" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D" index="2"]
-transform = Transform3D(0.77184, -0.216808, 0.59771, 0.635816, 0.26197, -0.726023, 0.000825286, 0.940408, 0.340049, 0.383739, 0.0193062, 0.370054)
+transform = Transform3D(0.771564, -0.191893, 0.60652, 0.635541, 0.274287, -0.721702, -0.0278709, 0.942307, 0.333586, 0.400108, 0.0273259, 0.3597)
 
 [node name="InteractionComponent" type="Node" parent="." index="2"]
 script = ExtResource("3_3gtcp")
 
-[node name="SoundComponent" parent="." index="4" instance=ExtResource("5_a402o")]
+[node name="SoundComponent" parent="." index="4" node_paths=PackedStringArray("TriggerArea") instance=ExtResource("5_a402o")]
 visible = false
+TriggerArea = NodePath("Area3D")
 
 [node name="MovementComponent" parent="." index="5" instance=ExtResource("8_8i55q")]
 MovementSpeedBase = 2.0
@@ -490,50 +488,65 @@ JumpForce = 4.5
 SprintSpeedMultiplier = 1.8
 AirControlMultiplier = 1.0
 
-[node name="Chest" type="Marker3D" parent="." index="6"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.19106, 0)
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="7"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="6"]
 libraries = {
 "": SubResource("AnimationLibrary_mtqt7")
 }
 blend_times = [&"head_bob", &"head_bob", 250.0]
 
-[node name="AnimationTree" type="AnimationTree" parent="." index="8"]
+[node name="AnimationTree" type="AnimationTree" parent="." index="7"]
 active = false
-libraries = {
-"": SubResource("AnimationLibrary_mtqt7")
-}
 tree_root = SubResource("AnimationNodeBlendTree_vih8b")
 anim_player = NodePath("../AnimationPlayer")
+parameters/current_length = null
+parameters/current_position = null
+parameters/current_delta = null
+parameters/Animation/current_length = null
+parameters/Animation/current_position = null
+parameters/Animation/current_delta = null
+"parameters/Animation 2/current_length" = null
+"parameters/Animation 2/current_position" = null
+"parameters/Animation 2/current_delta" = null
+parameters/crouch/current_length = 0.0
+parameters/crouch/current_position = 0.0
+parameters/crouch/current_delta = 0.0
 parameters/crouch/active = false
 parameters/crouch/internal_active = false
 parameters/crouch/request = 0
+parameters/output/current_length = null
+parameters/output/current_position = null
+parameters/output/current_delta = null
 
-[node name="GrabJoint" type="Generic6DOFJoint3D" parent="." index="9"]
+[node name="GrabJoint" type="Generic6DOFJoint3D" parent="." index="8"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.44972, 0)
 node_a = NodePath("../CharacterBody/Hips/HeadAnim/Head/Viewmodel/CameraSocket/Viewmodel_Camera/GrabAnchor")
 linear_limit_x/enabled = false
 linear_limit_y/enabled = false
 linear_limit_z/enabled = false
 
-[node name="GrabbingComponent" type="Node" parent="." index="10" node_paths=PackedStringArray("GrabJoint", "GrabAnchor")]
+[node name="GrabbingComponent" type="Node" parent="." index="9" node_paths=PackedStringArray("GrabJoint", "GrabAnchor")]
 script = ExtResource("10_8ufgj")
 GrabJoint = NodePath("../GrabJoint")
 GrabAnchor = NodePath("../CharacterBody/Hips/HeadAnim/Head/Viewmodel/CameraSocket/Viewmodel_Camera/GrabAnchor")
 GrabStrength = 50.0
 
-[node name="AttentionComponent" type="Node" parent="." index="11" node_paths=PackedStringArray("AttentionCast")]
+[node name="AttentionComponent" type="Node" parent="." index="10" node_paths=PackedStringArray("AttentionCast")]
 script = ExtResource("9_nqsj2")
 AttentionCast = NodePath("../CharacterBody/Hips/HeadAnim/Head/Viewmodel/CameraSocket/Viewmodel_Camera/AttentionCast")
 
-[node name="GPUParticles3D" parent="." index="12" instance=ExtResource("10_1an2w")]
-emitting = true
+[node name="Rain" parent="." index="11" instance=ExtResource("10_1an2w")]
 
-[node name="EquipmentComponent" parent="." index="13" node_paths=PackedStringArray("LeftHandSlot", "RightHandSlot") instance=ExtResource("11_wh707")]
+[node name="EquipmentComponent" parent="." index="12" node_paths=PackedStringArray("LeftHandSlot", "RightHandSlot") instance=ExtResource("11_wh707")]
 LeftHandSlot = NodePath("../CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D/LeftHandAttachment/LeftHandSocket")
 RightHandSlot = NodePath("../CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D/RightHandAttachment/RightHandSocket")
 _requestFirstPersonAnims = true
+
+[node name="VisibilityComponent" parent="." index="13" node_paths=PackedStringArray("Camera", "Viewport", "RoughColor", "VisibilityRect") instance=ExtResource("11_2utyn")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 1.35621, 0)
+Camera = NodePath("MeshInstance3D/VBoxContainer/SubViewportContainer/SubViewport/Camera3D")
+Viewport = NodePath("MeshInstance3D/VBoxContainer/SubViewportContainer/SubViewport")
+RoughColor = NodePath("MeshInstance3D/VBoxContainer/ColorRect")
+VisibilityRect = NodePath("MeshInstance3D/VBoxContainer/VisibilityRect")
 
 [editable path="CharacterBody/Hips/HeadAnim/Head/Viewmodel"]
 [editable path="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms"]

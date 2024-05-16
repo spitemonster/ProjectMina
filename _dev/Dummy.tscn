@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://b6me6mg5eidr0"]
+[gd_scene load_steps=5 format=3 uid="uid://b6me6mg5eidr0"]
 
 [ext_resource type="PackedScene" uid="uid://byh3hlhe1fd0j" path="res://scenes/characters/character_base/CharacterBase.tscn" id="1_5b7mb"]
 [ext_resource type="PackedScene" uid="uid://c3scrb5uv6qhp" path="res://resources/models/Paladin.glb" id="2_csysi"]
+[ext_resource type="PackedScene" uid="uid://br1j424l8kb60" path="res://scenes/components/ai/ai_perception/AIPerceptionComponent.tscn" id="3_ax7vp"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_egknk"]
+radius = 5.0
 
 [node name="Dummy" node_paths=PackedStringArray("CharacterBody", "CharacterHealth", "Eyes", "Chest") instance=ExtResource("1_5b7mb")]
 CharacterBody = NodePath("CharacterBody")
@@ -10,6 +14,9 @@ Eyes = NodePath("Eyes")
 Chest = NodePath("Chest")
 Faction = 2
 
+[node name="CharacterBody" parent="." index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.845006, 0)
+
 [node name="Paladin" parent="." index="2" instance=ExtResource("2_csysi")]
 
 [node name="Eyes" type="Marker3D" parent="." index="3"]
@@ -17,3 +24,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62066, 0)
 
 [node name="Chest" type="Marker3D" parent="." index="4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.29296, 0)
+
+[node name="AIPerceptionComponent" parent="." index="5" node_paths=PackedStringArray("PerceptionRadius") instance=ExtResource("3_ax7vp")]
+PerceptionRadius = NodePath("../PerceptionArea")
+EnableHearing = false
+
+[node name="PerceptionArea" type="Area3D" parent="." index="6"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 1.62192, 0)
+collision_layer = 0
+collision_mask = 4
+
+[node name="PerceptionCollision" type="CollisionShape3D" parent="PerceptionArea" index="0"]
+shape = SubResource("SphereShape3D_egknk")

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="GoapGoalBase" load_steps=2 format=3 uid="uid://pgy1am5wih1r"]
 
-[ext_resource type="Script" path="res://scenes/goap/core/GoapGoalBase.cs" id="1_ec38a"]
+[ext_resource type="Script" path="res://scenes/goap/core/goal/GoalBase.cs" id="1_ec38a"]
 
 [resource]
 script = ExtResource("1_ec38a")

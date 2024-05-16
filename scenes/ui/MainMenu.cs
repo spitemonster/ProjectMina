@@ -5,32 +5,42 @@ namespace ProjectMina;
 
 public partial class MainMenu : Control
 {
-	private bool _isShown;
+	public bool IsShown { get; protected set; }
 
-	public bool IsShown { get; }
-
-	[Export]
-	protected Button _returnButton;
-	[Export]
-	protected Button _quitButton;
+	[Export] protected Button ReturnButton;
+	[Export] protected Button QuitButton;
+	[Export] protected Button SaveButton;
+	[Export] protected Button LoadButton;
 
 	public override void _Ready()
 	{
-		_isShown = Visible;
+		IsShown = Visible;
 		
-		if (_returnButton != null)
+		if (ReturnButton != null)
 		{
-			_returnButton.Pressed += ToggleMainMenu;
+			ReturnButton.Pressed += ToggleMainMenu;
 		}
 
-		System.Diagnostics.Debug.Assert(_returnButton != null, "no return button");
-
-		if (_quitButton != null)
+		if (QuitButton != null)
 		{
-			_quitButton.Pressed += () => GetTree().Quit();
+			QuitButton.Pressed += () => GetTree().Quit();
 		}
 
-		System.Diagnostics.Debug.Assert(_quitButton != null, "no quit button");
+		if (SaveButton != null)
+		{
+			SaveButton.Pressed += () =>
+			{
+				SaveManager.SaveGame();
+			};
+		}
+
+		if (LoadButton != null)
+		{
+			LoadButton.Pressed += () =>
+			{
+				SaveManager.Instance.LoadGame();
+			};
+		}
 	}
 
 	public override void _Input(InputEvent e)
@@ -45,9 +55,9 @@ public partial class MainMenu : Control
 
 	private void ToggleMainMenu()
 	{
-		_isShown = !_isShown;
-		Visible = _isShown;
-		PlayerInput.Manager.SetPause(_isShown);
-		PlayerInput.SetMouseCapture(!_isShown);
+		IsShown = !IsShown;
+		Visible = IsShown;
+		PlayerInput.Manager.SetPause(IsShown);
+		PlayerInput.SetMouseCapture(!IsShown);
 	}
 }

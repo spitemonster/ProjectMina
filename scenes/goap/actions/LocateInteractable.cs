@@ -6,10 +6,9 @@ using ProjectMina.Goap;
 namespace ProjectMina;
 
 [GlobalClass]
-public partial class LocateInteractable : GoapActionBase
+public partial class LocateInteractable : ActionBase
 {
-    public override ActionStatus Run(GoapAgentComponent agent, GoapGoalBase primaryGoal,
-        Dictionary<StringName, Variant> worldState)
+    public override EActionStatus Run(AgentComponent agent, GoalBase primaryGoal, Dictionary<StringName, int> worldState)
     {
         
         var interactable = _LocateInteractable(agent, primaryGoal);
@@ -29,17 +28,17 @@ public partial class LocateInteractable : GoapActionBase
                 agent.Blackboard.SetValue("target_movement_position", interactable.GetOwner<Node3D>().GlobalPosition);
             }
             
-            Status = ActionStatus.Succeeded;
+            Status = EActionStatus.Succeeded;
         }
         else
         {
-            Status = ActionStatus.Running;
+            Status = EActionStatus.Running;
         }
 
         return Status;
     }
 
-    private static InteractableComponent _LocateInteractable(GoapAgentComponent agent, GoapGoalBase primaryGoal)
+    private static InteractableComponent _LocateInteractable(AgentComponent agent, GoalBase primaryGoal)
     {
         var nearbyNodes = agent.Pawn.SearchComponent.SearchArea.GetOverlappingBodies();
         
@@ -61,7 +60,7 @@ public partial class LocateInteractable : GoapActionBase
             }
 
             if (i.UseState.ContainsKey(primaryGoal.GoalName)
-                && i.UseState[primaryGoal.GoalName].Equals(primaryGoal.BaseDesiredValue.First())
+                && i.UseState[primaryGoal.GoalName].Equals(primaryGoal.BaseDesiredValue)
                 && node != agent.Pawn
                 && agent.Pawn.HasLineOfSight(node))
             {
@@ -72,7 +71,7 @@ public partial class LocateInteractable : GoapActionBase
         return null;
     }
 
-    private static InteractableComponent _LocateHealing(GoapAgentComponent agent)
+    private static InteractableComponent _LocateHealing(AgentComponent agent)
     {
         return null;
     }

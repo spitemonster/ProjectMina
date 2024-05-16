@@ -4,10 +4,10 @@ namespace ProjectMina.Goap;
 partial class PlanRequest: GodotObject
 {
     public int ID;
-    public GoapAgentComponent Agent;
-    public GoapGoalBase Goal;
+    public AgentComponent Agent;
+    public GoalBase Goal;
 
-    public void Complete()
+    public void Fulfill()
     {
         Free();
     }

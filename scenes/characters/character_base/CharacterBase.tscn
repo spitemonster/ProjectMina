@@ -4,8 +4,8 @@
 [ext_resource type="Script" path="res://scenes/components/health/HealthComponent.cs" id="2_gokx2"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d1qpq"]
-radius = 0.3
-height = 1.6
+radius = 0.22367
+height = 1.65072
 
 [node name="CharacterBase" type="CharacterBody3D" node_paths=PackedStringArray("CharacterBody", "CharacterHealth")]
 collision_layer = 5

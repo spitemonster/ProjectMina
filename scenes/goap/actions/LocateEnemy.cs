@@ -5,7 +5,7 @@ using ProjectMina.Goap;
 namespace ProjectMina;
 
 [GlobalClass]
-public partial class LocateEnemy : GoapActionBase
+public partial class LocateEnemy : ActionBase
 {
     // public virtual bool IsValid(GoapAgentComponent agent, GoapGoalBase primaryGoal,
     //     Dictionary<StringName, Variant> worldState)
@@ -13,11 +13,11 @@ public partial class LocateEnemy : GoapActionBase
     //     // return false;
     // }
     
-    public override ActionStatus Run(GoapAgentComponent agent, GoapGoalBase primaryGoal,
-        Dictionary<StringName, Variant> worldState)
+    public override EActionStatus Run(AgentComponent agent, GoalBase primaryGoal,
+        Dictionary<StringName, int> worldState)
     {
         GD.Print("[color=yellow]ACTION: ", Name, " running.[/color]");
         agent.Blackboard.SetValue("enemy_visible", true);
-        return ActionStatus.Succeeded;
+        return EActionStatus.Succeeded;
     }
 }

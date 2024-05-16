@@ -18,7 +18,6 @@ public partial class InteractableComponent : ComponentBase
 	// first foray into integrating the interaction system with the goap system
 	// enables a goap agent to check outcome of using the smart object
 	// and what they can do with it
-	[Export] public Array<GoapActionBase> Actions = new();
 	[Export] public Dictionary<StringName, Variant> UseState { get; protected set; } = new();
 
 	[ExportCategory("Interaction")]

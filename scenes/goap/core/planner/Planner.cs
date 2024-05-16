@@ -1,18 +1,20 @@
-using System.Linq;
 using Godot; 
 using System.Collections.Generic;
 using Godot.Collections;
 
 namespace ProjectMina.Goap;
 
-public partial class GoapPlanner : Node
+[GlobalClass]
+public partial class Planner : Node
 {
-	[Signal] public delegate void PlanRequestedEventHandler(GoapAgentComponent agent, int requestID);
-	[Signal] public delegate void PlanRequestRevokedEventHandler(GoapAgentComponent agent);
+	[Signal] public delegate void PlanRequestedEventHandler(AgentComponent agent, int requestID);
+	[Signal] public delegate void PlanRequestRevokedEventHandler(AgentComponent agent);
 	
-	public static GoapPlanner Instance { get; private set; }
-	public Godot.Collections.Dictionary<StringName, Variant> WorldState { get; private set; } = new();
-	private Godot.Collections.Dictionary<int, PlanRequest> _planRequestQueue = new();
+	public static Planner Instance { get; private set; }
+	public Godot.Collections.Dictionary<StringName, int> WorldState { get; private set; } = new();
+	
+	private Godot.Collections.Dictionary<int, PlanRequest> _planRequests = new();
+	
 	private int _currentRequestIdIncrementor = 0;
 
 	private GoapPlannerSettings _settings;
@@ -25,12 +27,12 @@ public partial class GoapPlanner : Node
 	/// <param name="agent">the agent requesting the plan</param>
 	/// <param name="goal">the goal for which we are building a plan</param>
 	/// <returns>the plan request ID; this eventually becomes the plan id</returns>
-	public int RequestPlan(GoapAgentComponent agent, GoapGoalBase goal)
+	public int RequestPlan(AgentComponent agent, GoalBase goal)
 	{
 		// this value initializes at 0, incrementing at the start of the function ensures there is no plan request with the id 0
 		_currentRequestIdIncrementor++;
 		PlanRequest request = new() { ID = _currentRequestIdIncrementor, Agent = agent, Goal = goal };
-		_planRequestQueue.Add(_currentRequestIdIncrementor, request);
+		_planRequests.Add(request.ID, request);
 		
 		return _currentRequestIdIncrementor;
 	}
@@ -42,100 +44,69 @@ public partial class GoapPlanner : Node
 	/// <returns>whether or not the request was successfully removed</returns>
 	public bool RevokePlanRequest(int requestID)
 	{
-		return _planRequestQueue.Remove(requestID);
+		return _planRequests.Remove(requestID);
+	}
+
+	public Godot.Collections.Dictionary<StringName, int> GetWorldState()
+	{
+		return WorldState.Duplicate();
 	}
 
 	public override void _Process(double delta)
 	{
-		if (_planRequestQueue.Count > 0)
+		if (_planRequests.Count > 0)
 		{
-			var planRequest = _planRequestQueue.Values.First();
+			PlanRequest planRequest = _planRequests[0];
 			
-			_planRequestQueue.Remove(planRequest.ID);
+			_planRequests.Remove(planRequest.ID);
 
-			Queue<GoapActionBase> planQueue = _BuildPlan(planRequest.Agent, planRequest.Goal);
-
-			GoapPlan plan = new()
-			{
-				ID = planRequest.ID,
-				Steps = planQueue,
-				Goal = planRequest.Goal,
-				Status = GoapPlanStatus.Ready
-			};
+			Plan plan = _BuildPlan(planRequest);
 			
 			planRequest.Agent.ReceivePlan(plan);
-			
-			// need to manually free godotobjets
-			planRequest.Complete();
+			planRequest.Fulfill();
 		}
 	}
 
-	private Queue<GoapActionBase> _BuildPlan(GoapAgentComponent agent, GoapGoalBase primaryGoal)
+	private Plan _BuildPlan(PlanRequest request)
 	{
-		GD.PrintRich("[color=cyan]||==========GOAP PLANNER==========||[/color]");
-		GD.PrintRich("[color=cyan]PLAN REQUEST GOAL: ", primaryGoal.GoalName, "[/color]");
+		Plan plan = new()
+		{
+			ID = request.ID,
+			Goal = request.Goal
+		};
 
-		if (primaryGoal.GoalName == null)
-		{
-			return new Queue<GoapActionBase>();
-		}
-		
-		Stack<GoapActionBase> plan = new();
-		
-		var agentState = agent.GetAgentState();
-		
-		// we don't want to touch our actual world state so we clone it and work with that for this process
-		var localWs = WorldState.Duplicate();
-		// merge our agent's state. agents and the world should never have the same states
-		localWs.Merge(agentState.Duplicate(), true);
-		
-		GD.PrintRich("[color=cyan]||==========GOAP PLANNER==========||[/color]");
-		GD.PrintRich("[color=cyan]ATTEMPTING TO BUILD PLAN WITH WORLD STATE[/color]");
-		foreach (var state in localWs)
-		{
-			GD.PrintRich("[color=cyan]	", state.Key, ": ", state.Value, "[/color]");
-		}
+		var worldState = request.Agent.GetAgentState();
+		worldState.Merge(GetWorldState());
 
-		// if the goal was satisfied in the time it took to get the plan or the agent has no available actions, return an empty plan and the agent will figure it out
-		if (primaryGoal.Satisfied(localWs) || agent.GetActions(localWs).Count < 1)
-		{
-			GD.PrintRich("[color=cyan]||==========GOAP PLANNER==========||[/color]");
-			GD.PrintRich("[color=cyan]returning empty goal because no actions or primary goal is satsified[/color]");
-			return new Queue<GoapActionBase>(plan);
-		}
+		int currentPlanStep = 0;
+		bool hasNextStep = true;
+		GoalBase currentGoal = request.Goal;
+
+		Stack<ActionBase> planSteps = new();
 		
-		var currentPlanStep = 0;
-		var hasNextStep = true;
-		var currentGoal = primaryGoal;
-		
-		// outline of the below to make sure it makes sense to me
-		// hasNextStep represents whether or not we have reached the conclusion of our plan;
-		// i.e. whether or not the original goal for which we are building the plan is satisfied or not
-		// _maxPlanSteps is basically just to cap how many levels deep the plan should get
-		// using _FindAction gets an action for us that achieves our current goal
 		while (hasNextStep && currentPlanStep < _maxPlanSteps)
 		{
-			var action = _FindAction(agent, currentGoal, primaryGoal, localWs);
-
+			var action = _FindAction(request.Agent, currentGoal, request.Goal, worldState);
+	
 			if (action == null)
 			{
 				GD.PrintRich("[color=cyan]||==========GOAP PLANNER==========||[/color]");
 				GD.PrintRich("[color=cyan]returning empty goal because couldn't find an action[/color]");
-				return new Queue<GoapActionBase>();
+				break;
 			}
 			
-			plan.Push(action);
+			planSteps.Push(action);
 			
-			var actionEffects = action.GetEffects(agent, primaryGoal, localWs);
-
+			var actionEffects = action.GetEffects(request.Agent, request.Goal, worldState);
+	
 			// accommodate actions that have multiple effects. most do not and generally should not but I expect future me (hi!) will appreciate this
 			foreach (var effect in actionEffects)
 			{
-				localWs[effect.Key] = effect.Value;
+				worldState[effect.Key] = effect.Value;
 			}
-
-			var preconditions = action.GetPreconditions(agent, primaryGoal, localWs);
-
+	
+			var preconditions = action.GetPreconditions(request.Agent, request.Goal, worldState);
+	
 			// if there are no preconditions, we're going to break out of the loop anyway
 			if (preconditions.Count == 0)
 			{
@@ -143,9 +114,9 @@ public partial class GoapPlanner : Node
 				currentPlanStep++;
 				continue;
 			}
-
-			var applicablePrecondition = _GetApplicablePrecondition(preconditions, localWs);
-
+	
+			var applicablePrecondition = _GetApplicablePrecondition(preconditions, worldState);
+	
 			if (applicablePrecondition == null)
 			{
 				hasNextStep = false;
@@ -158,20 +129,21 @@ public partial class GoapPlanner : Node
 			currentPlanStep++;	
 		}
 
-		return new Queue<GoapActionBase>(plan);
+		plan.Steps = new(planSteps);
+		plan.TotalSteps = planSteps.Count;
+
+		return plan;
 	}
 
-	private static GoapGoalBase _GetApplicablePrecondition(Godot.Collections.Dictionary<StringName, Variant> preconditions, Godot.Collections.Dictionary<StringName, Variant> worldState)
+	private static GoalBase _GetApplicablePrecondition(Godot.Collections.Dictionary<StringName, int> preconditions, Godot.Collections.Dictionary<StringName, int> worldState)
 	{
 		// assume all preconditions are satisfied until we're proven wrong just once
-		var localGoal = new GoapGoalBase();
-			
 		foreach (var precondition in preconditions)
 		{
-			localGoal = new GoapGoalBase
+			var localGoal = new GoalBase
 			{
 				GoalName = precondition.Key,
-				BaseDesiredValue = new Array<Variant> { precondition.Value }
+				BaseDesiredValue = precondition.Value
 			};
 
 			if (localGoal.Satisfied(worldState))
@@ -185,17 +157,17 @@ public partial class GoapPlanner : Node
 		return null;
 	}
 
-	private GoapActionBase _FindAction(GoapAgentComponent agent, GoapGoalBase currentGoal, GoapGoalBase primaryGoal, Godot.Collections.Dictionary<StringName, Variant> worldState)
+	private ActionBase _FindAction(AgentComponent agent, GoalBase currentGoal, GoalBase primaryGoal, Godot.Collections.Dictionary<StringName, int> worldState)
 	{
 		var actions = agent.GetActions(worldState);
 
 		foreach (var action in actions)
 		{
-			GD.PrintRich("[color=cyan]||==========GOAP PLANNER==========||[/color]");
-			GD.PrintRich("[color=cyan]Finding Action[/color]");
-			GD.PrintRich("	[color=cyan]", action.Name, "[/color]");
-			GD.PrintRich("	[color=cyan]satisfied: ", currentGoal.Satisfied(action.GetEffects(agent, primaryGoal, worldState)), "[/color]");
-			GD.PrintRich("	[color=cyan]valid: ", action.IsValid(agent, primaryGoal, worldState), "[/color]");
+			// GD.PrintRich("[color=cyan]||==========GOAP PLANNER==========||[/color]");
+			// GD.PrintRich("[color=cyan]Finding Action[/color]");
+			// GD.PrintRich("	[color=cyan]", action.Name, "[/color]");
+			// GD.PrintRich("	[color=cyan]satisfied: ", currentGoal.Satisfied(action.GetEffects(agent, primaryGoal, worldState)), "[/color]");
+			// GD.PrintRich("	[color=cyan]valid: ", action.IsValid(agent, primaryGoal, worldState), "[/color]");
 			// we are asking if
 			// the current goal is satisfied by the outcome of the action given the primary goal
 			if (currentGoal.Satisfied(action.GetEffects(agent, primaryGoal, worldState)) && action.IsValid(agent, primaryGoal, worldState))
@@ -267,7 +239,7 @@ public partial class GoapPlanner : Node
 	public override void _Ready()
 	{
 		// default settings exist but 
-		_settings = ResourceLoader.Load<GoapPlannerSettings>("res://resources/settings/GoapPlannerSettings.tres");
+		_settings = ResourceLoader.Load<GoapPlannerSettings>("res://resources/settings/PlannerSettings.tres");
 		
 		if (_settings != null)
 		{

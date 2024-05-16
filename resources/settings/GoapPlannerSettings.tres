@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="GoapPlannerSettings" load_steps=2 format=3 uid="uid://dcl4wjkoo8a5k"]
-
-[ext_resource type="Script" path="res://scenes/goap/core/GoapPlannerSettings.cs" id="1_ha87v"]
-
-[resource]
-script = ExtResource("1_ha87v")
-EnableDebug = true
-MaxPlanSteps = 10

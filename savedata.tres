@@ -1,0 +1,22 @@
+[gd_resource type="Resource" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scenes/characters/player_character/SaveDataPlayer.cs" id="1_8vsm6"]
+[ext_resource type="Script" path="res://scripts/classes/save/SaveDataGlobal.cs" id="2_1tdcx"]
+[ext_resource type="Script" path="res://scripts/classes/save/SavedGame.cs" id="3_ctgsr"]
+
+[sub_resource type="Resource" id="Resource_ksej6"]
+script = ExtResource("1_8vsm6")
+CameraTransform = Transform3D(-0.999278, 0.0268084, -0.0268733, 0, 0.707955, 0.706246, 0.037959, 0.705736, -0.707444, -10.1699, 1.45707, -2.64775)
+Position = Vector3(-10.1699, 0.00733891, -2.64775)
+Transform = Transform3D(-0.999278, 0, -0.037959, 0, 1, 0, 0.037959, 0, -0.999278, -10.1699, 0.00733891, -2.64775)
+ScenePath = "res://scenes/characters/player_character/PlayerCharacter.tscn"
+
+[sub_resource type="Resource" id="Resource_02lg4"]
+script = ExtResource("2_1tdcx")
+CurrentLevel = "res://_dev/scenes/gyms/gym_base/GymBase.tscn"
+ScenePath = ""
+
+[resource]
+script = ExtResource("3_ctgsr")
+GlobalData = SubResource("Resource_02lg4")
+GameData = [SubResource("Resource_ksej6")]
