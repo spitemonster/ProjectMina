@@ -1,5 +1,5 @@
 // cloudy skies shader
-// inspired from shadertoy shader made by Drift (https://www.shadertoy.com/view/4tdSWr) 
+// inspired from shadertoy shader made by Drift (https://www.shadertoy.com/view/4tdSWr)
 
 shader_type canvas_item;
 
@@ -24,14 +24,14 @@ vec2 hash( vec2 p ) {
 float noise( in vec2 p ) {
     float K1 = 0.366025404; // (sqrt(3)-1)/2;
     float K2 = 0.211324865; // (3-sqrt(3))/6;
-                vec2 i = floor(p + (p.x+p.y)*K1); 
+                vec2 i = floor(p + (p.x+p.y)*K1);
     vec2 a = p - i + (i.x+i.y)*K2;
     vec2 o = (a.x>a.y) ? vec2(1.0,0.0) : vec2(0.0,1.0); //vec2 of = 0.5 + 0.5*vec2(sign(a.x-a.y), sign(a.y-a.x));
     vec2 b = a - o + K2;
                 vec2 c = a - 1.0 + 2.0*K2;
     vec3 h = max(0.5-vec3(dot(a,a), dot(b,b), dot(c,c) ), 0.0 );
                 vec3 n = h*h*h*h*vec3( dot(a,hash(i+0.0)), dot(b,hash(i+o)), dot(c,hash(i+1.0)));
-    return dot(n, vec3(70.0));       
+    return dot(n, vec3(70.0));
 }
 
 float fbm(vec2 n) {
@@ -52,7 +52,7 @@ vec2 p = FRAGCOORD.xy / res.xy; // changement
                 vec2 uv = p*vec2(res.x/res.y,1.0);    // changement
     float time = TIME * speed ;
     float q = fbm(uv * cloudscale * 0.5);
-    
+
     //ridged noise shape
                 float r = 0.0;
                 uv *= cloudscale;
@@ -63,7 +63,7 @@ vec2 p = FRAGCOORD.xy / res.xy; // changement
         uv = m*uv + time;
                                weight *= 0.7;
     }
-    
+
     //noise shape
                 float f = 0.0;
     uv = p*vec2(res.x/res.y,1.0); // changement
@@ -75,9 +75,9 @@ vec2 p = FRAGCOORD.xy / res.xy; // changement
         uv = m*uv + time;
                                weight *= 0.6;
     }
-    
+
     f *= r + f;
-    
+
     //noise colour
     float c = 0.0;
     time = TIME * speed * 2.0;
@@ -90,7 +90,7 @@ vec2 p = FRAGCOORD.xy / res.xy; // changement
         uv = m*uv + time;
                                weight *= 0.6;
     }
-    
+
     //noise ridge colour
     float c1 = 0.0;
     time = TIME * speed * 3.0;
@@ -103,15 +103,15 @@ vec2 p = FRAGCOORD.xy / res.xy; // changement
         uv = m*uv + time;
                                weight *= 0.6;
     }
-                
+
     c += c1;
-    
+
     vec3 skycolour = mix(skycolour2, skycolour1, p.y);
     vec3 cloudcolour = vec3(1.1, 1.1, 0.9) * clamp((clouddark + cloudlight*c), 0.0, 1.0);
-   
+
     f = cloudcover + cloudalpha*f*r;
-    
+
     vec3 result = mix(skycolour, clamp(skytint * skycolour + cloudcolour, 0.0, 1.0), clamp(f + c, 0.0, 1.0));
-    
-    COLOR.rgb = vec3(result); 
+
+    COLOR.rgb = vec3(result);
 }

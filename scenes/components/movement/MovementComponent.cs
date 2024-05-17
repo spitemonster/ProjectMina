@@ -44,6 +44,8 @@ public partial class MovementComponent : ComponentBase
 	[Export] protected float SneakSpeedMultiplier = 0.5f;
 	[Export(PropertyHint.Range, "0,1,0.05")] protected float AirControlMultiplier = 0.5f;
 
+	public bool IsSneaking => _sneaking;
+
 	public bool Moving { get => _moving; }
 
 	private float _gravity = -9.8f;

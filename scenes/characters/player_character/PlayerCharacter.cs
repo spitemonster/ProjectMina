@@ -120,7 +120,6 @@ public partial class PlayerCharacter : CharacterBase
 					{
 						TestAiCharacter = Global.Data.AICharacters[0];
 					}
-					GD.Print("tested and working");
 					TestAiCharacter?.SetTargetPosition(GlobalPosition);
 				}
 				break;

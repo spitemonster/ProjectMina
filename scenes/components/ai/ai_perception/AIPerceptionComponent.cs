@@ -4,52 +4,92 @@ using Godot.Collections;
 
 namespace ProjectMina;
 
+public enum PerceptionType : int
+{
+    None,
+    Sight,
+    Hearing,
+    All
+}
+public partial class PerceptionContext : GodotObject
+{
+    public PerceptionContext(CharacterBase character, Vector3 position, PerceptionType type, float distance, bool characterVisible, bool characterInFieldOfView, bool characterInPerceptionRadius)
+    {
+        Type = type;
+        Distance = distance;
+        Character = character;
+        CharacterVisible = characterVisible;
+        CharacterInFieldOfView = characterInFieldOfView;
+        CharacterInPerceptionRadius = characterInPerceptionRadius;
+    }
+    
+    public CharacterBase Character { get; private set; }
+    public PerceptionType Type { get; private set; }
+    public Vector3 Position { get; private set; }
+    public float Distance { get; private set; }
+    public bool CharacterVisible { get; private set; }
+    public bool CharacterInFieldOfView { get; private set; }
+    public bool CharacterInPerceptionRadius { get; private set; }
+}
+
 [GlobalClass]
 public partial class AIPerceptionComponent : ComponentBase
 {
     // characters within perception radius
-    public Array<CharacterBase> CharactersInPerceptionRadius = new();
+    public Array<CharacterBase> CharactersInPerceptionRadius { get; private set; } = new();
 
     // characters within perception radius and within the character's field of view, does not do line of sight test
-    public Array<CharacterBase> SightableCharacters = new();
+    public Array<CharacterBase> CharactersInFieldOfView { get; private set; } = new();
 
     // sightable characters that pass line of sight test
-    public Array<CharacterBase> VisibleCharacters = new();
-
-    public CharacterBase VisibleCharacter;
+    public Array<CharacterBase> VisibleCharacters { get; private set; } = new();
 
     [ExportCategory("Perception")] [Export]
     public Area3D PerceptionRadius;
 
-    [Export] protected float PerceptionRate = .1f;
-    [Export] protected bool EnableClosePerception = true;
-    [Export] protected bool EnableFarPerception = true;
-
     [ExportCategory("Vision")] [Export] protected bool EnableSight = true;
+    [Export] public float FOVAngle { get; protected set; } = 165.0f;
     [Export] public float MaxSightDistance = 10.0f;
     [Export] public Curve VisibilityDistanceCurve { get; protected set; }
     [Export] public Curve VisibilityHorizontalCurve { get; protected set; }
     [Export] public Curve VisibilityVerticalCurve { get; protected set; }
-    [Export] protected float VisibilityDistanceWeight = 1.0f;
-    [Export] protected float VisibilityHorizontalWeight = 1.0f;
-    [Export] protected float VisibilityVerticalWeight = .5f;
-    [Export] protected float VisibilityLightednessWeight = .8f;
+
+    [Signal] public delegate void PlayerEnteredLineOfSightEventHandler();
+
+    [Signal] public delegate void PlayerNoticedEventHandler();
+
+    [Signal] public delegate void PlayerExitedLineOfSightEventHandler();
+
+    [Signal] public delegate void CharacterEnteredPerceptionRadiusEventHandler(CharacterBase character);
+
+    [Signal] public delegate void CharacterExitedPerceptionRadiusEventHandler(CharacterBase character);
+
+    [Signal] public delegate void CharacterEnteredFieldOfViewEventHandler(CharacterBase character);
+
+    [Signal] public delegate void CharacterExitedFieldOfViewEventHandler(CharacterBase character);
+
+    [Signal] public delegate void CharacterEnteredLineOfSightEventHandler(CharacterBase character);
+
+    [Signal] public delegate void CharacterExitedLineOfSightEventHandler(CharacterBase character);
+
+    [Signal] public delegate void SoundHeardEventHandler(SoundSourceComponent source);
+    // [Signal] public delegate void CharacterPerceivedEventHandler(PerceptionContext context);
+
+    [Signal] public delegate void PerceptionUpdatedEventHandler(PerceptionContext context);
 
     [ExportCategory("Hearing")] [Export] protected bool EnableHearing = true;
 
     [ExportCategory("Debug")] [Export] protected ProgressBar EnemyVisibilityLevelIndicator;
     [Export] protected ProgressBar EnemyAwarenessLevelIndicator;
 
-    [Signal] public delegate void PlayerEnteredLineOfSightEventHandler();
-    [Signal] public delegate void PlayerNoticedEventHandler();
-    [Signal] public delegate void PlayerExitedLineOfSightEventHandler();
-    [Signal] public delegate void CharacterEnteredPerceptionRadiusEventHandler(CharacterBase character);
-    [Signal] public delegate void CharacterExitedPerceptionRadiusEventHandler(CharacterBase character);
+    [Export] protected float VisibilityDistanceWeight = 1.0f;
+    [Export] protected float VisibilityHorizontalWeight = 1.0f;
+    [Export] protected float VisibilityVerticalWeight = .5f;
+    [Export] protected float VisibilityLightednessWeight = .8f;
 
-    [Signal]
-    public delegate void SoundHeardEventHandler(SoundSourceComponent source);
-
-    private Accumulator noticeAccumulator;
+    [Export] protected float PerceptionRate = .1f;
+    [Export] protected bool EnableClosePerception = true;
+    [Export] protected bool EnableFarPerception = true;
 
     private CharacterBase _owner;
 
@@ -57,18 +97,20 @@ public partial class AIPerceptionComponent : ComponentBase
 
     private float _awareness;
 
-    // we reuse these variables in _physicsprocess
-    private Vector3 _toTarget;
-    private float _dotProduct;
-    private float _angle;
-    private float _roundedAngle;
-    private float _clampedRange;
-
     private PlayerCharacter _targetCharacter;
     private bool _targetVisible = false;
 
+    
+    private float _maxDotProduct;
+
     public CharacterBase GetNearestVisibleCharacter()
     {
+        // return null if we don't have any visible characters
+        if (VisibleCharacters.Count < 1)
+        {
+            return null;
+        }
+        
         VisibleCharacters =
             new Array<CharacterBase>(
                 VisibleCharacters.OrderByDescending(c => (c.GlobalPosition - _owner.GlobalPosition).Length()));
@@ -79,20 +121,10 @@ public partial class AIPerceptionComponent : ComponentBase
     public override void _Ready()
     {
         base._Ready();
+        
+        _maxDotProduct = Mathf.Cos(Mathf.DegToRad(FOVAngle / 2.0f));
 
         _owner = GetOwner<CharacterBase>();
-
-        noticeAccumulator = new Accumulator()
-        {
-            Threshold = 50
-        };
-
-        AddChild(noticeAccumulator);
-
-        // if (_owner == null || PerceptionRadius == null)
-        // {
-        //     return;
-        // }
 
         _perceptionTimer = new Timer()
         {
@@ -103,6 +135,7 @@ public partial class AIPerceptionComponent : ComponentBase
 
         GetTree().Root.AddChild(_perceptionTimer);
         _perceptionTimer.Timeout += _Perceive;
+        
 
         PerceptionRadius.BodyEntered += _CheckAddBody;
         PerceptionRadius.BodyExited += _CheckRemoveBody;
@@ -116,19 +149,53 @@ public partial class AIPerceptionComponent : ComponentBase
         {
             _CheckAddBody(body);
         }
+        
+        _perceptionTimer.Start();
     }
 
     private void _Perceive()
     {
+        var forwardVector = _owner.ForwardVector;
+        // for each character that we could possibly perceive, we want to determine if they are in our field of view (thus sightable)
+        
+        foreach (var character in CharactersInPerceptionRadius)
+        {
+            // dot product test to determine if character is in field of view
+            
+
+            if (_IsInFieldOfView(character.Chest.GlobalPosition))
+            { 
+                _AddSightableCharacter(character);
+                
+                if (_owner.HasLineOfSight(character.Chest))
+                {
+                    _AddVisibleCharacter(character);
+                }
+                else
+                {
+                    _RemoveVisibleCharacter(character);
+                }
+            }
+            else
+            {
+                _RemoveSightableCharacter(character);
+            }
+        }
     }
 
     private void _CheckAddBody(Node3D body)
     {
-        if (body is CharacterBase character && character != _owner && !CharactersInPerceptionRadius.Contains(character))
+        // don't worry about this body if we're already perceiving it, if it's our owner or it's not a character
+        if (body is not CharacterBase character || character == _owner ||
+            CharactersInPerceptionRadius.Contains(character)) return;
+        
+        // potentially temporary; only perceive the player character
+        if (character is not PlayerCharacter pc)
         {
-            // TODO: Add code to determine if we even care to perceive this character
-            _AddPerceivableCharacter(character);
+            return;
         }
+        
+        _AddPerceivableCharacter(character);
     }
 
     private void _CheckRemoveBody(Node3D body)
@@ -138,258 +205,110 @@ public partial class AIPerceptionComponent : ComponentBase
             _RemovePerceivableCharacter(character);
         }
     }
-
+    
     private void _AddPerceivableCharacter(CharacterBase character)
     {
         CharactersInPerceptionRadius.Add(character);
         EmitSignal(SignalName.CharacterEnteredPerceptionRadius, character);
-        if (_targetCharacter == null && character is PlayerCharacter p)
-        {
-            _targetCharacter = p;
-        }
+
+        var pos = character.GlobalPosition;
+        var dist = _owner.GlobalPosition.DistanceTo(pos);
+        var hasLos = _owner.HasLineOfSight(character);
+        var inFov = _IsInFieldOfView(character.Chest.GlobalPosition);
+        
+        PerceptionContext context = new(character, pos, PerceptionType.All, dist, hasLos, inFov, true);
+        EmitSignal(SignalName.PerceptionUpdated, context);
     }
 
     private void _RemovePerceivableCharacter(CharacterBase character)
     {
         CharactersInPerceptionRadius.Remove(character);
-        EmitSignal(SignalName.CharacterExitedPerceptionRadius, character);
+        // this sort of bubbles up; if a character is no longer perceivable it cannot be sightable OR visible
+        // but the reverse can be the case; we can lose sight of the character with them still in the perception radius
+        // so these functions will always call the one above them but never the one below
+        _RemoveSightableCharacter(character);
 
-        if (_targetCharacter == character)
+        EmitSignal(SignalName.CharacterExitedPerceptionRadius, character);
+        
+        PerceptionContext context = new(character, Vector3.Zero, PerceptionType.None, 0, false, false, false);
+        EmitSignal(SignalName.PerceptionUpdated, context);
+    }
+    
+    private void _AddSightableCharacter(CharacterBase character)
+    {
+        if (CharactersInFieldOfView.Contains(character))
         {
-            _targetCharacter = null;
+            return;
         }
+        
+        CharactersInFieldOfView.Add(character);
+        EmitSignal(SignalName.CharacterEnteredFieldOfView, character);
+        
+        var pos = character.GlobalPosition;
+        var dist = _owner.GlobalPosition.DistanceTo(pos);
+        var hasLos = _owner.HasLineOfSight(character);
+        
+        PerceptionContext context = new(character, Vector3.Zero, PerceptionType.Sight, dist, hasLos, true, true);
+        EmitSignal(SignalName.PerceptionUpdated, context);
+    }
+    
+    private void _RemoveSightableCharacter(CharacterBase character)
+    {
+        // don't run if the character isn't in this array
+        if (!CharactersInFieldOfView.Contains(character))
+        {
+            return;
+        }
+        
+        CharactersInFieldOfView.Remove(character);
+        _RemoveVisibleCharacter(character);
+        EmitSignal(SignalName.CharacterExitedFieldOfView, character);
+
+        var inRadius = CharactersInPerceptionRadius.Contains(character);
+        
+        PerceptionContext context = new(character, Vector3.Zero, PerceptionType.Sight, 0, false, false, inRadius);
+        EmitSignal(SignalName.PerceptionUpdated, context);
+    }
+    
+    private void _AddVisibleCharacter(CharacterBase character)
+    {
+        if (VisibleCharacters.Contains(character))
+        {
+            return;
+        }
+        
+        VisibleCharacters.Add(character);
+        EmitSignal(SignalName.CharacterEnteredLineOfSight, character);
+        
+        var pos = character.GlobalPosition;
+        var dist = _owner.GlobalPosition.DistanceTo(pos);
+        
+        PerceptionContext context = new(character, pos, PerceptionType.Sight, dist, true, true, true);
+        EmitSignal(SignalName.PerceptionUpdated, context);
     }
 
-    public override void _PhysicsProcess(double delta)
+    private void _RemoveVisibleCharacter(CharacterBase character)
     {
-        if (_targetCharacter == null)
+        if (!VisibleCharacters.Contains(character))
         {
             return;
         }
 
-        var targetVisibility = 0.0f;
-        var visible = _owner.HasLineOfSight(_targetCharacter.Chest);
-
-        if (!visible)
-        {
-            if (_targetVisible)
-            {
-                _LosePlayer();    
-            }
-        } else
-        {
-            if (!_targetVisible)
-            {
-                _SpotPlayer();
-            }
-
-            _toTarget = (_targetCharacter.Chest.GlobalPosition - _owner.Eyes.GlobalPosition).Normalized();
-            
-            var toTargetHorizontal = new Vector3(_toTarget.X, 0, _toTarget.Z).Normalized();
-            var dotProductHorizontal = Mathf.Clamp(_owner.ForwardVector.Dot(toTargetHorizontal), 0, 1);
-            var dotProductVertical = Mathf.Abs(_toTarget.Y);
-            
-            var horizontalAngleComponent = dotProductHorizontal;
-            var verticalAngleComponent = 1 - dotProductVertical;
-
-            if (VisibilityHorizontalCurve != null)
-            {
-                horizontalAngleComponent = VisibilityHorizontalCurve.SampleBaked(dotProductHorizontal);
-            }
-
-            if (VisibilityVerticalCurve != null)
-            {
-                verticalAngleComponent = VisibilityVerticalCurve.SampleBaked(dotProductVertical);
-            }
-
-            var dist = (_targetCharacter.GlobalPosition - _owner.GlobalPosition).Length();
-            var distRatio = Mathf.Clamp(1 - (dist / MaxSightDistance), 0, 1);
-
-            var distanceComponent = distRatio;
-
-            if (VisibilityDistanceCurve != null)
-            {
-                distanceComponent = VisibilityDistanceCurve.SampleBaked(distRatio);
-            }
-
-            var playerVisibilityComponent = _targetCharacter.GetVisibility();
-
-            targetVisibility = (horizontalAngleComponent * VisibilityHorizontalWeight) *
-                                   (verticalAngleComponent * VisibilityVerticalWeight) *
-                                   (distanceComponent * VisibilityDistanceWeight);
-            targetVisibility -= (1 - playerVisibilityComponent) * VisibilityLightednessWeight;
-            targetVisibility = Mathf.Max(0, targetVisibility);
-        }
+        VisibleCharacters.Remove(character);
+        EmitSignal(SignalName.CharacterExitedLineOfSight, character);
         
-        // GD.Print("target visibility: ", targetVisibility);
+        var sightable = CharactersInFieldOfView.Contains(character);
+        var inRadius = CharactersInPerceptionRadius.Contains(character);
         
-        // noticeAccumulator.Value = targetVisibility;
+        PerceptionContext context = new(character, Vector3.Zero, PerceptionType.Sight, 0, false, sightable, inRadius);
+        EmitSignal(SignalName.PerceptionUpdated, context);
     }
 
-    private void _SpotPlayer()
+    private bool _IsInFieldOfView(Vector3 targetPosition)
     {
-        GD.Print("player spotted");
-        _CharacterEnterLineOfSight();
+        var toTarget = (targetPosition - _owner.Eyes.GlobalPosition).Normalized();
+        var dotProduct = _owner.ForwardVector.Dot(toTarget);
+        // Check if the dot product is within the allowed range
+        return dotProduct >= _maxDotProduct;
     }
-
-    private void _LosePlayer()
-    {
-        GD.Print("lost sight of player");
-        _CharacterExitLineOfSight();
-    }
-
-    private void _CharacterEnterLineOfSight()
-    {
-        _targetVisible = true;
-        EmitSignal(SignalName.PlayerEnteredLineOfSight);
-    }
-
-    private void _CharacterExitLineOfSight()
-    {
-        _targetVisible = false;
-        EmitSignal(SignalName.PlayerExitedLineOfSight);
-    }
-    //
-    // private void _AddSightableCharacter(CharacterBase character)
-    // {
-    //     SightableCharacters.Add(character);
-    //     EmitSignal(SignalName.CharacterEnteredFieldOfView, character);
-    //     // GD.Print("added sighted character: ", character);
-    // }
-    //
-    // private void _RemoveSightableCharacter(CharacterBase character)
-    // {
-    //     SightableCharacters.Remove(character);
-    //     EmitSignal(SignalName.CharacterExitedFieldOfView, character);
-    //     // GD.Print("removed sighted character: ", character);
-    //
-    //     if (VisibleCharacters.Contains(character))
-    //     {
-    //         _RemoveVisibleCharacter(character);
-    //     }
-    // }
-    //
-    // private void _AddVisibleCharacter(CharacterBase character)
-    // {
-    //     VisibleCharacters.Add(character);
-    //     EmitSignal(SignalName.CharacterEnteredLineOfSight, character);
-    //     // GD.Print("added visible character: ", character);
-    // }
-    //
-    // private void _RemoveVisibleCharacter(CharacterBase character)
-    // {
-    //     VisibleCharacters.Remove(character);
-    //     EmitSignal(SignalName.CharacterExitedLineOfSight, character);
-    //
-    //     if (VisibleCharacter == character)
-    //     {
-    //         VisibleCharacter = null;
-    //     }
-    //     // GD.Print("removed visible character: ", character);
-    // }
-    //
-    // public override void _PhysicsProcess(double delta)
-    // {
-    //     var forwardVector = _owner.ForwardVector;
-    //     
-    //     foreach (var character in CharactersInPerceptionRadius)
-    //     {
-    //         _toTarget = (character.Chest.GlobalPosition - _owner.Eyes.GlobalPosition).Normalized();
-    //         _dotProduct = forwardVector.Dot(_toTarget);
-    //         _angle = Mathf.Acos(_dotProduct) * (180.0f / Mathf.Pi);
-    //         _roundedAngle = Mathf.Clamp(Mathf.Round(_angle), -90, 90);
-    //         _clampedRange = Mathf.Clamp(1 - Mathf.Round((_roundedAngle / 90) * 100) / 100, 0, 1);
-    //         
-    //         if (_clampedRange > 0 && !SightableCharacters.Contains(character))
-    //         {
-    //             _AddSightableCharacter(character);
-    //         } else if (_clampedRange <= 0 && SightableCharacters.Contains(character))
-    //         {
-    //             _RemoveSightableCharacter(character);
-    //         }
-    //     }
-    //
-    //     foreach (var character in SightableCharacters)
-    //     {
-    //         if (_owner.HasLineOfSight(character.Chest))
-    //         {
-    //             if (!VisibleCharacters.Contains(character))
-    //             {
-    //                 _AddVisibleCharacter(character);
-    //             }
-    //         } else if (VisibleCharacters.Contains(character))
-    //         {
-    //             GD.Print("should lose line of sight");
-    //             _RemoveVisibleCharacter(character);
-    //         }
-    //     }
-    //
-    //     if (VisibleCharacter != null)
-    //     {
-    //         _toTarget = (VisibleCharacter.Chest.GlobalPosition - _owner.Eyes.GlobalPosition).Normalized();
-    //         var toTargetHorizontal = new Vector3(_toTarget.X, 0, _toTarget.Z).Normalized();
-    //         var dotProductHorizontal = Mathf.Clamp(forwardVector.Dot(toTargetHorizontal), 0, 1);
-    //         var dotProductVertical = Mathf.Abs(_toTarget.Y);
-    //
-    //         var horizontalAngleComponent = dotProductHorizontal;
-    //         var verticalAngleComponent = 1 - dotProductVertical;
-    //
-    //         if (VisibilityHorizontalCurve != null)
-    //         {
-    //             horizontalAngleComponent = VisibilityHorizontalCurve.SampleBaked(dotProductHorizontal);
-    //         }
-    //         
-    //         // GD.Print("horizontal component: ", horizontalAngleComponent);
-    //
-    //         if (VisibilityVerticalCurve != null)
-    //         {
-    //             verticalAngleComponent = VisibilityVerticalCurve.SampleBaked(dotProductVertical);
-    //         }
-    //         
-    //         // GD.Print("vertical component: ", verticalAngleComponent);
-    //         
-    //         var dist = (VisibleCharacter.GlobalPosition - _owner.GlobalPosition).Length();
-    //         var distRatio = Mathf.Clamp(1 - (dist / MaxSightDistance), 0, 1);
-    //         
-    //         var distanceComponent = distRatio;
-    //
-    //         if (VisibilityDistanceCurve != null)
-    //         {
-    //             distanceComponent = VisibilityDistanceCurve.SampleBaked(distRatio);
-    //         }
-    //         
-    //         // GD.Print("distance component: ", distanceComponent);
-    //
-    //         if (VisibleCharacter is PlayerCharacter p)
-    //         {
-    //             // GD.Print("visibility component: ", p.GetVisibility());
-    //         }
-    //         
-    //         //
-    //         // if (dist <= 1)
-    //         // {
-    //         //     _clampedRange = 1.0f;
-    //         // }
-    //         //
-    //         // var t = _clampedRange * distVal;
-    //         // _awareness += t;
-    //         //
-    //         // EnemyAwarenessLevelIndicator.Value = _awareness;
-    //         // EnemyVisibilityLevelIndicator.Value = t * 100;
-    //     }
-    //     else
-    //     {
-    //         if (VisibleCharacters.Count > 0)
-    //         {
-    //             
-    //             VisibleCharacter = VisibleCharacters[0];
-    //         }
-    //         else
-    //         {
-    //             // _awareness -= 1f;
-    //             EnemyVisibilityLevelIndicator.Value = 0;
-    //             EnemyAwarenessLevelIndicator.Value = 0;
-    //         }
-    //     }
-    // }
 }

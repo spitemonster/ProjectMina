@@ -12,16 +12,21 @@ RightDiagonalCast = NodePath("RightDiagonalCast")
 
 [node name="ForwardCast" type="RayCast3D" parent="."]
 target_position = Vector3(0, 0, -1)
+hit_from_inside = true
 debug_shape_custom_color = Color(1, 0, 0, 1)
 
 [node name="LeftCast" type="RayCast3D" parent="."]
-target_position = Vector3(-1, 0, 0)
+target_position = Vector3(-0.5, 0, 0)
+hit_from_inside = true
 
 [node name="RightCast" type="RayCast3D" parent="."]
-target_position = Vector3(1, 0, 0)
+target_position = Vector3(0.5, 0, 0)
+hit_from_inside = true
 
 [node name="LeftDiagonalCast" type="RayCast3D" parent="."]
-target_position = Vector3(-1, 0, -1)
+target_position = Vector3(-0.6, 0, -0.6)
+hit_from_inside = true
 
 [node name="RightDiagonalCast" type="RayCast3D" parent="."]
-target_position = Vector3(1, 0, -1)
+target_position = Vector3(0.6, 0, -0.6)
+hit_from_inside = true

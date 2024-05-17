@@ -32,8 +32,7 @@ public partial class ImpactComponent : ComponentBase3D
         
         _DisableImpact();
         _impactTimeoutTimer.Start();
-
-        GD.Print(GetOwner<Node>().Name, " hit");
+        
         EmitSignal(SignalName.Impacted, result);
     }
 
@@ -77,7 +76,6 @@ public partial class ImpactComponent : ComponentBase3D
 
         if (_previousVelocity > 1 && collision != null && _canImpact)
         {
-            GD.Print(collision.GetCollider());
             _HandleImpact(collision);
         }
     }

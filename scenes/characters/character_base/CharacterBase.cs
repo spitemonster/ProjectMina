@@ -18,6 +18,7 @@ public partial class CharacterBase : CharacterBody3D
 	// signals
 	[Signal] public delegate void AttackedEventHandler();
 	[Signal] public delegate void FinishedAttackEventHandler();
+	[Signal]  public delegate void FocusChangedEventHandler(Vector3 focusPosition);
 
 	// publicly accessible components
 	[Export] public CollisionShape3D CharacterBody { get; set; }
@@ -44,6 +45,9 @@ public partial class CharacterBase : CharacterBody3D
 	private Timer _footstepTimer;
 
 	protected PhysicsMaterial _floorSurface;
+
+	protected Node3D _lookTarget;
+	protected Vector3 _focusPosition;
 
 	public override void _Ready()
 	{
@@ -73,13 +77,48 @@ public partial class CharacterBase : CharacterBody3D
 	public override void _PhysicsProcess(double delta)
 	{
 		ForwardVector = -GlobalTransform.Basis.Z;
+	}
 
-		if (_debug)
+	public virtual void SetLookTarget(Node3D target)
+	{
+		if (target == null)
 		{
-			Vector3 traceOrigin = Chest.GlobalPosition;
-			Vector3 traceEnd = Chest.GlobalPosition + ForwardVector * 2f;
-			DebugDraw.Line(Chest.GlobalPosition, traceEnd, Colors.Red);
+			ClearLookTarget();
+			return;
 		}
+		
+		_lookTarget = target;
+	}
+
+	public virtual void ClearLookTarget()
+	{
+		_lookTarget = null;
+	}
+
+	// used at least by AI characters to set their look position
+	public virtual void SetFocus(Node3D focus)
+	{
+		if (focus == null)
+		{
+			ClearFocus();
+			return;
+		}
+		
+		GD.Print("focus changed");
+		_focusPosition = focus.GlobalPosition;
+		EmitSignal(SignalName.FocusChanged, _focusPosition);
+	}
+	
+	public virtual void SetFocus(Vector3 focusPosition)
+	{
+		_focusPosition = focusPosition;
+		EmitSignal(SignalName.FocusChanged, _focusPosition);
+	}
+
+	public virtual void ClearFocus()
+	{
+		_focusPosition = Vector3.Zero;
+		EmitSignal(SignalName.FocusChanged, _focusPosition);
 	}
 
 	// intended to be called by the logic of the entity controlling the character; the ai brain or the player character

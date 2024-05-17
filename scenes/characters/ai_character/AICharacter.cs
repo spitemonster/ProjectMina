@@ -27,8 +27,25 @@ public partial class AICharacter : CharacterBase
 	[Export] public NavigationAgent3D NavigationAgent { get; protected set; }
 	[Export] public SteeringComponent Steering { get; protected set; }
 	
+	[Export] public AIPerceptionComponent CharacterPerception { get; protected set; }
+
+	[Export] protected float NoticeThreshold = 25;
+	[Export] protected float AlertThreshold = 15;
+
+	protected float MinimumVelocity = 0.1f;
+	
 	private Vector3 _direction = new();
-	private Vector3 _lookTarget = new();
+
+	// private Timer _noticeTimer;
+
+	private CharacterBase _targetCharacter;
+	private bool _targetCharacterNoticed;
+	private bool _targetCharacterSeen;
+	private float _noticeAmount = 0.0f;
+	private float _alertAmount = 0.0f;
+
+	[Export] protected ProgressBar NoticeBar;
+	[Export] protected ProgressBar AlertBar;
 
 	public void EquipWeapon(EquippableComponent weapon)
 	{
@@ -55,6 +72,9 @@ public partial class AICharacter : CharacterBase
 	public override void _Ready()
 	{
 		base._Ready();
+
+		NoticeBar.MaxValue = NoticeThreshold;
+		AlertBar.MaxValue = AlertThreshold;
 		
 		// System.Diagnostics.Debug.Assert(Brain != null, "no brain component");
 		// System.Diagnostics.Debug.Assert(NavigationAgent != null, "No navigation agent");
@@ -72,12 +92,108 @@ public partial class AICharacter : CharacterBase
 		CharacterMovement.EnableJumping = false;
 		CharacterMovement.EnableSneaking = false;
 
+		if (CharacterPerception != null)
+		{
+			CharacterPerception.CharacterEnteredLineOfSight += (character) =>
+			{
+				if (_lookTarget == null)
+				{
+					_StartNoticeTimer(character);
+				}
+			};
+
+			CharacterPerception.CharacterExitedLineOfSight += (character) =>
+			{
+				if (_targetCharacter == character)
+				{
+					_ClearNoticeTimer();
+				}
+				
+				if (CharacterPerception.GetNearestVisibleCharacter() is { } c)
+				{
+					_StartNoticeTimer(c);
+				}
+			};
+		}
+
+		// _noticeTimer = new Timer()
+		// {
+		// 	Autostart = false,
+		// 	OneShot = true,
+		// 	WaitTime = 3.0f
+		// };
+
 		Global.Data.AddAICharacter(this);
+	}
+
+	private void _StartNoticeTimer(CharacterBase character)
+	{
+		if (_targetCharacter != null)
+		{
+			return;
+		}
+		
+		GD.Print("starting notice timer");
+		_targetCharacter = character;
+	}
+
+	private void _ClearNoticeTimer()
+	{
+		if (_targetCharacter == null)
+		{
+			return;
+		}
+
+		_targetCharacterNoticed = false;
+		_targetCharacterSeen = false;
+		_targetCharacter = null;
+		_alertAmount = 0.0f;
+		
+		_noticeAmount = 0.0f;
+		NoticeBar.SetValue(0);
+		AlertBar.SetValue(0);
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		base._PhysicsProcess(delta);
+
+		if (_targetCharacter != null && !_targetCharacterSeen)
+		{
+			float visibility = 1.0f;
+			float distance = GlobalPosition.DistanceTo(_targetCharacter.GlobalPosition);
+			float distanceRatio =  Mathf.Clamp(1 - (distance / CharacterPerception.MaxSightDistance), 0, 1);
+			float speed = _targetCharacter.Velocity.Length();
+			float speedRatio = Mathf.Clamp(_targetCharacter.Velocity.Length() / 1.3f, 0, 1);
+			float sneakMultiplier = _targetCharacter.CharacterMovement.IsSneaking ? .6f : 1.0f;
+			
+			if (_targetCharacter.GetNode("VisibilityComponent") is VisibilityComponent v)
+			{
+				visibility = v.GetVisibility();
+			}
+
+			if (!_targetCharacterNoticed)
+			{
+				float noticeAmount = (((visibility * 5f) + (distanceRatio * 4f) + (speedRatio * 2f)) * (float)delta) * sneakMultiplier;
+				_noticeAmount += noticeAmount;
+				NoticeBar.SetValue(_noticeAmount);
+				
+				if (_noticeAmount > NoticeThreshold)
+				{
+					_targetCharacterNoticed = true;
+				}
+			} else
+			{
+				float alertAmount = (((visibility * 5f) + (distanceRatio * 4f) + (speedRatio * 2f)) * (float)delta) * sneakMultiplier;
+				_alertAmount += alertAmount;
+				AlertBar.SetValue(_alertAmount);
+
+				if (_alertAmount >= AlertThreshold)
+				{
+					_targetCharacterSeen = true;
+				}
+			}
+		}
 		
 		for (var i = 0; i < GetSlideCollisionCount(); i++)
 		{
@@ -94,21 +210,29 @@ public partial class AICharacter : CharacterBase
 			r.ApplyCentralImpulse(-collision3D.GetNormal() * 4.0f * angleFactor);
 			r.ApplyImpulse(-collision3D.GetNormal() * 0.01f * angleFactor, collision3D.GetPosition());
 		}
+
+		if (_targetCharacter != null && _targetCharacterSeen)
+		{
+			SetTargetPosition(_targetCharacter.GlobalPosition);
+		}
 		
 		_direction = (NavigationAgent.GetNextPathPosition() - GlobalPosition).Normalized();
-		_lookTarget = NavigationAgent.TargetPosition;
-
+		
 		Vector3 localVelocity;
 
-		if (!NavigationAgent.IsTargetReached())
+		if (!NavigationAgent.IsTargetReached() && _direction != Vector3.Zero)
 		{
-			// Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, GetWorld3D().DirectSpaceState) * mult;
 			localVelocity = CharacterMovement.GetCharacterVelocity(_direction, delta, GetWorld3D().DirectSpaceState);
 		}
 		else
 		{
-			// Velocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState) * mult;
 			localVelocity = CharacterMovement.GetCharacterVelocity(Vector3.Zero, delta, GetWorld3D().DirectSpaceState);
+		}
+		
+		if (Steering != null)
+		{
+			Vector3 steeredVelocity = Steering.CalculateSteeringVelocity(localVelocity);
+			localVelocity = localVelocity.MoveToward(steeredVelocity, 1f);
 		}
 
 		if (NavigationAgent.AvoidanceEnabled)
@@ -117,33 +241,47 @@ public partial class AICharacter : CharacterBase
 		}
 		else
 		{
-			if (Steering != null)
-			{
-				localVelocity = Steering.CalculateSteeringVelocity(localVelocity);
-			}
-			
 			SetVelocity(localVelocity);
 		}
 	}
 
 	private void SetVelocity(Vector3 safeVelocity)
 	{
-		// GD.Print("AI character move and slide: ", safeVelocity.Length());
 		Velocity = safeVelocity;
-		CharacterAnimationTree.Set("parameters/test/blend_position", Velocity.Length());
+		CharacterAnimationTree.Set("parameters/locomotion/blend_position", Velocity.Length());
 		
-		if (_lookTarget != Vector3.Zero)
-		{
-			var t = GlobalTransform;
-			t = t.InterpolateWith(t.LookingAt(_lookTarget, Vector3.Up), 0.05f);
-			GlobalTransform = t;
+		// we want to get the look direction and the movement direction because in the animation tree they will control different things
+		// look direction is easy; it is the direction to the look target
+		Vector3 start = GlobalPosition + new Vector3(0, 1, 0);
+		Vector3 end = (start + safeVelocity);
+		Vector3 movementLineEnd = new Vector3(end.X, start.Y, end.Z);
+		
+		DebugDraw.Line(start, movementLineEnd, Colors.OrangeRed);
 
-			var gr = GlobalRotation;
-			gr.X = 0;
-			gr.Z = 0;
-			GlobalRotation = gr;
+		Vector3 lookPosition = Vector3.Zero;
+
+		if (_targetCharacter != null && _targetCharacterNoticed)
+		{
+			lookPosition = _targetCharacter.GlobalPosition;
 		}
-		
+		// rotate to face the current look target
+		else if (_lookTarget != null)
+		{
+			lookPosition = _lookTarget.GlobalPosition;
+		}
+		// if there is no current look target, rotate to face direction of movement
+		else if (Velocity.Length() > 0.1)
+		{
+			lookPosition = GlobalPosition + Velocity.Normalized();
+		}
+
+		// only rotate if we actually have a reason to rotate
+		if (lookPosition != Vector3.Zero)
+		{
+			GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(lookPosition, Vector3.Up), 0.05f);
+			GlobalRotation *= new Vector3(0, 1, 0);
+		}
+
 		MoveAndSlide();
 	}
 }
