@@ -17,7 +17,7 @@ public enum AIState : uint
 /// 	Functions as the AI stand in for a player. Controls a CharacterBase Pawn in the world, makes decisions based on its knowledge and sensory data and directs its pawn to action.
 /// </summary>
 
-public partial class AIBrainComponent : ControllerComponent
+public partial class AgentComponent : ControllerComponent
 {
 	public AICharacter Pawn { get; private set; }
 	[Export] public BlackboardComponent Blackboard { get; protected set; }
@@ -119,8 +119,12 @@ public partial class AIBrainComponent : ControllerComponent
 		// 		}
 		// 	};
 		// }
-
-		BehaviorTree.Start();
+		GD.Print("should start behavior tree");
+		if (BehaviorTree == null)
+		{
+			GD.Print(" no behavior tree");
+		}
+		BehaviorTree?.Start(this);
 	}
 
 	public void SetTargetPosition(Vector3 position)

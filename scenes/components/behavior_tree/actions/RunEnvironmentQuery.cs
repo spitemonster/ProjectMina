@@ -1,27 +1,49 @@
-using System;
-using System.Threading.Tasks;
 using Godot;
+using System.Threading.Tasks;
 
-using ProjectMina.EQS;
+using ProjectMina.EnvironmentQuerySystem;
 namespace ProjectMina.BehaviorTree;
-public partial class RunEQSQuery : Action
+
+[Tool]
+[GlobalClass]
+public partial class RunEnvironmentQuery : Action
 {
     private Query _query;
+    private int _queryRequestId = 0;
     
-    protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+    protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
     {
-        await Task.Run(() =>
+        if (Engine.IsEditorHint())
         {
-            _query.RunQuery(character);
-        });
+            return ActionStatus.Failed;
+        }
+
+        if (_query == null)
+        {
+            Fail();
+            return Status;
+        }
+        
+        GD.Print("REQ IS TICKING");
+
+        Vector3 bestPosition = await _query.RunQuery(agent);
+
+        if (BlackboardKey != null)
+        {
+            blackboard.SetValue(BlackboardKey, bestPosition);
+        }
         
         Succeed();
-
         return Status;
     }
 
     public override void _Ready()
     {
+        if (Engine.IsEditorHint())
+        {
+            return;
+        }
+        
         _query = GetChild<Query>(0);
         
         if (_query is null)
@@ -38,7 +60,7 @@ public partial class RunEQSQuery : Action
 		
         if (GetChildCount() == 0 || GetChildCount() > 1 || GetChild<Query>(0) == null)
         {
-            warnings.Add("A Run EQS Query node must have precisely one child Query node.");
+            warnings.Add("A RunEnvironmentQuery node must have precisely one child Query node.");
         }
 
         string[] baseWarnings = base._GetConfigurationWarnings();

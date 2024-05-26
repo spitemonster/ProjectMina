@@ -6,7 +6,7 @@ public partial class Global : Node
 	public static Global Data { get; private set; }
 	public CharacterBody3D Player { get; set; }
 
-	public Array<AICharacter> AICharacters { get; set; }
+	public Array<AICharacter> AICharacters { get; set; } = new();
 	public MainScene MainScene { get; set; }
 	public LevelBase CurrentLevel { get; set; }
 	public DevUI DevLog { get; set; }
@@ -14,7 +14,6 @@ public partial class Global : Node
 
 	public override void _Ready()
 	{
-		AICharacters = new();
 	}
 
 	public bool AddAICharacter(AICharacter newCharacter)

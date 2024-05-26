@@ -1,15 +1,13 @@
-[gd_scene load_steps=18 format=4 uid="uid://rkyi61f30ql0"]
+[gd_scene load_steps=16 format=4 uid="uid://rkyi61f30ql0"]
 
 [ext_resource type="PackedScene" uid="uid://c37sghih0u831" path="res://scenes/levels/level_base/LevelBase.tscn" id="1_pvykt"]
 [ext_resource type="PackedScene" uid="uid://c45weam7tjqmw" path="res://scenes/characters/player_character/PlayerCharacter.tscn" id="2_46giw"]
 [ext_resource type="PackedScene" uid="uid://cmjhf16ocrx1k" path="res://_dev/LevelBox.tscn" id="2_abotg"]
 [ext_resource type="PackedScene" uid="uid://mo2gs5u183mp" path="res://scenes/interaction/health_dispenser/health_dispenser.tscn" id="6_34s14"]
-[ext_resource type="PackedScene" uid="uid://wg5qwywu5abp" path="res://_dev/TestWeapon.tscn" id="6_c7bbx"]
 [ext_resource type="Material" uid="uid://cfy4a3eho0483" path="res://resources/materials/brick_wall_02/brick_wall_02.tres" id="7_mqk2a"]
 [ext_resource type="PackedScene" uid="uid://bycj2qoglbpn1" path="res://scenes/patrol_path/PatrolPath.tscn" id="8_bm0o6"]
 [ext_resource type="PackedScene" uid="uid://6mn1c1k3x6w5" path="res://scenes/characters/ai_character/AICharacter.tscn" id="8_pjer5"]
 [ext_resource type="PackedScene" uid="uid://cfbsu1i7xyqy5" path="res://scenes/patrol_path/PatrolPoint.tscn" id="9_j6s3l"]
-[ext_resource type="Script" path="res://_dev/scenes/gyms/ai_gym/Node.gd" id="9_kpxul"]
 [ext_resource type="PackedScene" uid="uid://d2r7tsyvv6gsp" path="res://_dev/scenes/Crate.tscn" id="11_3pmkd"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_8hssn"]
@@ -99,11 +97,9 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="3"]
 environment = SubResource("Environment_cqtbf")
 
-[node name="TestWeapon" parent="." index="4" instance=ExtResource("6_c7bbx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7665, -4.76837e-07, -8.52079)
-
-[node name="AICharacter" parent="." index="5" node_paths=PackedStringArray("SearchComponent", "NavigationAgent", "Steering", "CharacterPerception", "NoticeBar", "AlertBar", "CharacterBody", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterEquipment", "CharacterAnimationPlayer", "CharacterAnimationTree", "Eyes", "Chest") instance=ExtResource("8_pjer5")]
+[node name="AICharacter" parent="." index="4" node_paths=PackedStringArray("Brain", "SearchComponent", "NavigationAgent", "Steering", "CharacterPerception", "NoticeBar", "AlertBar", "CharacterBody", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterEquipment", "CharacterAnimationPlayer", "CharacterAnimationTree", "Eyes", "Chest") instance=ExtResource("8_pjer5")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -2.68568, 9.53674e-07, -11.9316)
+Brain = NodePath("Brain")
 SearchComponent = NodePath("SearchComponent")
 NavigationAgent = NodePath("NavigationAgent3D")
 Steering = NodePath("SteeringComponent")
@@ -120,14 +116,11 @@ CharacterAnimationTree = NodePath("AnimationTree")
 Eyes = NodePath("GeneralSkeleton/HeadCollision/Eyes")
 Chest = NodePath("GeneralSkeleton/TorsoCollision/Chest")
 
-[node name="Node" type="Node" parent="." index="6"]
-script = ExtResource("9_kpxul")
-
-[node name="Crate" parent="." index="7" instance=ExtResource("11_3pmkd")]
+[node name="Crate" parent="." index="5" instance=ExtResource("11_3pmkd")]
 transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 2.82232, 1.2613, -9.6278)
 
-[node name="Crate2" parent="." index="8" instance=ExtResource("11_3pmkd")]
+[node name="Crate2" parent="." index="6" instance=ExtResource("11_3pmkd")]
 transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 4.75364, 1.2613, -6.89282)
 
-[node name="Crate3" parent="." index="9" instance=ExtResource("11_3pmkd")]
+[node name="Crate3" parent="." index="7" instance=ExtResource("11_3pmkd")]
 transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 2.60906, 1.2613, -4.19899)

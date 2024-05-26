@@ -1,9 +1,23 @@
-[gd_scene load_steps=3 format=3 uid="uid://cjcubutoknxjj"]
+[gd_scene load_steps=6 format=3 uid="uid://cjcubutoknxjj"]
 
 [ext_resource type="Script" path="res://scripts/eqs/Query.cs" id="1_6sql5"]
 [ext_resource type="PackedScene" uid="uid://un5u0m7rygr7" path="res://scripts/eqs/Contexts/GridAroundQuerier.tscn" id="2_xgw5k"]
+[ext_resource type="PackedScene" uid="uid://fatnqjju8y64" path="res://scripts/eqs/Tests/IsPointReachable.tscn" id="3_gjwu0"]
+[ext_resource type="Script" path="res://scripts/eqs/Tests/IdealDistance.cs" id="4_c76j4"]
+[ext_resource type="Script" path="res://scripts/eqs/Tests/SelectRandom.cs" id="5_avfoe"]
 
 [node name="ReachablePoint" type="Node"]
 script = ExtResource("1_6sql5")
 
 [node name="GridAroundQuerier" parent="." instance=ExtResource("2_xgw5k")]
+HalfExtent = Vector3(5, 0.1, 5)
+
+[node name="IsPointReachable" parent="GridAroundQuerier" instance=ExtResource("3_gjwu0")]
+
+[node name="IdealDistance" type="Node" parent="GridAroundQuerier"]
+script = ExtResource("4_c76j4")
+MinDistance = 2.0
+MaxDistance = 5.0
+
+[node name="SelectRandom" type="Node" parent="GridAroundQuerier"]
+script = ExtResource("5_avfoe")

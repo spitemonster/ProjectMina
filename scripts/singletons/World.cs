@@ -1,6 +1,10 @@
+using Godot;
+
 namespace ProjectMina;
 
-public class World
+public partial class World : Node
 {
-    
+    public class Systems
+    {
+    }
 }

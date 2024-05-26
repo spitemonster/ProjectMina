@@ -5,23 +5,21 @@ using System.Threading.Tasks;
 
 namespace ProjectMina.BehaviorTree;
 
-[Tool]
-[GlobalClass]
 public partial class BlackboardCompare : Condition
 {
-	protected enum Operators
+	protected enum Operators: int
 	{
-		EQUAL,
-		NOT_EQUAL,
-		GREATER,
-		GREATER_EQUAL,
-		LESS,
-		LESS_EQUAL,
+		Equal,
+		NotEqual,
+		Greater,
+		GreaterEqual,
+		Less,
+		LessEqual,
 	}
 
 	// [Export(PropertyHint.Expression)] 
 	[Export] protected string BlackboardKey = "";
-	[Export] protected Operators Comparison = 0;
+	[Export] protected Operators Comparison = Operators.Equal;
 	[Export(PropertyHint.Expression)] protected string Value = "";
 
 	private Expression val;
@@ -32,19 +30,22 @@ public partial class BlackboardCompare : Condition
 		val = _ParseExpression(Value);
 	}
 
-	protected override Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
 	{
-		if (EvaluateComparison(blackboard))
+		return await Task.Run(() =>
 		{
-			Succeed();
-			_childActions[0].Tick(character, blackboard);
-		}
-		else
-		{
-			Fail();
-		}
+			if (EvaluateComparison(blackboard))
+			{
+				Succeed();
+				_childActions[0].Tick(agent, blackboard);
+			}
+			else
+			{
+				Fail();
+			}
 
-		return Task.FromResult(Status);
+			return Task.FromResult(Status);
+		});
 	}
 
 	private bool EvaluateComparison(BlackboardComponent blackboard)
@@ -60,11 +61,23 @@ public partial class BlackboardCompare : Condition
 
 		switch (Comparison)
 		{
-			case Operators.EQUAL:
+			case Operators.Equal:
 				result = blackboardValue.Equals(compareValue);
 				break;
-			case Operators.NOT_EQUAL:
+			case Operators.NotEqual:
 				result = !blackboardValue.Equals(compareValue);
+				break;
+			case Operators.LessEqual:
+				result = (float)compareValue <= (float)blackboardValue;
+				break;
+			case Operators.Less:
+				result = (float)compareValue < (float)blackboardValue;
+				break;
+			case Operators.GreaterEqual:
+				result = (float)compareValue >= (float)blackboardValue;
+				break;
+			case Operators.Greater:
+				result = (float)compareValue > (float)blackboardValue;
 				break;
 			default:
 				result = false;

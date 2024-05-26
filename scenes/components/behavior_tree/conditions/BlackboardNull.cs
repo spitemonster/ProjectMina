@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 
 namespace ProjectMina.BehaviorTree;
 
-[Tool]
-[GlobalClass]
 public partial class BlackboardNull : Condition
 {
 	protected enum Operators
@@ -23,19 +21,22 @@ public partial class BlackboardNull : Condition
 		base._Ready();
 	}
 
-	protected override Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
 	{
-		if (EvaluateComparison(blackboard) && _childActions[0] is Action a)
+		return await Task.Run(() =>
 		{
-			Succeed();
-			_childActions[0].Tick(character, blackboard);
-		}
-		else
-		{
-			Fail();
-		}
+			if (EvaluateComparison(blackboard) && _childActions[0] is Action a)
+			{
+				Succeed();
+				_childActions[0].Tick(agent, blackboard);
+			}
+			else
+			{
+				Fail();
+			}
 
-		return Task.FromResult(Status);
+			return Task.FromResult(Status);
+		});
 	}
 
 	private bool EvaluateComparison(BlackboardComponent blackboard)

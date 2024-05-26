@@ -4,6 +4,6 @@
 
 [resource]
 script = ExtResource("1_j27pa")
-HoldableActions = Array[StringName]([&"interact"])
+HoldableActions = [&"interact"]
 HoldTimeoutDelay = 0.1
 HoldDuration = 1.5

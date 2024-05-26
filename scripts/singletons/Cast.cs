@@ -51,4 +51,104 @@ public partial class Cast : Node
 
 		return result;
 	}
+
+	// casts a single shape of a given radius at the given origin
+	// relatively fast so could be used 
+	public static HitResult Sphere(PhysicsDirectSpaceState3D spaceState, Vector3 origin, float radius,
+		Array<Rid> exclude, bool debugShape = false, bool debugHit = false)
+	{
+
+		SphereShape3D sphere = new SphereShape3D()
+		{
+			Radius = radius
+		};
+		
+		PhysicsShapeQueryParameters3D traceQuery = new()
+		{
+			CollideWithAreas = true,
+			CollideWithBodies = true,
+			Exclude = exclude,
+			Shape = sphere
+		};
+
+		var traceResults = spaceState.IntersectShape(traceQuery, 1);
+		
+		if (traceResults == null || traceResults.Count < 1)
+		{
+			return null;
+		}
+
+		var traceResult = traceResults[0];
+		
+		GD.Print("trace result: ", traceResult);
+
+		if (traceResult == null || !traceResult.ContainsKey("collider"))
+		{
+			return null;
+		}
+		
+		HitResult result = new()
+		{
+			Collider = (PhysicsBody3D)traceResult["collider"],
+			HitNormal = (Vector3)traceResult["normal"],
+			HitPosition = (Vector3)traceResult["position"]
+		};
+		
+		if (debugShape)
+		{
+			DebugDraw.Sphere(origin, .5f, Colors.Cyan);
+		}
+
+		if (debugHit)
+		{
+			DebugDraw.Sphere(result.HitPosition, .3f, Colors.Red);
+		}
+
+		return result;
+	}
+
+	// casts a single shape of a given radius at the given origin
+	public static HitResult Shape(PhysicsDirectSpaceState3D spaceState, Shape3D shape, Vector3 origin, Array<Rid> exclude, bool debugShape = false, bool debugHit = false)
+	{
+		PhysicsShapeQueryParameters3D traceQuery = new()
+		{
+			CollideWithAreas = true,
+			CollideWithBodies = true,
+			Exclude = exclude,
+			Shape = shape
+		};
+
+		var traceResults = spaceState.IntersectShape(traceQuery, 1);
+		
+		if (traceResults == null || traceResults.Count < 1)
+		{
+			return null;
+		}
+
+		var traceResult = traceResults[0];
+
+		if (!traceResult.ContainsKey("collider"))
+		{
+			return null;
+		}
+		
+		HitResult result = new()
+		{
+			Collider = (PhysicsBody3D)traceResult["collider"],
+			HitNormal = (Vector3)traceResult["normal"],
+			HitPosition = (Vector3)traceResult["position"]
+		};
+		
+		if (debugShape)
+		{
+			DebugDraw.Sphere(origin, .5f, Colors.Cyan);
+		}
+
+		if (debugHit)
+		{
+			DebugDraw.Sphere(result.HitPosition, .3f, Colors.Red);
+		}
+
+		return result;
+	}
 }

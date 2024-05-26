@@ -3,8 +3,15 @@ using System.Threading.Tasks;
 
 namespace ProjectMina.BehaviorTree;
 
+public enum ActionStatus: int
+{
+	Succeeded,
+	Failed,
+	Running
+}
+
 [Tool]
-[GlobalClass, Icon("res://_dev/icons/icon--chart.svg")]
+[GlobalClass]
 public partial class BehaviorTreeComponent : ComponentBase
 {
 
@@ -15,39 +22,48 @@ public partial class BehaviorTreeComponent : ComponentBase
 
 	private Action _root;
 	private int _loopCount;
-	private AICharacter _character;
+	private AgentComponent _agent;
 
 	public override void _Ready()
 	{
 		base._Ready();
-
-		_character = GetOwner<CharacterBody3D>() as AICharacter;
 		_root = GetChild<Action>(0);
 
 		System.Diagnostics.Debug.Assert(GetChildCount() == 1, "A Behavior Tree can only have one entry point.");
 		SetPhysicsProcess(false);
 	}
 
-	public void Start()
+	public void Start(AgentComponent agent)
 	{
 		if (!Started)
 		{
-			SetProcess(true);
+			GD.Print("starting!");
+			
 			Started = true;
+			SetProcess(true);
+			_agent = agent;
 		}
 	}
 
 	public override async void _Process(double delta)
 	{
-		if (!IsActive || _root == null || _character == null || _blackboard == null)
+		if (Engine.IsEditorHint())
 		{
-			SetProcess(false);
 			return;
 		}
 		
+		if (!Started)
+		{
+			GD.Print("not started");
+			return;
+		}
+		
+		GD.Print("fuck");
+		
+		
 		base._Process(delta);
 
-		Task tickAction = _root.Tick(_character, _blackboard);
+		Task<ActionStatus> tickAction = _root.Tick(_agent, _blackboard);
 
 		if (!tickAction.IsCompleted)
 		{
@@ -73,12 +89,6 @@ public partial class BehaviorTreeComponent : ComponentBase
 		{
 			warnings.Add("A Behavior Tree may have only one root node.");
 		}
-
-		// removing because this returns false because AI character is not a tool. I think I'm smart enough not to do this; I also could use behavior trees elsewhere so...
-		// if (GetOwner<AICharacter>() is null)
-		// {
-		// 	warnings.Add("A Behavior Tree must be a direct descendent of an AI Character.");
-		// }
 
 		if (_blackboard == null)
 		{

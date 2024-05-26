@@ -1,5 +1,6 @@
 using Godot;
 using Godot.Collections;
+using Microsoft.VisualBasic;
 
 namespace ProjectMina;
 
@@ -8,22 +9,20 @@ namespace ProjectMina;
 public partial class BlackboardComponent : ComponentBase
 {
 	[Signal] public delegate void ValueChangedEventHandler(StringName key, Variant newValue);
-	[Export] public Resource Blackboard;
+	[Export] public BlackboardAsset Blackboard { get; protected set; }
 
 	public Array<StringName> Keys = new();
 
-	private Dictionary<StringName, Variant> _blackboard = new();
-	
-	public Dictionary<StringName, Variant> GetBlackboard()
+	public Dictionary<StringName, Variant> GetEntries()
 	{
-		return _blackboard.Duplicate();
+		return Blackboard.Entries.Duplicate();
 	}
 
 	public bool ValueEqual(StringName key, Variant compare)
 	{
 		Variant v = GetValue(key);
 
-		if ((bool)v == false || GetValueType(key) != compare.GetType() || !v.Equals(compare))
+		if ((bool)v == false || GetValueType(key) != compare.VariantType || !v.Equals(compare))
 		{
 			return false;
 		}
@@ -35,12 +34,12 @@ public partial class BlackboardComponent : ComponentBase
 	{
 		Variant v = GetValue(key);
 
-		return !((bool)v == false || GetValueType(key) != compare.GetType());
+		return !((bool)v == false || GetValueType(key) != compare.VariantType);
 	}
 
 	public bool HasValue(StringName key)
 	{
-		bool hasValue = _blackboard.ContainsKey(key);
+		bool hasValue = Blackboard.Entries.ContainsKey(key);
 
 		if (EnableDebug)
 		{
@@ -57,28 +56,72 @@ public partial class BlackboardComponent : ComponentBase
 			return false;
 		}
 
-		return _blackboard[key];
+		return Blackboard.Entries[key];
 	}
 
-	public System.Type GetValueType(StringName key)
+	public bool GetValueAsBool(StringName key)
+	{
+		return GetValue(key).AsBool();
+	}
+
+	public Vector3 GetValueAsVector3(StringName key)
+	{
+		return GetValue(key).AsVector3();
+	}
+
+	public int GetValueAsInt(StringName key)
+	{
+		return GetValue(key).AsInt32();
+	}
+
+	public float GetValueAsFloat(StringName key)
+	{
+		return (float)GetValue(key).AsDouble();
+	}
+
+	public GodotObject GetValueAsObject(StringName key)
+	{
+		return GetValue(key).AsGodotObject();
+	}
+
+	public Variant.Type GetValueType(StringName key)
 	{
 		if (!HasValue(key))
 		{
-			return null;
+			return Variant.Type.Nil;
 		}
 
-		return GetValue(key).GetType();
+		return GetValue(key).VariantType;
 	}
 
 	public bool SetValue(StringName key, Variant value)
 	{
-		// ensure our data contains the correct key, the types are the same and the value currently there is not the same as what is being submitted
-		if (!HasValue(key) || _blackboard[key].GetType() != value.GetType() || _blackboard[key].Equals(value))
+		GD.Print("setting value for key: ", key);
+		if (!HasValue(key))
 		{
-			return false;
+			GD.Print("doesn't have key");
 		}
 
-		_blackboard[key] = value;
+		if (Blackboard.Entries[key].GetType() != value.GetType())
+		{
+			GD.Print("types don't match");
+		}
+
+		if (Blackboard.Entries[key].Equals(value))
+		{
+			GD.Print("values are already equal: ", value);
+		}
+		
+		// ensure our data contains the correct key, the types are the same and the value currently there is not the same as what is being submitted
+		if (!HasValue(key) || Blackboard.Entries[key].GetType() != value.GetType() || Blackboard.Entries[key].Equals(value))
+		{
+			GD.Print("can't set value");
+			return false;
+		}
+		
+		GD.Print("setting value");
+
+		Blackboard.Entries[key] = value;
 		EmitSignal(SignalName.ValueChanged, key, value);
 		return true;
 	}
@@ -90,8 +133,8 @@ public partial class BlackboardComponent : ComponentBase
 			return false;
 		}
 
-		_blackboard[key] = default;
-		EmitSignal(SignalName.ValueChanged, key, _blackboard[key]);
+		Blackboard.Entries[key] = default;
+		EmitSignal(SignalName.ValueChanged, key, Blackboard.Entries[key]);
 		return true;
 	}
 
@@ -99,41 +142,12 @@ public partial class BlackboardComponent : ComponentBase
 	{
 		if (Blackboard != null && Blackboard is BlackboardAsset bb && bb.Entries.Count > 0)
 		{
-			_blackboard = bb.Entries.Duplicate();
+			Blackboard.Entries = bb.Entries.Duplicate();
 		}
 	}
 
 	public override void _Ready()
 	{
 		base._Ready();
-	}
-
-	public override string[] _GetConfigurationWarnings()
-	{
-		Array<string> warnings = new();
-
-		foreach (var key in _blackboard.Keys)
-		{
-			if (key is not null)
-			{
-				warnings.Add("Blackboard keys must be of type StringName.");
-				break;
-			}
-		}
-
-		string[] baseWarnings = base._GetConfigurationWarnings();
-		if (baseWarnings != null && baseWarnings.Length > 0)
-		{
-			warnings.AddRange(baseWarnings);
-		}
-
-		string[] errs = new string[warnings.Count];
-
-		for (int i = 0; i < warnings.Count; i++)
-		{
-			errs.SetValue(warnings[i], i);
-		}
-
-		return errs;
 	}
 }

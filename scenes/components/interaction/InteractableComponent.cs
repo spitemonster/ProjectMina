@@ -1,6 +1,5 @@
 using Godot;
 using Godot.Collections;
-using ProjectMina.Goap;
 
 namespace ProjectMina;
 

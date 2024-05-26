@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://weq0lwg64gir"]
 
-[ext_resource type="Script" path="res://addons/qodot/src/nodes/qodot_map.gd" id="1_ym368"]
-[ext_resource type="Resource" uid="uid://c36hv0o6g0udo" path="res://addons/qodot/game_definitions/fgd/qodot_fgd.tres" id="2_mjxmw"]
+[ext_resource type="Script" path="res://resources/addons/qodot/src/nodes/qodot_map.gd" id="1_ym368"]
+[ext_resource type="Resource" uid="uid://c36hv0o6g0udo" path="res://resources/addons/qodot/game_definitions/fgd/qodot_fgd.tres" id="2_mjxmw"]
 [ext_resource type="Material" uid="uid://cfy4a3eho0483" path="res://resources/materials/brick_wall_02/brick_wall_02.tres" id="3_16r6s"]
 [ext_resource type="Material" uid="uid://ehlue8xya6d8" path="res://resources/materials/asphalt/asphalt.tres" id="3_khi7j"]
 

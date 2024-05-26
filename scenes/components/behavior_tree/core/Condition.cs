@@ -6,7 +6,7 @@ namespace ProjectMina.BehaviorTree;
 
 public partial class Condition : Action
 {
-	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
 	{
 		await Task.Run(() =>
 		{

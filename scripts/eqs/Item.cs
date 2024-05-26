@@ -1,11 +1,10 @@
 using Godot;
-using System;
 
-namespace ProjectMina.EQS;
+namespace ProjectMina.EnvironmentQuerySystem;
 
 [Tool]
 [GlobalClass]
-public partial class Point : GodotObject
+public partial class Item : GodotObject
 {
     public Vector3 Position { get; private set; }
 
@@ -15,10 +14,14 @@ public partial class Point : GodotObject
     // tracks the number of tests run on the point
     public int Tests;
 
-    public Point(Vector3 position)
+    public Item(Vector3 position)
     {
         Position = position;
     }
-    
-    public void 
+
+    public void AddScore(float score)
+    {
+        Score += score;
+        Tests++;
+    }
 }

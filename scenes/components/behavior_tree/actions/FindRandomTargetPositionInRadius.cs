@@ -11,20 +11,20 @@ public partial class FindRandomTargetPositionInRadius : Action
 	private RandomNumberGenerator rng = new();
 	private Vector3 _newTarget;
 
-	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
 	{
 		await Task.Run(() =>
 		{
-
-			CallDeferred("FindPosition", character, blackboard);
+			CallDeferred("FindPosition", agent, blackboard);
 		});
 		Succeed();
 		return Status;
 	}
 
-	private void FindPosition(AICharacter character, BlackboardComponent blackboard)
+	private void FindPosition(AgentComponent agent, BlackboardComponent blackboard)
 	{
-		var characterPosition = character.GlobalPosition;
+		GD.Print("FINDING POSITION");
+		var characterPosition = agent.Pawn.GlobalPosition;
 		var newPosition = characterPosition;
 
 		var x = characterPosition.X + rng.RandfRange(-12.5f, 12.5f);
@@ -34,7 +34,10 @@ public partial class FindRandomTargetPositionInRadius : Action
 		newPosition.Z = z;
 		newPosition.Y = characterPosition.Y;
 
-		Vector3 pos = NavigationServer3D.MapGetClosestPoint(character.NavigationAgent.GetNavigationMap(), newPosition);
+		Vector3 pos = NavigationServer3D.MapGetClosestPoint(agent.Pawn.NavigationAgent.GetNavigationMap(), newPosition);
+		GD.Print("pos: ", pos);
+		
+		DebugDraw.Sphere(pos, 1, Colors.Bisque);
 
 		_newTarget = pos;
 		blackboard.SetValue("target_movement_position", _newTarget);

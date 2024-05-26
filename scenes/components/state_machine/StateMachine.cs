@@ -1,6 +1,8 @@
-namespace ProjectMina.state_machine;
+using Godot;
 
-public class StateMachine
+namespace ProjectMina;
+
+public partial class StateMachine : ComponentBase
 {
     
 }

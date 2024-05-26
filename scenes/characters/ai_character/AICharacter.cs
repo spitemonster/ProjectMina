@@ -3,13 +3,6 @@ using Godot;
 using ProjectMina.BehaviorTree;
 namespace ProjectMina;
 
-public enum AIState
-{
-	Idle,
-	Suspicious,
-	Alerted
-}
-
 public enum AIBehavior
 {
 	Patrol,
@@ -21,7 +14,7 @@ public enum AIBehavior
 [GlobalClass]
 public partial class AICharacter : CharacterBase
 {
-	[Export] public AIBrainComponent Brain;
+	[Export] public AgentComponent Brain;
 	[Export] public float BrakingDistance = 1.0f;
 	[Export] public SearchComponent SearchComponent { get; protected set; }
 	[Export] public NavigationAgent3D NavigationAgent { get; protected set; }
@@ -91,30 +84,6 @@ public partial class AICharacter : CharacterBase
 		CharacterMovement.EnableClimbing = false;
 		CharacterMovement.EnableJumping = false;
 		CharacterMovement.EnableSneaking = false;
-
-		if (CharacterPerception != null)
-		{
-			CharacterPerception.CharacterEnteredLineOfSight += (character) =>
-			{
-				if (_lookTarget == null)
-				{
-					_StartNoticeTimer(character);
-				}
-			};
-
-			CharacterPerception.CharacterExitedLineOfSight += (character) =>
-			{
-				if (_targetCharacter == character)
-				{
-					_ClearNoticeTimer();
-				}
-				
-				if (CharacterPerception.GetNearestVisibleCharacter() is { } c)
-				{
-					_StartNoticeTimer(c);
-				}
-			};
-		}
 
 		// _noticeTimer = new Timer()
 		// {

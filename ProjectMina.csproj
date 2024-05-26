@@ -8,4 +8,8 @@
   <ItemGroup>
     <Folder Include="scenes\utility_ai\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="scenes\components\behavior_tree\README.md" />
+    <Content Include="scripts\eqs\README.md" />
+  </ItemGroup>
 </Project>

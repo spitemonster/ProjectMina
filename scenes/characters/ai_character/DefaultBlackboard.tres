@@ -4,4 +4,9 @@
 
 [resource]
 script = ExtResource("1_3bxvf")
-Entries = {}
+Entries = {
+"current_health": 0.0,
+"max_health": 0.0,
+"target_movement_position": Vector3(0, 0, 0),
+"target_movement_position_reached": false
+}

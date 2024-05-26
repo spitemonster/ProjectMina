@@ -4,3 +4,4 @@
 
 [node name="Wait" type="Node"]
 script = ExtResource("1_qyik3")
+WaitTime = 5.0

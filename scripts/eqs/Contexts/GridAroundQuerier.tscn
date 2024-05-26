@@ -4,3 +4,4 @@
 
 [node name="GridAroundQuerier" type="Node"]
 script = ExtResource("1_rk1oc")
+HalfExtent = Vector3(5, 1, 5)

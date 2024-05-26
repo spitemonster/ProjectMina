@@ -1,23 +1,53 @@
 using Godot;
-using System;
+using Godot.Collections;
+using System.Threading.Tasks;
 
-public partial class QueryContext : Node
+namespace ProjectMina.EnvironmentQuerySystem;
+
+// describes a list of points taht 
+[Tool]
+[GlobalClass]
+public partial class Context : EQSNode
 {
-	public Vector3 Position { get; private set; }
-	public Vector3 Extent { get; private set; }
 
-	public QueryContext(Vector3 position, Vector3 extent)
+	// override this function to generate the array of points
+	public virtual async Task<Array<Vector3>> GetPoints(AgentComponent querier)
 	{
-		// extent of the query should have a default value
-		if (extent == Vector3.Zero)
-		{
-			Extent = new Vector3(10, 10, 10);
-		}
-		Position = position;
-		Extent = extent;
+		return new Array<Vector3>();
 	}
-	
-	public override void _Process(double delta)
+
+	public override string[] _GetConfigurationWarnings()
 	{
+		Godot.Collections.Array<string> warnings = new();
+		
+		if (GetChildCount() == 0)
+		{
+			warnings.Add("An EQS Context must have at least one child Test node.");
+		}
+		
+		foreach (var child in GetChildren())
+		{
+			if (child is not Test)
+			{
+				GD.Print("child name: ", child.Name);
+				warnings.Add("An EQS Context may only have Test node children.");
+				break;
+			}
+		}
+
+		string[] baseWarnings = base._GetConfigurationWarnings();
+		if (baseWarnings != null && baseWarnings.Length > 0)
+		{
+			warnings.AddRange(baseWarnings);
+		}
+
+		string[] errs = new string[warnings.Count];
+
+		for (int i = 0; i < warnings.Count; i++)
+		{
+			errs.SetValue(warnings[i], i);
+		}
+
+		return errs;
 	}
 }

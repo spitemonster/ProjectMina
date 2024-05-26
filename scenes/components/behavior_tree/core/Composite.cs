@@ -10,20 +10,22 @@ public partial class Composite : Action
 
 	}
 
-	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
 	{
 		Task<ActionStatus> tickAction = null;
 
 		foreach (Action task in GetChildren())
 		{
-			if (task != null)
+			if (task == null)
 			{
-				tickAction = task.Tick(character, blackboard);
+				continue;
+			}
+			
+			tickAction = task.Tick(agent, blackboard);
 
-				if (!tickAction.IsCompleted)
-				{
-					await tickAction;
-				}
+			if (!tickAction.IsCompleted)
+			{
+				await tickAction;
 			}
 		}
 

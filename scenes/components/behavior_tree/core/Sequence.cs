@@ -3,9 +3,11 @@ using Godot;
 
 namespace ProjectMina.BehaviorTree;
 
+[Tool]
+[GlobalClass]
 public partial class Sequence : Composite
 {
-	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
 	{
 		foreach (Action child in GetChildren())
 		{
@@ -14,14 +16,14 @@ public partial class Sequence : Composite
 				continue;
 			}
 
-			Task<ActionStatus> tickAction = child.Tick(character, blackboard);
+			Task<ActionStatus> tickAction = child.Tick(agent, blackboard);
 
 			if (!tickAction.IsCompleted)
 			{
 				await tickAction;
 			}
 
-			if (child.Status == ActionStatus.FAILED)
+			if (child.Status == ActionStatus.Failed)
 			{
 				Fail();
 				return Status;

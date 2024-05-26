@@ -4,25 +4,23 @@ using System.Threading.Tasks;
 
 namespace ProjectMina.BehaviorTree;
 
-[Tool]
-[GlobalClass]
 public partial class FollowCurrentTarget : Action
 {
 	private bool _followed = false;
 
-	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
 	{
 		GD.Print("should follow");
 		await Task.Run(() =>
 		{
-			CallDeferred("FollowTarget", character, blackboard);
+			CallDeferred("FollowTarget", agent, blackboard);
 		});
 
 		Succeed();
 		return Status;
 	}
 
-	private void FollowTarget(AICharacter character, BlackboardComponent blackboard)
+	private void FollowTarget(AgentComponent agent, BlackboardComponent blackboard)
 	{
 		GD.Print("should follow");
 		NodePath currentFocusPath = (NodePath)blackboard.GetValue("current_focus");

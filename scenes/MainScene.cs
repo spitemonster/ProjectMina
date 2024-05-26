@@ -45,7 +45,9 @@ public partial class MainScene : Control
 			if (EnableDebug) GD.PushError("Main scene failed unloading the current level");
 		}
 
-		if (levelScene.Instantiate() is LevelBase l)
+		var level = ResourceLoader.Load<PackedScene>(levelScene.ResourcePath);
+
+		if (level.Instantiate() is LevelBase l)
 		{
 			LevelSlot.AddChild(l);
 			CurrentLevel = l;

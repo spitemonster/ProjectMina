@@ -3,8 +3,6 @@ using System;
 
 namespace ProjectMina;
 
-[Tool]
-[GlobalClass]
 public partial class ControllerComponent : ComponentBase
 {
 

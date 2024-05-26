@@ -11,14 +11,14 @@ public partial class FindRangedWeapon : Action
 	[Export] public float SearchRadius = 10.0f;
 	[Signal] public delegate void SearchCompletedEventHandler(bool weaponFound);
 
-	protected override async Task<ActionStatus> _Tick(AICharacter character, BlackboardComponent blackboard)
+	protected override async Task<ActionStatus> _Tick(AgentComponent character, BlackboardComponent blackboard)
 	{
 		FindWeapon(character, blackboard);
 		await ToSignal(this, SignalName.SearchCompleted);
 		return Status;
 	}
 
-	private void FindWeapon(AICharacter character, BlackboardComponent blackboard)
+	private void FindWeapon(AgentComponent character, BlackboardComponent blackboard)
 	{
 		// Vector3 characterPosition = character.GlobalPosition;
 		//
