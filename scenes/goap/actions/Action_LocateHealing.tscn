@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://2pxyc4jldv8d"]
-
-[ext_resource type="Script" path="res://scenes/goap/actions/LocateHealing.cs" id="1_i6v8y"]
-
-[node name="Action_LocateHealing" type="Node"]
-script = ExtResource("1_i6v8y")

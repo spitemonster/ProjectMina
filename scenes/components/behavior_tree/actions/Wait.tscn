@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dl8m32n18hj0n"]
+
+[ext_resource type="Script" path="res://scenes/components/behavior_tree/actions/Wait.cs" id="1_qyik3"]
+
+[node name="Wait" type="Node"]
+script = ExtResource("1_qyik3")
