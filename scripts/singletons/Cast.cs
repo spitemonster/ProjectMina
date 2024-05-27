@@ -3,6 +3,21 @@ using Godot;
 using Godot.Collections;
 
 namespace ProjectMina;
+
+public partial class HitResult
+{
+	public Vector3 HitPosition { get; private set; }
+	public Vector3 HitNormal { get; private set; }
+	public PhysicsBody3D Collider { get; private set; }
+	
+	public HitResult(Vector3 hitPosition, Vector3 hitNormal, PhysicsBody3D collider)
+	{
+		HitPosition = hitPosition;
+		HitNormal = hitNormal;
+		Collider = collider;
+	}
+}
+
 public partial class Cast : Node
 {
 	/// <summary>
@@ -32,12 +47,8 @@ public partial class Cast : Node
 			return null;
 		}
 
-		HitResult result = new()
-		{
-			Collider = (PhysicsBody3D)traceResult["collider"],
-			HitNormal = (Vector3)traceResult["normal"],
-			HitPosition = (Vector3)traceResult["position"]
-		};
+		HitResult result = new((Vector3)traceResult["position"], (Vector3)traceResult["normal"],
+			(PhysicsBody3D)traceResult["collider"]);
 
 		if (debugLine)
 		{
@@ -87,12 +98,8 @@ public partial class Cast : Node
 			return null;
 		}
 		
-		HitResult result = new()
-		{
-			Collider = (PhysicsBody3D)traceResult["collider"],
-			HitNormal = (Vector3)traceResult["normal"],
-			HitPosition = (Vector3)traceResult["position"]
-		};
+		HitResult result = new((Vector3)traceResult["position"], (Vector3)traceResult["normal"],
+			(PhysicsBody3D)traceResult["collider"]);
 		
 		if (debugShape)
 		{
@@ -132,12 +139,8 @@ public partial class Cast : Node
 			return null;
 		}
 		
-		HitResult result = new()
-		{
-			Collider = (PhysicsBody3D)traceResult["collider"],
-			HitNormal = (Vector3)traceResult["normal"],
-			HitPosition = (Vector3)traceResult["position"]
-		};
+		HitResult result = new((Vector3)traceResult["position"], (Vector3)traceResult["normal"],
+			(PhysicsBody3D)traceResult["collider"]);
 		
 		if (debugShape)
 		{

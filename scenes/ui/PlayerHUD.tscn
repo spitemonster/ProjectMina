@@ -7,7 +7,7 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x7tv5"]
 bg_color = Color(1, 0.298039, 0.517647, 1)
 
-[node name="PlayerHUD" type="Control" node_paths=PackedStringArray("_reticle", "_healthBar")]
+[node name="PlayerHUD" type="Control" node_paths=PackedStringArray("_reticle", "_healthBar", "_indicatorContainer", "_useIndicator", "_grabIndicator", "_equipIndicator")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 3
 anchors_preset = 15
@@ -16,12 +16,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_xdxxf")
-reticleDefaultColor = Color(1, 1, 1, 1)
-reticleUseColor = Color(1, 0.917647, 0, 1)
-reticleGrabColor = Color(0, 1, 0, 1)
-reticleEquipColor = Color(1, 0, 1, 1)
 _reticle = NodePath("Panel/Reticle")
 _healthBar = NodePath("AspectRatioContainer/ProgressBar")
+_indicatorContainer = NodePath("Panel/VBoxContainer")
+_useIndicator = NodePath("Panel/VBoxContainer/UseIndicator")
+_grabIndicator = NodePath("Panel/VBoxContainer/GrabIndicator")
+_equipIndicator = NodePath("Panel/VBoxContainer/EquipIndicator")
 
 [node name="Panel" type="Panel" parent="."]
 layout_mode = 1
@@ -51,12 +51,48 @@ grow_vertical = 2
 rotation = 0.785398
 pivot_offset = Vector2(8, 8)
 
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+clip_children = 2
+y_sort_enabled = true
+layout_mode = 0
+offset_right = 273.0
+offset_bottom = 148.0
+
+[node name="UseIndicator" type="RichTextLabel" parent="Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_font_sizes/normal_font_size = 24
+text = "LMB - Use"
+fit_content = true
+scroll_active = false
+
+[node name="GrabIndicator" type="RichTextLabel" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 24
+text = "RMB - Grab"
+fit_content = true
+
+[node name="EquipIndicator" type="RichTextLabel" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 24
+text = "F - Equip
+"
+fit_content = true
+
+[node name="CollectIndicator" type="RichTextLabel" parent="Panel/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 24
+text = "Hold F - Place In Inventory
+"
+fit_content = true
+
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 40.0
-offset_bottom = 12.0
+offset_right = 287.0
+offset_bottom = 41.0
 ratio = 8.0
 stretch_mode = 3
 

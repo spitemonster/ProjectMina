@@ -1,42 +1,71 @@
+using System;
 using System.Diagnostics;
 using Godot;
 namespace ProjectMina;
 
 public partial class PlayerHUD : Control
 {
-	[Export]
-	protected Color reticleDefaultColor;
-	[Export]
-	protected Color reticleUseColor;
-	[Export]
-	protected Color reticleGrabColor;
-	[Export]
-	protected Color reticleEquipColor;
-	[Export]
-	protected InteractionComponent _interactionComponent;
-	[Export]
-	protected HealthComponent _healthComponent;
-	[Export]
-	protected ColorRect _reticle;
-	[Export]
-	protected ProgressBar _healthBar;
+	[Export] protected Color ReticleDefaultColor;
+	[Export] protected Color ReticleEnemyColor;
+	[Export] protected Color ReticleAllyColor;
+	[Export] private InteractionComponent _interactionComponent;
+	private HealthComponent _healthComponent;
+	
+	[Export] private ColorRect _reticle;
+	[Export] private ProgressBar _healthBar;
+	[Export] protected VBoxContainer _indicatorContainer;
+	[Export] private Control _useIndicator;
+	[Export] private Control _grabIndicator;
+	[Export] private Control _equipIndicator;
+
+	private string _useText;
 
 	private PlayerCharacter _player;
 
 	public override void _Ready()
 	{
-		return;
 		base._Ready();
+		
+		Global.Data.PlayerSet += _Setup;
+		
+	}
 
-		// _player = Global.Data.Player;
-		//
-		// _interactionComponent = _player.CharacterInteraction;
-		// _healthComponent = _player.CharacterHealth;
+	private void _Setup(PlayerCharacter player)
+	{
+		_player = player;
+		GD.Print("player: ", _player);
+		_interactionComponent = _player.CharacterInteraction;
+		_healthComponent = _player.CharacterHealth;
+
+		if (_useIndicator == null && _indicatorContainer.GetNodeOrNull("UseIndicator") is Control u)
+		{
+			_useIndicator = u;
+		}
+		
+		if (_equipIndicator == null && _indicatorContainer.GetNodeOrNull("EquipIndicator") is Control e)
+		{
+			_equipIndicator = e;
+		}
+		
+		if (_grabIndicator == null && _indicatorContainer.GetNodeOrNull("GrabIndicator") is Control g)
+		{
+			_grabIndicator = g;
+		}
+		
+		_useIndicator.Visible = false;
+		_grabIndicator.Visible = false;
+		_equipIndicator.Visible = false;
+		// _indicatorContainer?.QueueSort();
+
+		if (_useIndicator is RichTextLabel l)
+		{
+			_useText = l.Text;
+		}
 
 		if (_interactionComponent != null)
 		{
 			GD.Print("have interaction component in player hud");
-			// _interactionComponent.InteractionStateChanged += UpdateReticleInteractionState;
+			_interactionComponent.InteractionContextUpdated += UpdateReticleInteractionState;
 		}
 
 		Debug.Assert(_interactionComponent != null, "no interaction component");
@@ -50,18 +79,26 @@ public partial class PlayerHUD : Control
 		Debug.Assert(_healthBar != null, "no health bar");
 	}
 
-	private void UpdateReticleInteractionState(InteractionComponent.InteractionType newState)
+	private void UpdateReticleInteractionState(InteractionContext newContext)
 	{
-		_reticle.Modulate = newState switch
+		GD.Print("should update hud reticle. use: ", newContext.Use, ". grab: ", newContext.Grab, ". equip: ", newContext.Equip);
+		_useIndicator?.SetVisible(newContext.Use);
+		_grabIndicator?.SetVisible(newContext.Grab);
+		_equipIndicator?.SetVisible(newContext.Equip);
+
+		if (_useIndicator is RichTextLabel l)
 		{
-			InteractionComponent.InteractionType.None => reticleDefaultColor,
-			InteractionComponent.InteractionType.Use => reticleUseColor,
-			InteractionComponent.InteractionType.Grab => reticleGrabColor,
-			InteractionComponent.InteractionType.Equip => reticleEquipColor,
-			_ => _reticle.Modulate
-		};
+			if (newContext.Use && !String.IsNullOrEmpty(newContext.UsePromptOverride))
+			{
+				l.Text = newContext.UsePromptOverride;
+			}
+			else
+			{
+				l.Text = _useText;
+			}
+		}
+
 		
-		GD.Print(newState);
 	}
 
 	private void UpdateHealthBar(double newHealth, bool wasDamage)

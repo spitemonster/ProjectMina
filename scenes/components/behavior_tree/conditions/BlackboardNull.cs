@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace ProjectMina.BehaviorTree;
 
+[Tool]
+[GlobalClass]
 public partial class BlackboardNull : Condition
 {
-	protected enum Operators
+	protected enum Operators : int
 	{
 		EQUAL,
 		NOT_EQUAL

@@ -20,29 +20,66 @@ public partial class BehaviorTreeComponent : ComponentBase
 	[Export] public bool IsActive { get; private set; } = true;
 	[Export] private BlackboardComponent _blackboard;
 
-	private Action _root;
+	private Action _rootAction;
 	private int _loopCount;
 	private AgentComponent _agent;
 
 	public override void _Ready()
 	{
+		SetProcess(false);
+		SetPhysicsProcess(false);
+		
 		base._Ready();
-		_root = GetChild<Action>(0);
+		_rootAction = GetChild<Action>(0);
 
 		System.Diagnostics.Debug.Assert(GetChildCount() == 1, "A Behavior Tree can only have one entry point.");
-		SetPhysicsProcess(false);
 	}
 
-	public void Start(AgentComponent agent)
+	public bool SetAgent(AgentComponent agent)
 	{
-		if (!Started)
+		if (_agent != null)
 		{
-			GD.Print("starting!");
-			
-			Started = true;
-			SetProcess(true);
-			_agent = agent;
+			return false;
 		}
+
+		_agent = agent;
+		return true;
+	}
+
+	public void Start()
+	{
+		if (!IsActive || _agent == null || Started)
+		{
+			if (EnableDebug)
+			{
+				GD.Print("Can't start Behavior Tree ", Name, ". IsActive: ", IsActive, ". _agent: ", _agent, ". Started: ", Started);
+			}
+			
+			return;
+		}
+		
+		if (EnableDebug)
+		{
+			GD.Print("Starting Behavior Tree ", Name);
+		}
+		
+		Started = true;
+		SetProcess(true);
+	}
+
+	public void Stop()
+	{
+		if (!IsActive || !Started)
+		{
+			return;
+		}
+
+		if (EnableDebug)
+		{
+			GD.Print("Stopping Behavior Tree ", Name);
+		}
+		
+		SetProcess(false);
 	}
 
 	public override async void _Process(double delta)
@@ -60,10 +97,9 @@ public partial class BehaviorTreeComponent : ComponentBase
 		
 		GD.Print("fuck");
 		
-		
 		base._Process(delta);
 
-		Task<ActionStatus> tickAction = _root.Tick(_agent, _blackboard);
+		Task<ActionStatus> tickAction = _rootAction.Tick(_agent, _blackboard);
 
 		if (!tickAction.IsCompleted)
 		{

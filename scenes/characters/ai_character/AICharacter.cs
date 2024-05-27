@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Godot;
 using ProjectMina.BehaviorTree;
@@ -14,12 +15,11 @@ public enum AIBehavior
 [GlobalClass]
 public partial class AICharacter : CharacterBase
 {
-	[Export] public AgentComponent Brain;
+	// [Export] public AgentComponent Brain;
 	[Export] public float BrakingDistance = 1.0f;
 	[Export] public SearchComponent SearchComponent { get; protected set; }
 	[Export] public NavigationAgent3D NavigationAgent { get; protected set; }
 	[Export] public SteeringComponent Steering { get; protected set; }
-	
 	[Export] public AIPerceptionComponent CharacterPerception { get; protected set; }
 
 	[Export] protected float NoticeThreshold = 25;
@@ -47,9 +47,9 @@ public partial class AICharacter : CharacterBase
 
 	public void UseFocusedInteractable()
 	{
-		var focus = (Node3D)Brain.Blackboard.GetValue("current_focus");
-		var interactable = focus.GetNode<InteractableComponent>("Interactable");
-		interactable.Interact(this);
+		// var focus = (Node3D)Brain.Blackboard.GetValue("current_focus");
+		// var interactable = focus.GetNode<InteractableComponent>("Interactable");
+		// interactable.Interact(this);
 	}
 
 	public void FinishInteractableAnim()
@@ -69,10 +69,6 @@ public partial class AICharacter : CharacterBase
 		NoticeBar.MaxValue = NoticeThreshold;
 		AlertBar.MaxValue = AlertThreshold;
 		
-		// System.Diagnostics.Debug.Assert(Brain != null, "no brain component");
-		// System.Diagnostics.Debug.Assert(NavigationAgent != null, "No navigation agent");
-		// System.Diagnostics.Debug.Assert(CharacterMovement != null, "No movement component");
-		//
 		NavigationAgent.DebugEnabled = true;
 		NavigationAgent.VelocityComputed += SetVelocity;
 		
@@ -84,13 +80,6 @@ public partial class AICharacter : CharacterBase
 		CharacterMovement.EnableClimbing = false;
 		CharacterMovement.EnableJumping = false;
 		CharacterMovement.EnableSneaking = false;
-
-		// _noticeTimer = new Timer()
-		// {
-		// 	Autostart = false,
-		// 	OneShot = true,
-		// 	WaitTime = 3.0f
-		// };
 
 		Global.Data.AddAICharacter(this);
 	}
@@ -221,12 +210,6 @@ public partial class AICharacter : CharacterBase
 		
 		// we want to get the look direction and the movement direction because in the animation tree they will control different things
 		// look direction is easy; it is the direction to the look target
-		Vector3 start = GlobalPosition + new Vector3(0, 1, 0);
-		Vector3 end = (start + safeVelocity);
-		Vector3 movementLineEnd = new Vector3(end.X, start.Y, end.Z);
-		
-		DebugDraw.Line(start, movementLineEnd, Colors.OrangeRed);
-
 		Vector3 lookPosition = Vector3.Zero;
 
 		if (_targetCharacter != null && _targetCharacterNoticed)
@@ -243,9 +226,11 @@ public partial class AICharacter : CharacterBase
 		{
 			lookPosition = GlobalPosition + Velocity.Normalized();
 		}
+		
+		Vector3 direction = (lookPosition - GlobalPosition).Normalized();
 
-		// only rotate if we actually have a reason to rotate
-		if (lookPosition != Vector3.Zero)
+		// only rotate if the look position is set and it's not our current position and the direction is not parallel to the up vector
+		if (lookPosition != Vector3.Zero && lookPosition != GlobalPosition && Math.Abs(direction.Dot(Vector3.Up)) < 0.99f)
 		{
 			GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(lookPosition, Vector3.Up), 0.05f);
 			GlobalRotation *= new Vector3(0, 1, 0);

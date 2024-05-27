@@ -97,9 +97,8 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." index="3"]
 environment = SubResource("Environment_cqtbf")
 
-[node name="AICharacter" parent="." index="4" node_paths=PackedStringArray("Brain", "SearchComponent", "NavigationAgent", "Steering", "CharacterPerception", "NoticeBar", "AlertBar", "CharacterBody", "CharacterHealth", "CharacterAttention", "CharacterMovement", "CharacterEquipment", "CharacterAnimationPlayer", "CharacterAnimationTree", "Eyes", "Chest") instance=ExtResource("8_pjer5")]
+[node name="AICharacter" parent="." index="4" node_paths=PackedStringArray("SearchComponent", "NavigationAgent", "Steering", "CharacterPerception", "NoticeBar", "AlertBar", "CharacterBody", "CharacterHealth", "CharacterMovement", "CharacterEquipment", "CharacterAnimationPlayer", "CharacterAnimationTree", "Eyes", "Chest") instance=ExtResource("8_pjer5")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -2.68568, 9.53674e-07, -11.9316)
-Brain = NodePath("Brain")
 SearchComponent = NodePath("SearchComponent")
 NavigationAgent = NodePath("NavigationAgent3D")
 Steering = NodePath("SteeringComponent")
@@ -108,7 +107,6 @@ NoticeBar = NodePath("GeneralSkeleton/Sprite3D/SubViewport/Control/HBoxContainer
 AlertBar = NodePath("GeneralSkeleton/Sprite3D/SubViewport/Control/HBoxContainer/AwarenessBar")
 CharacterBody = NodePath("Body")
 CharacterHealth = NodePath("HealthComponent")
-CharacterAttention = NodePath("AttentionComponent")
 CharacterMovement = NodePath("MovementComponent")
 CharacterEquipment = NodePath("EquipmentComponent")
 CharacterAnimationPlayer = NodePath("AnimationPlayer")

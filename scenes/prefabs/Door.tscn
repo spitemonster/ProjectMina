@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://dthkgruo86yys"]
+[gd_scene load_steps=5 format=3 uid="uid://dthkgruo86yys"]
 
-[ext_resource type="PackedScene" uid="uid://p7v7yqiyokub" path="res://scenes/interaction/Interaction.tscn" id="1_0buvd"]
-[ext_resource type="Script" path="res://scenes/interaction/Door.cs" id="1_6v7ht"]
-[ext_resource type="Script" path="res://scenes/components/interactable/InteractableComponent.cs" id="3_hfjl0"]
+[ext_resource type="Script" path="res://scenes/prefabs/Door.cs" id="1_6v7ht"]
+[ext_resource type="Script" path="res://scenes/components/interaction/UsableComponent.cs" id="2_sbhcm"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_471hd"]
 size = Vector3(1, 2, 0.1)
@@ -11,11 +10,11 @@ size = Vector3(1, 2, 0.1)
 points = PackedVector3Array(-0.5, -1, -0.05, -0.5, -1, 0.05, -0.5, 1, -0.05, 0.5, -1, -0.05, 0.5, -1, 0.05, -0.5, 1, 0.05, 0.5, 1, -0.05, 0.5, 1, 0.05)
 
 [node name="Door" type="StaticBody3D"]
-transform = Transform3D(-0.481754, 0, 0.876307, 0, 1, 0, -0.876307, 0, -0.481754, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 collision_mask = 11
 script = ExtResource("1_6v7ht")
-openRotation = Vector3(0, 110, 0)
-openSpeed = 1.2
+OpenRotation = Vector3(0, 118, 0)
+OpenDuration = 1.0
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
@@ -25,8 +24,5 @@ mesh = SubResource("BoxMesh_471hd")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
 shape = SubResource("ConvexPolygonShape3D_ug10r")
 
-[node name="Interaction" parent="." instance=ExtResource("1_0buvd")]
-unique_name_in_owner = true
-
-[node name="InteractableComponent" type="Node" parent="."]
-script = ExtResource("3_hfjl0")
+[node name="Usable" type="Node" parent="."]
+script = ExtResource("2_sbhcm")

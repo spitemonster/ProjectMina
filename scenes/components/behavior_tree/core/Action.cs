@@ -9,7 +9,6 @@ public abstract partial class Action : Node
 {
 	[Signal] public delegate void ActionCompletedEventHandler(ActionStatus ActionStatus);
 	[Signal] public delegate void ActionStatusChangedEventHandler(ActionStatus newStatus);
-	
 	[Export] public bool IsActive { get; private set; } = true;
 	// if an action that inherits this class should modify the blackboard directly, such as finding and setting a target location, it can be set here
 	[Export] public StringName BlackboardKey { get; protected set; }

@@ -79,7 +79,7 @@ public partial class MovementComponent : ComponentBase
 			frictionMultiplier = currentFloor.Friction;
 		}
 
-		frictionMultiplier = Mathf.Clamp(frictionMultiplier, 0.1f, 1.0f);
+		frictionMultiplier = Mathf.Clamp(frictionMultiplier, 0.015f, 1.0f);
 
 		Vector3 currentVelocity = _character.Velocity;
 		float movementSpeed = CalculateMovementSpeed();

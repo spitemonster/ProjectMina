@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 
 namespace ProjectMina.BehaviorTree;
 
+[Tool]
+[GlobalClass]
 public partial class BlackboardCompare : Condition
 {
 	protected enum Operators: int
@@ -17,12 +19,14 @@ public partial class BlackboardCompare : Condition
 		LessEqual,
 	}
 
-	// [Export(PropertyHint.Expression)] 
-	[Export] protected string BlackboardKey = "";
+
 	[Export] protected Operators Comparison = Operators.Equal;
 	[Export(PropertyHint.Expression)] protected string Value = "";
 
+	[Signal] public delegate void ExpressionEvaluatedEventHandler(); 
+
 	private Expression val;
+	private bool _evaluation;
 
 	public override void _Ready()
 	{
@@ -32,20 +36,26 @@ public partial class BlackboardCompare : Condition
 
 	protected override async Task<ActionStatus> _Tick(AgentComponent agent, BlackboardComponent blackboard)
 	{
-		return await Task.Run(() =>
+		if (_childActions.Count < 1)
 		{
-			if (EvaluateComparison(blackboard))
-			{
-				Succeed();
-				_childActions[0].Tick(agent, blackboard);
-			}
-			else
-			{
-				Fail();
-			}
+			Fail();
+			return Status;
+		}
+		
+		CallDeferred("EvaluateComparison", blackboard);
 
-			return Task.FromResult(Status);
-		});
+		await ToSignal(this, SignalName.ExpressionEvaluated);
+		
+		if (!_evaluation)
+		{
+			Fail();
+			return Status;
+		}
+		
+		await _childActions[0].Tick(agent, blackboard);
+		
+		Succeed();
+		return Status;
 	}
 
 	private bool EvaluateComparison(BlackboardComponent blackboard)
@@ -53,6 +63,8 @@ public partial class BlackboardCompare : Condition
 		Variant compareValue = val.Execute(new(), val);
 		Variant blackboardValue = blackboard.GetValue(BlackboardKey);
 		bool result = false;
+		
+		GD.Print("evaluating comparison: ", BlackboardKey, ". compare value: ", compareValue, ". blackboard value: ", blackboardValue);
 
 		if (val.HasExecuteFailed())
 		{
@@ -84,6 +96,7 @@ public partial class BlackboardCompare : Condition
 				break;
 		}
 
+		_evaluation = result;
 		return result;
 	}
 
@@ -96,6 +109,8 @@ public partial class BlackboardCompare : Condition
 		{
 			return null;
 		}
+		
+		GD.Print("parsed expression. exp: ", exp, ". res: ", res);
 
 		return exp;
 	}

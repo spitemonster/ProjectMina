@@ -119,12 +119,25 @@ public partial class AgentComponent : ControllerComponent
 		// 		}
 		// 	};
 		// }
-		GD.Print("should start behavior tree");
-		if (BehaviorTree == null)
+
+		CallDeferred("_SetupBehaviorTree");
+	}
+
+	private void _SetupBehaviorTree()
+	{
+		BehaviorTree?.SetAgent(this);
+		BehaviorTree?.Start();
+	}
+	
+	public override void _Process(double delta)
+	{
+		Vector3 blackboardMovementTarget = Blackboard.GetValueAsVector3("target_movement_position");
+		Vector3 agentMovementTarget = Pawn.NavigationAgent.TargetPosition;
+
+		if (agentMovementTarget != blackboardMovementTarget)
 		{
-			GD.Print(" no behavior tree");
+			SetTargetPosition(blackboardMovementTarget);
 		}
-		BehaviorTree?.Start(this);
 	}
 
 	public void SetTargetPosition(Vector3 position)

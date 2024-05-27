@@ -3,90 +3,68 @@ using Godot.Collections;
 
 namespace ProjectMina;
 
-public partial class InteractableComponent : ComponentBase
+// public enum InteractionType : int
+// {
+// Use,
+// Equip,
+// Take
+// };
+
+public abstract partial class InteractableComponent : ComponentBase
 {
 	[Signal] public delegate void FocusReceivedEventHandler();
 	[Signal] public delegate void FocusLostEventHandler();
 	[Signal] public delegate void InteractionStartedEventHandler(CharacterBase character);
-	[Signal] public delegate void InteractionEndedEventHandler(bool success);
-	[Signal] public delegate void InteractionFinishedEventHandler();
+	[Signal] public delegate void InteractionCompletedEventHandler();
+	[Signal] public delegate void InteractionCanceledEventHandler();
 	[Signal] public delegate void InteractionDisabledEventHandler();
 	[Signal] public delegate void InteractionEnabledEventHandler();
-	public bool CanInteract { get; protected set; }
 
-	// first foray into integrating the interaction system with the goap system
-	// enables a goap agent to check outcome of using the smart object
-	// and what they can do with it
-	[Export] public Dictionary<StringName, Variant> UseState { get; protected set; } = new();
-
-	[ExportCategory("Interaction")]
-	[Export] public Control InteractionIndicator;
-
-	[ExportCategory("Animation")]
-	[Export] public AnimationPlayer AnimPlayer { get; protected set; }
-	[Export] public AnimationTree AnimTree { get; protected set; }
-	[Export] public AnimationLibrary FirstPersonInteractionAnimations { get; protected set; }
+	public bool CanInteract { get; protected set; } = true;
+	private bool _interacting = false;
+	private CharacterBase _interactingCharacter;
 	
-	[Export] public StringName ThirdPersonInteractionAnimName;
+	[Export] public string PromptOverride;
 	
-	// position to which an AI character were to move if they were to attempt to interact
-	[Export] public Marker3D ActionPosition { get; protected set; }
-	
-	private bool _hasIndicator;
-
-	public override void _Ready()
+	public virtual void ReceiveFocus() {}
+	public virtual void LoseFocus() {}
+	public virtual bool Interact(CharacterBase character)
 	{
-		if (InteractionIndicator != null)
+		if (!CanInteract || _interacting)
 		{
-			_hasIndicator = true;
-			InteractionIndicator.Visible = false;
+			GD.Print("can't interact for some reason. caninteract: ", CanInteract, ". _interacting: ", _interacting);
+			return false;
 		}
-	}
-
-	public virtual void ReceiveFocus()
-	{
-		EmitSignal(SignalName.FocusReceived);
-
-		if (_hasIndicator)
-		{
-			InteractionIndicator.Visible = true;
-		}
-	}
-
-	public virtual void LoseFocus()
-	{
-		EmitSignal(SignalName.FocusLost);
-
-		if (_hasIndicator)
-		{
-			InteractionIndicator.Visible = false;
-		}
-	}
-
-	public virtual void Interact(CharacterBase character)
-	{
+		GD.Print("interacting from base class");
+		_interactingCharacter = character;
+		CanInteract = false;
+		_interacting = true;
 		EmitSignal(SignalName.InteractionStarted, character);
+		return true;
 	}
-
-	public virtual void EndInteract()
+	public virtual void CompleteInteraction(CharacterBase character)
 	{
-		EmitSignal(SignalName.InteractionEnded, true);
+        _interactingCharacter = null;
+		CanInteract = true;
+		_interacting = false;
+		EmitSignal(SignalName.InteractionCompleted);
 	}
-
-	public void EnableInteract()
+	public virtual void CancelInteraction(CharacterBase character)
+	{
+        _interactingCharacter = null;
+		CanInteract = true;
+		_interacting = false;
+		EmitSignal(SignalName.InteractionCanceled);
+	}
+	public virtual void EnableInteract()
 	{
 		CanInteract = true;
 		EmitSignal(SignalName.InteractionEnabled);
 	}
 
-	public void DisableInteract()
+	public virtual void DisableInteract()
 	{
 		CanInteract = false;
 		EmitSignal(SignalName.InteractionDisabled);
 	}
-
-	// public Animation GetThirdPersonInteractionAnim()
-	// {
-	// 	return ThirdPersonInteractionAnimations.PickRandom();
-	// }
 }

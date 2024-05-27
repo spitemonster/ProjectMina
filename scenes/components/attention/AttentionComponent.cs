@@ -116,6 +116,6 @@ public partial class AttentionComponent : ComponentBase
 	private bool CanFocus(Node3D targetObject)
 	{
 		var distanceToTargetObject = (AttentionCast.GlobalPosition - targetObject.GlobalPosition).Length();
-		return (targetObject.HasNode("InteractableComponent") || targetObject is RigidBody3D) && distanceToTargetObject < 2.0;
+		return (targetObject.HasNode("Usable") || targetObject is RigidBody3D) && distanceToTargetObject < 2.0;
 	}
 }

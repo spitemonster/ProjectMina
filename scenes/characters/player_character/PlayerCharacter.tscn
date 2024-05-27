@@ -434,9 +434,6 @@ parameters/right_hand/current_delta = 0
 parameters/right_hand_base_pose/current_length = null
 parameters/right_hand_base_pose/current_position = null
 parameters/right_hand_base_pose/current_delta = null
-parameters/use_tool/current_length = null
-parameters/use_tool/current_position = null
-parameters/use_tool/current_delta = null
 
 [node name="RightHandTarget" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel" index="2"]
 transform = Transform3D(-0.459135, 0.12302, 0.879807, -0.849829, 0.227708, -0.47533, -0.258814, -0.965927, -3.08001e-06, 0.151362, -0.127785, -0.0300227)
@@ -465,7 +462,7 @@ bones/27/rotation = Quaternion(0.53386, -0.190273, -0.279088, 0.775177)
 cast_shadow = 0
 
 [node name="RightHandAttachment" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D" index="1"]
-transform = Transform3D(0.771813, 0.229526, -0.592978, -0.635843, 0.274205, -0.721467, -0.00299761, 0.933879, 0.357577, -0.375261, 0.0274194, 0.374992)
+transform = Transform3D(0.781317, 0.226144, -0.581723, -0.624101, 0.273446, -0.731933, -0.00645247, 0.934926, 0.354785, -0.375261, 0.0274194, 0.374992)
 
 [node name="RightHandSocket" parent="CharacterBody/Hips/HeadAnim/Head/Viewmodel/fps_arms/FPS_Arms/Skeleton3D/RightHandAttachment" index="0"]
 transform = Transform3D(0.0201643, -0.602196, -0.798093, 0.938355, 0.286921, -0.192787, 0.345085, -0.745008, 0.570859, 0.0638688, 0.00408357, -0.0524669)
@@ -482,8 +479,8 @@ TriggerArea = NodePath("Area3D")
 
 [node name="MovementComponent" parent="." index="5" instance=ExtResource("8_8i55q")]
 MovementSpeedBase = 2.0
-AccelerationForce = 0.05
-BrakingForce = 0.08
+AccelerationForce = 0.3
+BrakingForce = 1.0
 JumpForce = 4.5
 SprintSpeedMultiplier = 1.8
 AirControlMultiplier = 1.0

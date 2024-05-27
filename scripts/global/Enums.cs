@@ -2,7 +2,7 @@ using Godot;
 
 namespace ProjectMina;
 
-public partial class Enums : GodotObject
+public partial class Enums
 {
 
 	public enum DirectionHorizontal

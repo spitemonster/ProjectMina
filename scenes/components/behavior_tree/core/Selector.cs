@@ -13,17 +13,14 @@ public partial class Selector : Composite
 			{
 				continue;
 			}
+			
+			GD.Print("blackboard selector checking child: ", child.Name);
 
-			Task<ActionStatus> tickAction = child.Tick(agent, blackboard);
+			ActionStatus status = await child.Tick(agent, blackboard);
 
-			if (!tickAction.IsCompleted)
+			if (status == ActionStatus.Succeeded)
 			{
-				await tickAction;
-			}
-
-			if (child.Status == ActionStatus.Succeeded)
-			{
-				GD.Print("child ticked!");
+				GD.Print("blackboard selector child succeeded");
 				Succeed();
 				return Status;
 			}

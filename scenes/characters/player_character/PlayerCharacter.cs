@@ -71,7 +71,7 @@ public partial class PlayerCharacter : CharacterBase
 			GD.Print("added test ai character");
 		}
 
-		Global.Data.Player = this;
+		Global.Data.SetPlayer(this);
 		
 		base._Ready();
 		
@@ -116,12 +116,9 @@ public partial class PlayerCharacter : CharacterBase
 				}
 				else
 				{
-					if (TestAiCharacter == null && Global.Data.AICharacters.Count > 0)
-					{
-						TestAiCharacter = Global.Data.AICharacters[0];
-					}
-					TestAiCharacter?.SetTargetPosition(GlobalPosition);
+					CharacterInteraction.Interact();
 				}
+				
 				break;
 			case "run":
 				CharacterMovement.ToggleSprint();

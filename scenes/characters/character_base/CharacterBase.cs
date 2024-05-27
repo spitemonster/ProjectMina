@@ -170,7 +170,7 @@ public partial class CharacterBase : CharacterBody3D
 
 		PhysicsMaterial surfaceMaterial = new();
 
-		if (res != null)
+		if (res == null)
 		{
 			return surfaceMaterial;
 		}

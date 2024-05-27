@@ -51,8 +51,14 @@ public partial class EquippableComponent : InteractableComponent
 
 		EquipmentSlot = slot;
 		_wielder = character;
+		// _parent.Reparent(EquipmentSlot);
+		// _parent.TopLevel = false;
+		// _parent.Transform = new();
+		// _parent.Sleeping = true;
+		// _parent.Freeze = true;
 		GD.Print(character.Name, " equipped: ", GetOwner<Node>().Name);
 		EmitSignal(SignalName.Equipped, _wielder);
+		
 	}
 
 	public void Unequip()
@@ -105,13 +111,13 @@ public partial class EquippableComponent : InteractableComponent
 		if (EquipmentSlot != null)
 		{
 			
-			// var currentPosition = _parent.GlobalPosition;
-			// var targetPosition = EquipmentSlot.GlobalPosition;
-			// var targetLinearVelocity = (targetPosition - currentPosition) * 100.0f;
-			//
-			// _parent.LinearVelocity = targetLinearVelocity;
+			var currentPosition = _parent.GlobalPosition;
+			var targetPosition = EquipmentSlot.GlobalPosition;
+			var targetLinearVelocity = (targetPosition - currentPosition) * 100.0f;
 			
-			_parent.GlobalTransform = EquipmentSlot.GlobalTransform;
+			_parent.LinearVelocity = targetLinearVelocity;
+			
+			// _parent.GlobalTransform = EquipmentSlot.GlobalTransform;
 		}
 	}
 }

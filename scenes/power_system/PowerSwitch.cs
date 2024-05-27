@@ -5,8 +5,6 @@ using ProjectMina;
 public partial class PowerSwitch : Node3D
 {
 	[Export] public bool SwitchState = false;
-	[Export] protected InteractableComponent OnButtonInteraction;
-	[Export] protected InteractableComponent OffButtonInteraction;
 	[Export] protected MeshInstance3D OnButtonMesh;
 	[Export] protected MeshInstance3D OffButtonMesh;
 	
@@ -14,8 +12,8 @@ public partial class PowerSwitch : Node3D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		OnButtonInteraction.InteractionStarted += _SwitchOn;
-		OffButtonInteraction.InteractionStarted += _SwitchOff;
+		// OnButtonInteraction.InteractionStarted += _SwitchOn;
+		// OffButtonInteraction.InteractionStarted += _SwitchOff;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -25,33 +23,33 @@ public partial class PowerSwitch : Node3D
 
 	private void _SwitchOn(CharacterBase character)
 	{
-		if (!SwitchState)
-		{
-			GD.Print("should switch on");
-			SwitchState = true;
-			_TogglePower(SwitchState);
-		}
+		// if (!SwitchState)
+		// {
+		// 	GD.Print("should switch on");
+		// 	SwitchState = true;
+		// 	_TogglePower(SwitchState);
+		// }
 	}
 
 	private void _SwitchOff(CharacterBase character)
 	{
-		if (SwitchState)
-		{
-			GD.Print("should switch off");
-			SwitchState = false;
-			_TogglePower(SwitchState);
-		}
+		// if (SwitchState)
+		// {
+		// 	GD.Print("should switch off");
+		// 	SwitchState = false;
+		// 	_TogglePower(SwitchState);
+		// }
 	}
 
 	private void _TogglePower(bool state)
 	{
-		if (state)
-		{
-			_animPlayer.PlayBackwards("switch");
-		}
-		else
-		{
-			_animPlayer.Play("switch");
-		}
+		// if (state)
+		// {
+		// 	_animPlayer.PlayBackwards("switch");
+		// }
+		// else
+		// {
+		// 	_animPlayer.Play("switch");
+		// }
 	}
 }
