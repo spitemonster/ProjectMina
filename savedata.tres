@@ -1,0 +1,22 @@
+[gd_resource type="Resource" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/saveload/SaveDataPlayer.cs" id="1_l70le"]
+[ext_resource type="Script" path="res://scripts/saveload/SaveDataGlobal.cs" id="2_xklps"]
+[ext_resource type="Script" path="res://scripts/saveload/SavedGame.cs" id="3_ragxs"]
+
+[sub_resource type="Resource" id="Resource_x35bl"]
+script = ExtResource("1_l70le")
+CameraTransform = Transform3D(-0.886994, -0.196689, 0.417794, 0, 0.90475, 0.425938, -0.461779, 0.377805, -0.802508, -1.33081, 1.45635, 2.15483)
+Position = Vector3(-1.33081, 0.00662183, 2.15483)
+Transform = Transform3D(-0.886994, 0, 0.461779, 0, 1, 0, -0.461779, 0, -0.886994, -1.33081, 0.00662183, 2.15483)
+ScenePath = "res://scenes/characters/player_character/PlayerCharacter.tscn"
+
+[sub_resource type="Resource" id="Resource_xheub"]
+script = ExtResource("2_xklps")
+CurrentLevel = "res://_dev/scenes/gyms/gym_base/GymBase.tscn"
+ScenePath = ""
+
+[resource]
+script = ExtResource("3_ragxs")
+GlobalData = SubResource("Resource_xheub")
+GameData = [SubResource("Resource_x35bl")]

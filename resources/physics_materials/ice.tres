@@ -1,0 +1,5 @@
+[gd_resource type="PhysicsMaterial" format=3 uid="uid://otmv1bxldn0a"]
+
+[resource]
+resource_name = "Ice"
+friction = 0.0
