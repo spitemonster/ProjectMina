@@ -2,4 +2,4 @@
 
 [resource]
 resource_name = "Concrete"
-rough = true
+friction = 0.8

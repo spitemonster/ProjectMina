@@ -9,6 +9,7 @@ uniform bool dithering = true;
 uniform int colors : hint_range(1, MAXCOLORS) = 12;
 uniform int dither_size: hint_range(1, 8) = 2;
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest;
+uniform float brightness = 1;
 
 float dithering_pattern(ivec2 fragcoord) {
 	const float pattern[] = {
@@ -70,4 +71,8 @@ void fragment() {
 	} else {
 		COLOR.rgb = raw.rgb;
 	}
+	
+	COLOR.r = clamp(brightness * COLOR.r, 0, 1);
+	COLOR.g = clamp(brightness * COLOR.g, 0, 1);
+	COLOR.b = clamp(brightness * COLOR.b, 0, 1);
 }

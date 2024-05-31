@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Linq;
 using Godot;
 using Godot.Collections;
+using ProjectMina.EnvironmentQuerySystem;
 
 namespace ProjectMina;
 
@@ -34,6 +35,8 @@ public partial class PlayerCharacter : CharacterBase
 	
 	[ExportGroup("Movement")]
 	[Export] public CharacterMovementStateMachine MovementStateMachine;
+	
+	public float LookSpeedMultiplier = 1;
 
 	public Vector3 CameraForwardVector { get; private set; }
 	private Node3D _currentFloor;
@@ -57,6 +60,13 @@ public partial class PlayerCharacter : CharacterBase
 	private CharacterControlContext _controlContext = new();
 
 	private bool _wishSprint = false;
+
+	private AnimationNodeStateMachinePlayback _animStateMachine;
+
+	private LabelValueRow _floorMonitor;
+	private LabelValueRow _floorSurfaceMonitor;
+
+	public AnimationNodeTimeScale MovementAnimsTimeScale;
 
 	public float GetVisibility()
 	{
@@ -89,11 +99,16 @@ public partial class PlayerCharacter : CharacterBase
 		// get our default capsule settings for crouching
 		var bodyCapsule = (CapsuleShape3D)CharacterBody.Shape;
 		PrimaryCamera.MakeCurrent();
+
+		CharacterAnimationTree.Active = true;
+		_animStateMachine = (AnimationNodeStateMachinePlayback)CharacterAnimationTree.Get("parameters/movement_anims/playback");
+		// MovementAnimsTimeScale =
+		// 	(AnimationNodeTimeScale)CharacterAnimationTree.Get("parameters/movement_speed_scale/");
 	}
 
 	private void InitEvents()
 	{
-		PlayerInput.Manager.MouseMove += HandleMouseMove;
+		PlayerInput.Manager.MouseMove += _HandleMouseMove;
 		PlayerInput.Manager.ActionPressed += _OnActionPressed;
 		PlayerInput.Manager.ActionReleased += _OnActionReleased;
 		PlayerInput.Manager.ActionHoldStarted += _OnActionHoldStarted;
@@ -103,6 +118,38 @@ public partial class PlayerCharacter : CharacterBase
 		// CharacterMovement.SneakEnded += _EndStealth;
 		CharacterEquipment.WeaponEquipped += _OnWeaponEquipped;
 		CharacterEquipment.WeaponUnequipped += _OnWeaponUnequipped;
+		GrabComponent.ItemGrabbed += (Node3D item) =>
+		{
+			GD.Print("should grab");
+			MovementStateMachine.RequestTransition("Grab");
+		};
+
+		GrabComponent.ItemDropped += (Node3D item, bool fomBreak) =>
+		{
+			GD.Print("should drop");
+			if (Velocity.Length() > 0)
+			{
+                GD.Print("Should walk");
+				MovementStateMachine.RequestTransition("Walk");
+			}
+			else
+			{
+                GD.Print("should idle");
+				MovementStateMachine.RequestTransition("Idle");
+			}
+		};
+
+		MovementStateMachine.StateTransitioned += (StringName newState, StringName previousState) =>
+		{
+			// if (newState != null)
+			// {
+			// 	StringName currentAnimationState = _animStateMachine.GetCurrentNode();
+			// 	_animStateMachine.Travel(newState);	
+			// }
+		};
+
+		_floorMonitor = Dev.UI.AddDevMonitor("Floor: ", Colors.Orange);
+		_floorSurfaceMonitor = Dev.UI.AddDevMonitor("Floor Material: ", Colors.Orange);
 	}
 
 	private void _OnActionPressed(StringName action)
@@ -130,8 +177,8 @@ public partial class PlayerCharacter : CharacterBase
 				MovementStateMachine.RequestTransition("Jump");
 				break;
 			case "stealth":
-				// CharacterMovement.ToggleSneak();
-				_controlContext.WishCrouch = true;
+				MovementStateMachine.RequestTransition(MovementStateMachine.CurrentState == "Crouch" ? "Walk" : "Crouch");
+				// _controlContext.WishCrouch = true;
 				break;
 			case "interact":
 				if (GrabComponent.IsGrabbing())
@@ -142,6 +189,9 @@ public partial class PlayerCharacter : CharacterBase
 				{
 					CharacterInteraction.Interact();
 				}
+				break;
+			case "lean_left":
+				MovementStateMachine.RequestTransition("Lean");
 				break;
 		}
 	}
@@ -166,15 +216,23 @@ public partial class PlayerCharacter : CharacterBase
 	{
 		if (action == "interact")
 		{
+			Dev.UI.PushDevNotification("should interact");
 			if (GrabComponent.IsGrabbing())
 			{
-				GrabComponent.ReleaseGrabbedItem(CameraForwardVector * 500.0f);
+				Dev.UI.PushDevNotification("is grabbing");
+				GrabComponent.ReleaseGrabbedItem(CameraForwardVector * 10.0f);
 				return;
 			}
+
+			Dev.UI.PushDevNotification("CurrentFocus: " + CharacterAttention.CurrentFocus.Name);
 
 			if (CharacterAttention.CurrentFocus != null && GrabbingComponent.CanGrab(CharacterAttention.CurrentFocus))
 			{
 				GrabComponent.GrabItem((RigidBody3D)CharacterAttention.CurrentFocus);
+			}
+			else
+			{
+				Dev.UI.PushDevNotification("couldn't grab current focus");
 			}
 		}
 	}
@@ -185,6 +243,9 @@ public partial class PlayerCharacter : CharacterBase
 		{
 			case "jump":
 				// CharacterMovement.JumpReleased();
+				break;
+			case "lean_left":
+				MovementStateMachine.RequestTransition("Idle");
 				break;
 		}
 	}
@@ -217,76 +278,27 @@ public partial class PlayerCharacter : CharacterBase
 
 	public override void _PhysicsProcess(double delta)
 	{
-		var spaceState = GetWorld3D().DirectSpaceState;
-		
-		if (!IsOnFloor())
-		{
-			if (_currentFloor is RigidBody3D r)
-			{
-				r.Sleeping = false;
-			}
-			_currentFloor = null;
-			_floorSurface = null;
-		}
-		else
-		{
-			var traceResult = Cast.Ray(spaceState, GlobalPosition, GlobalPosition + Vector3.Up * -.5f, _exclude);
-			_floorSurface = GetFloorSurface(CharacterBody.GlobalPosition);
-			
-			if (traceResult is { Collider: RigidBody3D r })
-			{
-				r.Sleeping = true;
-				_currentFloor = r;
-			}
-		}
-
-		// iterate over all collisions and apply collision physics to them
-		for (var i = 0; i < GetSlideCollisionCount(); i++)
-		{
-			KinematicCollision3D collision3D = GetSlideCollision(i);
-			if (collision3D.GetCollider() is not RigidBody3D r || !IsOnFloor() || r == _currentFloor) continue;
-			
-			var directionToCollision = (r.GlobalPosition - CharacterBody.GlobalPosition).Normalized();
-			var angleToCollision = new Vector3(0.0f, -1.0f, 0.0f).AngleTo(directionToCollision);
-			var angleFactor = Mathf.Clamp(Mathf.Pow(angleToCollision, 2), 0.0f, 1.0f);
-			angleFactor = Mathf.Round(angleFactor * 100) / 100;
-
-			if (!(angleFactor > 0.5)) continue;
-			
-			r.ApplyCentralImpulse(-collision3D.GetNormal() * 4.0f * angleFactor);
-			r.ApplyImpulse(-collision3D.GetNormal() * 0.01f * angleFactor, collision3D.GetPosition());
-		}
-
-		// TODO: hmmmmm....
-		// var controlInput = PlayerInput.GetInputDirection();
-		// var direction = (GlobalTransform.Basis * new Vector3(controlInput.X, 0, controlInput.Y)).Normalized();
-		
-		// Velocity = CharacterMovement.GetCharacterVelocity(direction, delta, spaceState, _floorSurface);
-		
-		// _controlContext.ControlInput = PlayerInput.GetInputDirection();
-		// _controlContext.Velocity = Velocity;
-		// _controlContext.Grounded = IsOnFloor();
-		// _controlContext.WishClimb = false;
-		// _controlContext.WishSprint = _wishSprint;
-		
 		MovementStateMachine.ApplyCharacterControl(this, _controlContext, delta);
-		MoveAndSlide();
-		base._PhysicsProcess(delta);
+		
+		if (!SnapUpToStairs(delta))
+		{
+			ApplyRigidBodyCollisions();
+			MoveAndSlide();	
+			SnapDownToStairs();
+		}
 
+		base._PhysicsProcess(delta);
+		
+		_floorMonitor?.SetValue(CurrentFloor != null ? CurrentFloor.Name : "None");
+		_floorSurfaceMonitor?.SetValue(CurrentFloorMaterial != null ? CurrentFloorMaterial.ResourceName : "None");
 	}
 
-	private void HandleMouseMove(Vector2 mouseRelative)
+	private void _HandleMouseMove(Vector2 mouseRelative)
 	{
 		if (GetTree().Paused) return;
 		
-		var headRelative = (float)(-mouseRelative.X * .0025);
-		var cameraRelative = (float)(-mouseRelative.Y * .0025);
-
-		if (GrabComponent.IsGrabbing())
-		{
-			headRelative *= (float)CarryGrabSpeedMultiplier;
-			cameraRelative *= (float)CarryGrabSpeedMultiplier;
-		}
+		var headRelative = (float)(-mouseRelative.X * .0025 * LookSpeedMultiplier);
+		var cameraRelative = (float)(-mouseRelative.Y * .0025 * LookSpeedMultiplier);
 
 		RotateY(headRelative);
 		Head.RotateX(cameraRelative);
@@ -308,9 +320,9 @@ public partial class PlayerCharacter : CharacterBase
 	public override void Footstep()
 	{
 		
-		if (_floorSurface != default)
+		if (FloorSurface != default)
 		{
-			switch (_floorSurface.ResourceName)
+			switch (FloorSurface.ResourceName)
 			{
 				case "Grass":
 					break;
@@ -338,7 +350,7 @@ public partial class PlayerCharacter : CharacterBase
 
 	public void BeforeLoad()
 	{
-		PlayerInput.Manager.MouseMove -= HandleMouseMove;
+		PlayerInput.Manager.MouseMove -= _HandleMouseMove;
 		PlayerInput.Manager.ActionPressed -= _OnActionPressed;
 		PlayerInput.Manager.ActionReleased -= _OnActionReleased;
 		PlayerInput.Manager.ActionHoldStarted -= _OnActionHoldStarted;
@@ -367,15 +379,13 @@ public partial class PlayerCharacter : CharacterBase
 	
 	// TODO: when the player is crouching (actively moving between one state and another) line of sight detection doesn't work
 	// since it casts to character chest which is outside of the crouch capsule for a few frames.  
-	private void _StartStealth()
+	public void Crouch()
 	{
-		CharacterAnimationPlayer.Play("crouch");
 		CharacterBody.Disabled = true;
 	}
 
-	private void _EndStealth()
+	public void EndCrouch()
 	{
-		CharacterAnimationPlayer.PlayBackwards("crouch");
 		CharacterBody.Disabled = false;
 	}
 	

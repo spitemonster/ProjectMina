@@ -207,9 +207,9 @@ public partial class AICharacter : CharacterBase
 			lookPosition = _targetCharacter.GlobalPosition;
 		}
 		// rotate to face the current look target
-		else if (_lookTarget != null)
+		else if (LookTarget != null)
 		{
-			lookPosition = _lookTarget.GlobalPosition;
+			lookPosition = LookTarget.GlobalPosition;
 		}
 		// if there is no current look target, rotate to face direction of movement
 		else if (Velocity.Length() > 0.1)
@@ -225,7 +225,5 @@ public partial class AICharacter : CharacterBase
 			GlobalTransform = GlobalTransform.InterpolateWith(GlobalTransform.LookingAt(lookPosition, Vector3.Up), 0.05f);
 			GlobalRotation *= new Vector3(0, 1, 0);
 		}
-
-		MoveAndSlide();
 	}
 }

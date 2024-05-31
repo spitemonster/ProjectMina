@@ -18,7 +18,7 @@ public partial class HitResult
 	}
 }
 
-public partial class Cast : Node
+public partial class Cast : Node3D
 {
 	/// <summary>
 	/// helper for performing a raycast
@@ -32,7 +32,6 @@ public partial class Cast : Node
 	/// <returns></returns>
 	public static HitResult Ray(PhysicsDirectSpaceState3D spaceState, Vector3 castOrigin, Vector3 castEnd, Array<Rid> exclude, bool debugLine = false, bool debugHit = false)
 	{
-
 		PhysicsRayQueryParameters3D traceQuery = new()
 		{
 			From = castOrigin,
@@ -42,7 +41,7 @@ public partial class Cast : Node
 
 		var traceResult = spaceState.IntersectRay(traceQuery);
 
-		if (traceResult == null || !traceResult.ContainsKey("collider"))
+		if (traceResult == null || !traceResult.ContainsKey("collider") || (GodotObject)traceResult["collider"] is not PhysicsBody3D)
 		{
 			return null;
 		}

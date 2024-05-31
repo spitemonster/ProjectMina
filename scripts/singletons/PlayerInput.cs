@@ -238,7 +238,6 @@ public partial class PlayerInput : Node
 			var t = _actionsAwaitingHoldTimers[action];
 			t.Stop();
 			t.QueueFree();
-			
 			_actionsAwaitingHoldTimers.Remove(action);
 			EmitSignal(SignalName.ActionPressed, action);
 		} else if (_heldActionTimers.ContainsKey(action))
