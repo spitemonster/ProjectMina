@@ -65,7 +65,33 @@ tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
 "handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0.6, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(0.8, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/6/type = "bezier"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("CharacterBody/Hips:position:z")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_ydphh"]
+resource_name = "crouch_position"
+length = 0.0333367
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("CharacterBody/Hips:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.5, -0.166667, 0, 0, 0),
 "times": PackedFloat32Array(0)
 }
 
@@ -163,18 +189,40 @@ tracks/2/keys = {
 
 [sub_resource type="Animation" id="Animation_gg6mh"]
 resource_name = "sprint"
-length = 0.400003
+length = 0.533337
 loop_mode = 1
 tracks/0/type = "bezier"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CharacterBody/Hips:position:y")
+tracks/0/path = NodePath("CharacterBody/Hips:position:x")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"handle_modes": PackedInt32Array(2, 2, 2, 2, 2),
-"points": PackedFloat32Array(0, 0, 0, 0.0166667, -0.005, -0.03, -0.0166667, 2.21085e-05, 0.0166667, -2.21085e-05, -0.000265302, -0.0166667, -0.005, 0.0166667, 0.005, 0.03, -0.0166667, -2.21085e-05, 0.0166667, 2.21085e-05, 0, -0.0166667, 0.005, 0, 0),
-"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4)
+"handle_modes": PackedInt32Array(0, 0, 0, 0, 0),
+"points": PackedFloat32Array(0, 0, 0, 0.0166667, 0.005, 0.03, -0.0166667, 0, 0.0166667, 0, 0, -0.0166667, 0.005, 0.0166667, -0.005, -0.03, -0.0166667, 0, 0.0166667, 0, 0, -0.0166667, -0.005, 0, 0),
+"times": PackedFloat32Array(0, 0.13375, 0.2675, 0.40125, 0.535)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("CharacterBody/Hips:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0, 0, 0),
+"points": PackedFloat32Array(0, 0, 0, 0.0166667, -0.005, -0.03, -0.0166667, 0, 0.0166667, 0, 0, -0.0166667, -1.7896e-05, 0.0166667, 1.7896e-05, -0.0297852, -0.0166667, 0, 0.0166667, 0, 0, -0.0166667, -0.00496421, 0, 0),
+"times": PackedFloat32Array(0, 0.13375, 0.2675, 0.40125, 0.535)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CharacterBody/Hips:position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0, 0, 0),
+"points": PackedFloat32Array(0, 0, 0, 0.0166667, 0, 0, -0.0166667, 0, 0.0166667, 0, 0, -0.0166667, 0, 0.0166667, 0, 0, -0.0166667, 0, 0.0166667, 0, 0, -0.0166667, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.13375, 0.2675, 0.40125, 0.535)
 }
 
 [sub_resource type="Animation" id="Animation_yub7w"]
@@ -206,21 +254,6 @@ tracks/0/keys = {
 "handle_modes": PackedInt32Array(3, 3, 3, 3, 3),
 "points": PackedFloat32Array(0, -0.0625, 0.0075, 0.0625, -0.0075, -0.03, -0.0625, 0, 0.0625, 0, 0, -0.0625, -0.0150725, 0.0625, 0.0150725, 0.0302899, -0.0625, 0, 0.0625, 0, 0, -0.0625, 0.00757246, 0.0625, -0.00757246),
 "times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1)
-}
-
-[sub_resource type="Animation" id="Animation_ydphh"]
-resource_name = "crouch_position"
-length = 0.0333367
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("CharacterBody/Hips:position:y")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(-0.5, -0.166667, 0, 0, 0),
-"times": PackedFloat32Array(0)
 }
 
 [resource]

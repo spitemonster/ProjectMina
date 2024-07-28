@@ -1,11 +1,13 @@
 [gd_resource type="Resource" script_class="BlackboardAsset" load_steps=2 format=3 uid="uid://diuu5ee6up4cg"]
 
-[ext_resource type="Script" path="res://scripts/components/blackboard/BlackboardAsset.cs" id="1_3bxvf"]
+[ext_resource type="Script" path="res://components/blackboard/BlackboardAsset.cs" id="1_3bxvf"]
 
 [resource]
 script = ExtResource("1_3bxvf")
 Entries = {
 "current_health": 0.0,
+"current_state": "",
+"current_target": null,
 "enemy_visible": false,
 "max_health": 0.0,
 "target_movement_position": Vector3(0, 0, 0),

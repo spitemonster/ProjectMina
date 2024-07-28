@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AudioStreamPoolSettings" load_steps=2 format=3 uid="uid://bs6s1n165hsr7"]
 
-[ext_resource type="Script" path="res://scripts/settings/AudioStreamPoolSettings.cs" id="1_r882u"]
+[ext_resource type="Script" path="res://scripts/resources/settings/AudioStreamPoolSettings.cs" id="1_r882u"]
 
 [resource]
 script = ExtResource("1_r882u")

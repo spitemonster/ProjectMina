@@ -1,6 +1,6 @@
 [gd_resource type="Resource" load_steps=2 format=3 uid="uid://cyuj6kaqgrybg"]
 
-[ext_resource type="Script" path="res://scripts/settings/InputManagerSettings.cs" id="1_j27pa"]
+[ext_resource type="Script" path="res://scripts/resources/settings/InputManagerSettings.cs" id="1_j27pa"]
 
 [resource]
 script = ExtResource("1_j27pa")
