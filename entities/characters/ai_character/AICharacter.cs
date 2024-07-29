@@ -16,6 +16,8 @@ public partial class AICharacter : CharacterBase
 	[Export] protected ProgressBar AlertBar;
 
 	private AIControllerComponent _aiController;
+	public Label3D AwarenessLabel { get; protected set; }
+	public Label3D DetectionLabel { get; protected set; }
 
 	public override void _Ready()
 	{
@@ -25,6 +27,8 @@ public partial class AICharacter : CharacterBase
 
 		_msm = GetNode<CharacterMovementStateMachine>("%MSM");
 		_aiController = (AIControllerComponent)Controller;
+		AwarenessLabel = GetNodeOrNull<Label3D>("%AwarenessLabel");
+		DetectionLabel = GetNodeOrNull<Label3D>("%DetectionLabel");
 		Global.Data.AddAICharacter(this);
 	}
 

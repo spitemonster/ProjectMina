@@ -6,7 +6,7 @@
 script = ExtResource("1_3bxvf")
 Entries = {
 "current_health": 0.0,
-"current_state": "",
+"current_state": 0,
 "current_target": null,
 "enemy_visible": false,
 "max_health": 0.0,

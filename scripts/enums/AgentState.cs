@@ -1,7 +1,7 @@
 using Godot;
 namespace ProjectMina;
 
-public enum EAgentState : int
+public enum EAgentState : uint
 {
     Idle,
     Patrol,

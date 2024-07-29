@@ -19,8 +19,9 @@ public partial class AIControllerComponent : ControllerComponent
 
 	public EAgentState AgentState = EAgentState.Idle;
 	private BlackboardAsset _blackboardAsset;
-	private PlayerCharacter _pc;
-
+	// private PlayerCharacter _pc;
+	private AICharacter _aiPawn;
+	
 	public Node3D GetCurrentFocus()
 	{
 		return Pawn.CharacterAttention.CurrentFocus;
@@ -42,6 +43,9 @@ public partial class AIControllerComponent : ControllerComponent
 		}
 		
 		Pawn = GetOwner<AICharacter>();
+		_aiPawn = GetOwner<AICharacter>();
+		
+		GD.Print("Owner: ", GetOwner().Name);
 		
 		if (EnableDebug)
 		{
@@ -68,12 +72,20 @@ public partial class AIControllerComponent : ControllerComponent
 		{
 			GD.PushError(" no navigation agent in ready either");
 		}
-
-		NavigationAgent.TargetReached += () =>
+		else
 		{
-			Blackboard?.SetValue("target_movement_position_reached", true);
-			Blackboard?.SetValue("target_movement_position", Vector3.Zero);
-		};
+			NavigationAgent.TargetReached += () =>
+			{
+				Blackboard?.SetValue("target_movement_position_reached", true);
+				Blackboard?.SetValue("target_movement_position", Vector3.Zero);
+			};
+		}
+
+		if (_aiPawn.CharacterPerception != null)
+		{
+			_aiPawn.CharacterPerception.CharacterNoticed += _CharacterNoticed;
+			_aiPawn.CharacterPerception.CharacterSeen += _CharacterSeen;
+		}
 
 		Pawn.CharacterHealth.HealthChanged += (newHealth, wasDamage) =>
 		{
@@ -85,10 +97,31 @@ public partial class AIControllerComponent : ControllerComponent
 			}
 		};
 
-		Perception.PlayerNoticed += _NoticePlayer;
-		Perception.PlayerSeen += _SeePlayer;
-
+		// Perception.PointOfInterestNoticed += _NoticePointOfInterest;
+		// Perception.PointOfInterestSeen += _SeePointOfInterest;
+		CallDeferred("_InitDev");
 		CallDeferred("_SetupBehaviorTree");
+	}
+
+	private void _InitDev()
+	{
+		_aiPawn.AwarenessLabel.Text = "Idle";
+	}
+
+	private void _CharacterNoticed(CharacterBase character)
+	{
+		AgentState = EAgentState.Suspicious;
+		Blackboard.SetValueAsInt("current_state", (int)AgentState);
+		Blackboard.SetValueAsObject("current_target", character);
+		_aiPawn.AwarenessLabel.Text = "Suspicious";
+	}
+
+	private void _CharacterSeen(CharacterBase character)
+	{
+		AgentState = EAgentState.Combat;
+		Blackboard.SetValueAsInt("current_state", (int)AgentState);
+		Blackboard.SetValueAsObject("current_target", character);
+		_aiPawn.AwarenessLabel.Text = "Alerted";
 	}
 
 	private void _SetupBehaviorTree()
@@ -97,18 +130,18 @@ public partial class AIControllerComponent : ControllerComponent
 		BehaviorTree?.Start();
 	}
 
-	private void _NoticePlayer(PlayerCharacter p)
+	private void _NoticePointOfInterest(Node3D pointOfInterest)
 	{
-		GD.Print("should notice player");
-		Blackboard.SetValueAsObject("current_target", p);
-		Blackboard.SetValueAsString("current_state", "suspicious");
+		GD.Print("should notice point of interest");
+		Blackboard.SetValueAsObject("current_target", pointOfInterest);
+		// Blackboard.SetValueAsString("current_state", "suspicious");
 	}
 	
-	private void _SeePlayer(PlayerCharacter p)
+	private void _SeePointOfInterest(Node3D pointOfInterest)
 	{
-		GD.Print("should notice player");
-		Blackboard.SetValueAsObject("current_target", p);
-		Blackboard.SetValueAsString("current_state", "alerted");
+		GD.Print("should see point of interest");
+		Blackboard.SetValueAsObject("current_target", pointOfInterest);
+		// Blackboard.SetValueAsString("current_state", "alerted");
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -127,9 +160,6 @@ public partial class AIControllerComponent : ControllerComponent
 			
 			
 		}
-
-		
-
 	}
 
 	public void SetTargetPosition(Vector3 position)
