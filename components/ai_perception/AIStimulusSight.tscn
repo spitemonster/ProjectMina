@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://ct6s7hgcl1ag0"]
+
+[ext_resource type="Script" path="res://components/ai_perception/AIStimulusSight.cs" id="1_wjgc8"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_pw7k6"]
+radius = 1.0
+
+[node name="AIStimulusSight" type="Area3D"]
+collision_layer = 524288
+collision_mask = 0
+script = ExtResource("1_wjgc8")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_pw7k6")

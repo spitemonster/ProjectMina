@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://lj6a4gpnhyd1"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/actions/LookAt.cs" id="1_w6q85"]
+
+[node name="LookAt" type="Node"]
+script = ExtResource("1_w6q85")

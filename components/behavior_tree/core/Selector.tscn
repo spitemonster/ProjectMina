@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cq2mvxorq7ec1"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/core/Selector.cs" id="1_u2mdl"]
+
+[node name="Selector" type="Node"]
+script = ExtResource("1_u2mdl")

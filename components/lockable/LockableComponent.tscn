@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqil3ny8cjq7o"]
+
+[ext_resource type="Script" path="res://components/lockable/LockableComponent.cs" id="1_ropjb"]
+
+[node name="Lockable" type="Node"]
+script = ExtResource("1_ropjb")

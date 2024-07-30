@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dwd1tel6tc6mv"]
+
+[ext_resource type="Script" path="res://components/character_movement/CharacterFallingState.cs" id="1_h805d"]
+
+[node name="CharacterFallingState" type="Node"]
+process_mode = 4
+script = ExtResource("1_h805d")

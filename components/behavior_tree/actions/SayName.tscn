@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cf0jp2qslepqp"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/actions/SayName.cs" id="1_m1o8g"]
+
+[node name="SayName" type="Node"]
+script = ExtResource("1_m1o8g")

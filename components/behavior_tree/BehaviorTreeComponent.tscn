@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dv40g220dok86"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/BehaviorTreeComponent.cs" id="1_lg26u"]
+
+[node name="BehaviorTreeComponent" type="Node"]
+script = ExtResource("1_lg26u")

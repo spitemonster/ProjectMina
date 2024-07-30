@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cq1b3t3knmbu7"]
+
+[ext_resource type="Script" path="res://components/character_movement/CharacterMovementStateMachine.cs" id="1_yc3wi"]
+
+[node name="CharacterMovementStateMachine" type="Node"]
+process_mode = 4
+script = ExtResource("1_yc3wi")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bjxol7qa8t1a3"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/actions/Fail.cs" id="1_40guh"]
+
+[node name="Fail" type="Node"]
+script = ExtResource("1_40guh")

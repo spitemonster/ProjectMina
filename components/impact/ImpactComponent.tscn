@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://c4lbnfkrm3e5v"]
+
+[ext_resource type="Script" path="res://components/impact/ImpactComponent.cs" id="1_yula6"]
+
+[node name="ImpactComponent" type="Node3D"]
+script = ExtResource("1_yula6")
+ImpactTimeoutDuration = 0.085

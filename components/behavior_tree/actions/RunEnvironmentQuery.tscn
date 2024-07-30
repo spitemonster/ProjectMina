@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccqy2v1o3l3pw"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/actions/RunEnvironmentQuery.cs" id="1_hhkai"]
+
+[node name="RunEnvironmentQuery" type="Node"]
+script = ExtResource("1_hhkai")
+BlackboardKey = &""

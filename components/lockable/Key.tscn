@@ -1,0 +1,25 @@
+[gd_scene load_steps=6 format=3 uid="uid://d37oc485j5pvw"]
+
+[ext_resource type="PackedScene" uid="uid://bx6qdtogqxphv" path="res://components/usable/UsableComponent.tscn" id="1_tntto"]
+[ext_resource type="Script" path="res://components/lockable/Key.cs" id="1_xgl06"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eoywb"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_e4v54"]
+material = SubResource("StandardMaterial3D_eoywb")
+size = Vector3(0.2, 0.2, 0.2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_paw31"]
+points = PackedVector3Array(-0.1, -0.1, -0.1, 0.0999954, 0.1, 0.1, 0.0999954, 0.1, -0.1, 0.0999954, -0.1, 0.1, -0.1, 0.1, 0.1, 0.0999954, -0.1, -0.1, -0.1, 0.1, -0.1, -0.1, -0.1, 0.1)
+
+[node name="Key" type="RigidBody3D"]
+script = ExtResource("1_xgl06")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_e4v54")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_paw31")
+
+[node name="Usable" parent="." instance=ExtResource("1_tntto")]

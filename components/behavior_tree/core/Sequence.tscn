@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2js6fsmd6a04"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/core/Sequence.cs" id="1_mklc5"]
+
+[node name="Sequence" type="Node"]
+script = ExtResource("1_mklc5")
+BlackboardKey = &""

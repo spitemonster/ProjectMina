@@ -15,7 +15,7 @@ public partial class AICharacter : CharacterBase
 	[Export] protected ProgressBar NoticeBar;
 	[Export] protected ProgressBar AlertBar;
 
-	private AIControllerComponent _aiController;
+	public AIControllerComponent AIController { get; protected set; }
 	public Label3D AwarenessLabel { get; protected set; }
 	public Label3D DetectionLabel { get; protected set; }
 
@@ -26,7 +26,7 @@ public partial class AICharacter : CharacterBase
 		Controller = GetNode<ControllerComponent>("%Controller");
 
 		_msm = GetNode<CharacterMovementStateMachine>("%MSM");
-		_aiController = (AIControllerComponent)Controller;
+		AIController = (AIControllerComponent)Controller;
 		AwarenessLabel = GetNodeOrNull<Label3D>("%AwarenessLabel");
 		DetectionLabel = GetNodeOrNull<Label3D>("%DetectionLabel");
 		Global.Data.AddAICharacter(this);
@@ -34,9 +34,9 @@ public partial class AICharacter : CharacterBase
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (_aiController == null)
+		if (AIController == null)
 		{
-			_aiController = (AIControllerComponent)Controller;
+			AIController = (AIControllerComponent)Controller;
 		}
 
 		if (ControlInput.Length() > 0)

@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://j7wg8i7jx714"]
+
+[ext_resource type="Script" path="res://components/steering/SteeringComponent.cs" id="1_6pdmo"]
+
+[node name="SteeringComponent" type="Node3D" node_paths=PackedStringArray("ForwardCast", "LeftCast", "LeftDiagonalCast", "RightCast", "RightDiagonalCast")]
+script = ExtResource("1_6pdmo")
+ForwardCast = NodePath("ForwardCast")
+LeftCast = NodePath("LeftCast")
+LeftDiagonalCast = NodePath("LeftDiagonalCast")
+RightCast = NodePath("RightCast")
+RightDiagonalCast = NodePath("RightDiagonalCast")
+
+[node name="ForwardCast" type="RayCast3D" parent="."]
+target_position = Vector3(0, 0, -1)
+hit_from_inside = true
+debug_shape_custom_color = Color(1, 0, 0, 1)
+
+[node name="LeftCast" type="RayCast3D" parent="."]
+target_position = Vector3(-0.5, 0, 0)
+hit_from_inside = true
+
+[node name="RightCast" type="RayCast3D" parent="."]
+target_position = Vector3(0.5, 0, 0)
+hit_from_inside = true
+
+[node name="LeftDiagonalCast" type="RayCast3D" parent="."]
+target_position = Vector3(-0.6, 0, -0.6)
+hit_from_inside = true
+
+[node name="RightDiagonalCast" type="RayCast3D" parent="."]
+target_position = Vector3(0.6, 0, -0.6)
+hit_from_inside = true

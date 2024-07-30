@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://br1j424l8kb60"]
+
+[ext_resource type="Script" path="res://components/ai_perception/AIPerceptionComponent.cs" id="1_684a7"]
+
+[node name="AIPerceptionComponent" type="Node"]
+script = ExtResource("1_684a7")

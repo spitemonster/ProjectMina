@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5175pcce7msl"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/actions/FollowCurrentTarget.cs" id="1_81p8v"]
+
+[node name="FollowCurrentTarget" type="Node"]
+script = ExtResource("1_81p8v")

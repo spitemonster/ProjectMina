@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ichiwdyy1cod"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/actions/MoveToTargetPosition.cs" id="1_1gq55"]
+
+[node name="MoveToTargetPosition" type="Node"]
+script = ExtResource("1_1gq55")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://di5rjnovb8okf"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/actions/FindRandomTargetPositionInRadius.cs" id="1_dqlne"]
+
+[node name="FindRandomTargetPositionInRadius" type="Node"]
+script = ExtResource("1_dqlne")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bgsqf3mefx27t"]
+
+[ext_resource type="Script" path="res://components/equippable/EquippableComponent.cs" id="1_q4vkv"]
+
+[node name="EquippableComponent" type="Node"]
+script = ExtResource("1_q4vkv")

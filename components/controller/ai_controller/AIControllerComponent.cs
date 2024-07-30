@@ -85,6 +85,7 @@ public partial class AIControllerComponent : ControllerComponent
 		{
 			_aiPawn.CharacterPerception.CharacterNoticed += _CharacterNoticed;
 			_aiPawn.CharacterPerception.CharacterSeen += _CharacterSeen;
+			_aiPawn.CharacterPerception.CharacterLostVisualDetection += _LostVisual;
 		}
 
 		Pawn.CharacterHealth.HealthChanged += (newHealth, wasDamage) =>
@@ -101,6 +102,14 @@ public partial class AIControllerComponent : ControllerComponent
 		// Perception.PointOfInterestSeen += _SeePointOfInterest;
 		CallDeferred("_InitDev");
 		CallDeferred("_SetupBehaviorTree");
+	}
+
+	private void _LostVisual(CharacterBase character)
+	{
+		AgentState = EAgentState.Idle;
+		Blackboard.SetValueAsInt("current_state", (int)AgentState);
+		Blackboard.SetValueAsObject("current_target", null);
+		_aiPawn.AwarenessLabel.Text = "Idle";
 	}
 
 	private void _InitDev()

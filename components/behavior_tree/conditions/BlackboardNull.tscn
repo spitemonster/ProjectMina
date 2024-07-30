@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dvppnvmka6eoh"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/conditions/BlackboardCompare.cs" id="1_eahmh"]
+
+[node name="BlackboardNull" type="Node"]
+script = ExtResource("1_eahmh")
+BlackboardKey = &""

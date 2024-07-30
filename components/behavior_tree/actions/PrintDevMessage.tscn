@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cwo0ux5p2h4lq"]
+
+[ext_resource type="Script" path="res://components/behavior_tree/actions/PrintDevMessage.cs" id="1_fh56e"]
+
+[node name="PrintDevMessage" type="Node"]
+script = ExtResource("1_fh56e")
