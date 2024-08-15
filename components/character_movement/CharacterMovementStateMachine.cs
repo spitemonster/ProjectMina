@@ -61,17 +61,17 @@ public partial class CharacterMovementStateMachine : StateMachine
 			GD.PushError("Character Movement State Machine: ", Name, " is not child of Character Base.");
 			return;
 		}
-
+		
 		foreach (var state in States.Values)
 		{
 			if (state is CharacterMovementState m)
 			{
-				m.Setup(_character);
+				var b = m.Setup(_character);
 			}
 		}
 
 		CallDeferred("_InitDevMonitor");
-		Start();
+		CallDeferred("Start");
 	}
 
 	private void _InitDevMonitor()

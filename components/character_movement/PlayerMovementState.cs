@@ -1,7 +1,6 @@
 using Godot;
-using System;
-namespace ProjectMina;
 
+namespace ProjectMina;
 public partial class PlayerMovementState : CharacterMovementState
 {
     protected PlayerCharacter Player;
@@ -30,8 +29,9 @@ public partial class PlayerMovementState : CharacterMovementState
     public override void SetupAnimComponents()
     {
         base.SetupAnimComponents();
-        AnimStateMachine = (AnimationNodeStateMachinePlayback)AnimTree.Get("parameters/movement_anims/playback");
+        var smRoot = (AnimationNodeBlendTree)AnimTreeRoot;
+        AnimStateMachineRoot = (AnimationNodeStateMachinePlayback)AnimTree.Get("parameters/movement_anims/playback");
         PositionAnimStateMachine = (AnimationNodeStateMachinePlayback)AnimTree.Get("parameters/position_anims/playback");
-        MovementAnimTimeScale = (AnimationNodeTimeScale)AnimTreeRoot.GetNode("movement_speed_scale");
+        // MovementAnimTimeScale = (AnimationNodeTimeScale)smRoot.GetNode("movement_speed_scale");
     }
 }

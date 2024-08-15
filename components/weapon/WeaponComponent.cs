@@ -12,9 +12,19 @@ public enum EWeaponType : int
 public partial class WeaponComponent : EquippableComponent
 {
 
-    public EWeaponType WeaponType = EWeaponType.None;
+    [Export] protected WeaponData Data;
+    public EWeaponType WeaponType => Data.WeaponType;
     
-    
+    public override void _Ready()
+    {
+        if (Data == null)
+        {
+            GD.PushError("no weapon data");
+        }
+        
+        EquipmentType = EEquipmentType.Weapon;
+        base._Ready();
+    }
     
     protected virtual void Attack()
     {
@@ -37,12 +47,5 @@ public partial class WeaponComponent : EquippableComponent
     public override void EndUse()
     {
         EndAttack();
-    }
-
-    public override void _Ready()
-    {
-        base._Ready();
-
-        EquipmentType = EEquipmentType.Weapon;
     }
 }

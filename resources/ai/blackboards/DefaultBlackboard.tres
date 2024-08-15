@@ -5,11 +5,13 @@
 [resource]
 script = ExtResource("1_3bxvf")
 Entries = {
-"current_health": 0.0,
-"current_state": 0,
-"current_target": null,
 "enemy_visible": false,
+"focus": null,
+"has_weapon": true,
+"health": 0.0,
 "max_health": 0.0,
-"target_movement_position": Vector3(0, 0, 0),
-"target_movement_position_reached": false
+"state": 0,
+"target_position": Vector3(0, 0, 0),
+"weapon_equipped": false,
+"weapon_range": 1
 }

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://systems/saveload/SaveDataPlayer.cs" id="1_12v34"]
+[ext_resource type="Script" path="res://systems/saveload/SaveDataGlobal.cs" id="2_beyqx"]
+[ext_resource type="Script" path="res://systems/saveload/SavedGame.cs" id="3_jmibx"]
+
+[sub_resource type="Resource" id="Resource_ftw21"]
+script = ExtResource("1_12v34")
+CameraTransform = Transform3D(0.954863, 0.07891, -0.286368, 0, 0.964067, 0.265653, 0.297041, -0.253663, 0.920553, -1.91226, 1.45704, 4.85461)
+Position = Vector3(-1.91226, 0.00703696, 4.85461)
+Transform = Transform3D(0.954863, 0, -0.297041, 0, 1, 0, 0.297041, 0, 0.954863, -1.91226, 0.00703696, 4.85461)
+ScenePath = "res://entities/characters/player_character/PlayerCharacter.tscn"
+
+[sub_resource type="Resource" id="Resource_t7qfb"]
+script = ExtResource("2_beyqx")
+CurrentLevel = "res://entities/levels/gyms/ai_gym/ai_gym.tscn"
+ScenePath = ""
+
+[resource]
+script = ExtResource("3_jmibx")
+GlobalData = SubResource("Resource_t7qfb")
+GameData = [SubResource("Resource_ftw21")]

@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://cxegp3asclok0"]
-
-[ext_resource type="Script" path="res://components/character_movement/PlayerLeanState.cs" id="1_rpxot"]
-
-[node name="PlayerLeanState" type="Node"]
-script = ExtResource("1_rpxot")

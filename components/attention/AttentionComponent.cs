@@ -108,7 +108,9 @@ public partial class AttentionComponent : ComponentBase
 			return true;
 		}
 
-		InteractableComponent interactableComponent = CurrentFocus.GetNodeOrNull<InteractableComponent>("Usable") ?? CurrentFocus.GetNodeOrNull<InteractableComponent>("Equippable");
+		// HATE THIS
+		// TODO: UNFUCK THIS ABSOLUTELY
+		InteractableComponent interactableComponent = CurrentFocus.GetNodeOrNull<InteractableComponent>("Usable") ?? CurrentFocus.GetNodeOrNull<InteractableComponent>("Equippable") ?? CurrentFocus.GetNodeOrNull<InteractableComponent>("RangedWeapon");
 		
 		if (interactableComponent != null)
 		{

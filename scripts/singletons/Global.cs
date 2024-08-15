@@ -1,27 +1,21 @@
 using Godot;
 using Godot.Collections;
+using ProjectMina.EQS;
+
 namespace ProjectMina;
 public partial class Global : Node
 {
-	public class DevTools
-	{
-		public DevUI UI;
-	}
-	
 	[Signal] public delegate void PlayerSetEventHandler(PlayerCharacter player);
 	[Signal] public delegate void AICharacterAddedEventHandler(AICharacter character);
 	public static Global Data { get; private set; }
 
-	public static DevTools Dev = new();
+	public static EnvironmentQuerySystem EQS;
+	
 	public PlayerCharacter Player { get; set; }
 	public Array<AICharacter> AICharacters { get; set; } = new();
 	public MainScene MainScene { get; set; }
 	public LevelBase CurrentLevel { get; set; }
 	public AudioManager AudioManager { get; set; }
-	
-	public override void _Ready()
-	{
-	}
 
 	public bool SetPlayer(PlayerCharacter player)
 	{
@@ -32,6 +26,17 @@ public partial class Global : Node
 
 		Player = player;
 		EmitSignal(SignalName.PlayerSet, Player);
+		return true;
+	}
+
+	public bool SetEnvironmentQuerySystem(EnvironmentQuerySystem eqs)
+	{
+		if (EQS != null)
+		{
+			return false;
+		}
+
+		EQS = eqs;
 		return true;
 	}
 

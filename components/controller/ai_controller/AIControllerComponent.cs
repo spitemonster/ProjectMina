@@ -8,9 +8,10 @@ namespace ProjectMina;
 /// 	Functions as the AI stand in for a player. Controls a CharacterBase Pawn in the world, makes decisions based on its knowledge and sensory data and directs its pawn to action.
 /// </summary>
 
-[GlobalClass,Icon("res://_dev/icons/icon--brain.svg")]
+[GlobalClass,Icon("res://resources/images/icons/icon--brain.svg")]
 public partial class AIControllerComponent : ControllerComponent
 {
+	[Signal] public delegate void AgentStateChangedEventHandler(EAgentState agentState);
 	// public AICharacter Pawn { get; private set; }
 	[Export] public BlackboardComponent Blackboard { get; protected set; }
 	[Export] public BehaviorTreeComponent BehaviorTree { get; protected set; }
@@ -24,12 +25,12 @@ public partial class AIControllerComponent : ControllerComponent
 	
 	public Node3D GetCurrentFocus()
 	{
-		return Pawn.CharacterAttention.CurrentFocus;
+		return (Node3D)Blackboard.GetValueAsObject("focus");
 	}
 
 	public Vector3 GetTargetPosition()
 	{
-		return (Vector3)Blackboard.GetValue("target_movement_position");
+		return (Vector3)Blackboard.GetValue("target_position");
 	}
 
 	public override void _Ready()
@@ -44,8 +45,6 @@ public partial class AIControllerComponent : ControllerComponent
 		
 		Pawn = GetOwner<AICharacter>();
 		_aiPawn = GetOwner<AICharacter>();
-		
-		GD.Print("Owner: ", GetOwner().Name);
 		
 		if (EnableDebug)
 		{
@@ -76,8 +75,7 @@ public partial class AIControllerComponent : ControllerComponent
 		{
 			NavigationAgent.TargetReached += () =>
 			{
-				Blackboard?.SetValue("target_movement_position_reached", true);
-				Blackboard?.SetValue("target_movement_position", Vector3.Zero);
+				Blackboard?.SetValue("target_position", Vector3.Zero);
 			};
 		}
 
@@ -90,7 +88,7 @@ public partial class AIControllerComponent : ControllerComponent
 
 		Pawn.CharacterHealth.HealthChanged += (newHealth, wasDamage) =>
 		{
-			Blackboard?.SetValue("current_health", newHealth);
+			Blackboard?.SetValue("health", newHealth);
 
 			if (wasDamage)
 			{
@@ -104,12 +102,24 @@ public partial class AIControllerComponent : ControllerComponent
 		CallDeferred("_SetupBehaviorTree");
 	}
 
+	private void _SetState(EAgentState newState)
+	{
+		if (AgentState == newState)
+		{
+			return;
+		}
+
+		AgentState = newState;
+		EmitSignal(SignalName.AgentStateChanged, (uint)AgentState);
+	}
+
 	private void _LostVisual(CharacterBase character)
 	{
-		AgentState = EAgentState.Idle;
-		Blackboard.SetValueAsInt("current_state", (int)AgentState);
-		Blackboard.SetValueAsObject("current_target", null);
+		_SetState(EAgentState.Idle);
+		Blackboard.SetValueAsInt("state", (int)AgentState);
+		Blackboard.SetValueAsObject("focus", null);
 		_aiPawn.AwarenessLabel.Text = "Idle";
+		_aiPawn.SheathWeapon();
 	}
 
 	private void _InitDev()
@@ -119,17 +129,28 @@ public partial class AIControllerComponent : ControllerComponent
 
 	private void _CharacterNoticed(CharacterBase character)
 	{
-		AgentState = EAgentState.Suspicious;
-		Blackboard.SetValueAsInt("current_state", (int)AgentState);
-		Blackboard.SetValueAsObject("current_target", character);
+		if (AgentState == EAgentState.Combat)
+		{
+			return;
+		}
+		
+		_SetState(EAgentState.Suspicious);
+		Blackboard.SetValueAsInt("state", (int)AgentState);
+		Blackboard.SetValueAsObject("focus", character);
 		_aiPawn.AwarenessLabel.Text = "Suspicious";
 	}
 
 	private void _CharacterSeen(CharacterBase character)
 	{
-		AgentState = EAgentState.Combat;
-		Blackboard.SetValueAsInt("current_state", (int)AgentState);
-		Blackboard.SetValueAsObject("current_target", character);
+		if (AgentState == EAgentState.Combat)
+		{
+			return;
+		}
+		
+		_SetState(EAgentState.Combat);
+		Blackboard.SetValueAsInt("state", (int)AgentState);
+		Blackboard.SetValueAsObject("focus", character);
+		_aiPawn.DrawWeapon();
 		_aiPawn.AwarenessLabel.Text = "Alerted";
 	}
 
@@ -141,39 +162,59 @@ public partial class AIControllerComponent : ControllerComponent
 
 	private void _NoticePointOfInterest(Node3D pointOfInterest)
 	{
-		GD.Print("should notice point of interest");
-		Blackboard.SetValueAsObject("current_target", pointOfInterest);
-		// Blackboard.SetValueAsString("current_state", "suspicious");
+		Blackboard.SetValueAsObject("focus", pointOfInterest);
+		// Blackboard.SetValueAsString("state", "suspicious");
 	}
 	
 	private void _SeePointOfInterest(Node3D pointOfInterest)
 	{
-		GD.Print("should see point of interest");
-		Blackboard.SetValueAsObject("current_target", pointOfInterest);
-		// Blackboard.SetValueAsString("current_state", "alerted");
+		Blackboard.SetValueAsObject("focus", pointOfInterest);
+		// Blackboard.SetValueAsString("state", "alerted");
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
+		if (NavigationAgent == null || Blackboard == null)
+		{
+			return;
+		}
+		
+		Node3D target = (Node3D)Blackboard?.GetValueAsObject("focus");
+		var movementDirection = new Vector2();
+		
+		// movement
 		if (NavigationAgent.TargetPosition != Vector3.Zero && !NavigationAgent.IsTargetReached())
 		{
 			var targetDirection = (NavigationAgent.GetNextPathPosition() - Pawn.GlobalPosition).Normalized();
-			var movementDirection = new Vector2(targetDirection.X, targetDirection.Z);
+			movementDirection = new Vector2(targetDirection.X, targetDirection.Z);
 			
 			Pawn.SetMovementInput(movementDirection);
-			Pawn.SetControlInput(movementDirection);
 		}
 		else
 		{
 			Pawn.SetMovementInput(Vector2.Zero);
-			
-			
 		}
+		
+		// rotation
+		if (target != null)
+		{
+			var lookDirection = (target.GlobalPosition - Pawn.GlobalPosition).Normalized();
+			Pawn.SetControlInput(new Vector2(lookDirection.X, lookDirection.Z));
+		}
+		else
+		{
+			Pawn.SetControlInput(movementDirection);
+		}
+	}
+
+	public void SetFocus(Node3D focus)
+	{
+		Blackboard.SetValueAsObject("focus", focus);
 	}
 
 	public void SetTargetPosition(Vector3 position)
 	{
-		Blackboard.SetValueAsVector3("target_movement_position", position);
+		Blackboard.SetValueAsVector3("target_position", position);
 		NavigationAgent.TargetPosition = position;
 	}
 }

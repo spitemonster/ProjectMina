@@ -11,7 +11,7 @@ public enum EActionStatus: uint
 }
 
 [Tool]
-[GlobalClass, Icon("res://_dev/icons/icon--chart.svg")]
+[GlobalClass, Icon("res://resources/images/icons/icon--chart.svg")]
 public partial class BehaviorTreeComponent : ComponentBase
 {
 

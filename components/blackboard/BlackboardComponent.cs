@@ -5,7 +5,7 @@ using Microsoft.VisualBasic;
 namespace ProjectMina;
 
 [Tool]
-[GlobalClass,Icon("res://_dev/icons/icon--board.svg")]
+[GlobalClass,Icon("res://resources/images/icons/icon--board.svg")]
 public partial class BlackboardComponent : ComponentBase
 {
 	[Signal] public delegate void ValueChangedEventHandler(StringName key, Variant newValue);

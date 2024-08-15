@@ -34,7 +34,6 @@ public partial class HealthComponent : ComponentBase
 	public void TakeDamage(float amount)
 	{
 		ChangeHealth(amount, true);
-		GD.Print(GetOwner().Name, " took damage. Current health: ", CurrentHealth);
 	}
 
 	// force overwrites the health entirely

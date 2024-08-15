@@ -8,11 +8,10 @@ public partial class MoveToTargetPosition : Action
 	private bool _navigationStarted = false;
 	protected override EActionStatus _Tick(AIControllerComponent controller, BlackboardComponent blackboard)
 	{
-		GD.Print("target pos: ", controller.NavigationAgent.TargetPosition);
-
 		var targetPosition = blackboard.GetValueAsVector3(BlackboardKey);
 		var navTarget = controller.NavigationAgent.TargetPosition;
-		if (!_navigationStarted || (_navigationStarted && navTarget != targetPosition))
+		
+		if (!_navigationStarted || (_navigationStarted && navTarget != targetPosition && targetPosition != Vector3.Zero))
 		{
 			_navigationStarted = true;
 			controller.SetTargetPosition(targetPosition);
@@ -20,8 +19,8 @@ public partial class MoveToTargetPosition : Action
 		
 		if (controller.NavigationAgent.IsTargetReached())
 		{
+			Dev.UI.PushDevNotification("target reached");
 			_navigationStarted = false;
-			GD.Print("should finish successfully");
 			return EActionStatus.Succeeded;	
 		}
 

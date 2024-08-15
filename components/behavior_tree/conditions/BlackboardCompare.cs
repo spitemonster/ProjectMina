@@ -35,7 +35,6 @@ public partial class BlackboardCompare : Condition
 	{
 		if (ChildActions.Count < 1)
 		{
-			GD.PushError("no child actions");
 			SetStatus(EActionStatus.Failed);
 			return Status;
 		}
@@ -50,7 +49,6 @@ public partial class BlackboardCompare : Condition
 			return Status;
 		}
 		
-		GD.Print("should run child");
 		ChildActions[0].Tick(controller, blackboard);
 		
 		SetStatus(EActionStatus.Succeeded);
@@ -62,22 +60,15 @@ public partial class BlackboardCompare : Condition
 
 		if (val == null)
 		{
-			GD.Print("Shit!");
 			return false;
 		}
 		
-		GD.Print("original compare value: ", Value);
-		GD.Print("val: ", val);
 		Variant compareValue = val.Execute(new(), val);
-		GD.Print("compare value: ", compareValue);
 		Variant blackboardValue = blackboard.GetValue(BlackboardKey);
 		bool result = false;
 
-		GD.Print("blackboard value: ", blackboardValue);
 		if (val.HasExecuteFailed())
 		{
-			GD.Print("fail");
-			GD.Print(val.GetErrorText());
 			SetStatus(EActionStatus.Failed);
 		}
 
@@ -107,7 +98,6 @@ public partial class BlackboardCompare : Condition
 		}
 
 		_evaluation = result;
-		GD.Print("comparison result: ", result);
 		return result;
 	}
 

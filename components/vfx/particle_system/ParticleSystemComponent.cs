@@ -10,7 +10,7 @@ public partial class ParticleSystemComponent : ComponentBase3D
 	[Export] public bool Loop { get; protected set; } = false;
 	[Export] public bool Autostart { get; protected set; } = false;
 
-	public bool FreeOnFinish = true;
+	[Export] public bool FreeOnFinish = true;
 	public bool Playing { get; private set; } = false;
 
 	protected AnimationPlayer animationPlayer;
@@ -37,12 +37,11 @@ public partial class ParticleSystemComponent : ComponentBase3D
 				if (particle is CpuParticles3D c)
 				{
 					c.Emitting = true;
-					c.Finished += AccumulateCompletedParticles;
+
 				}
 				else if (particle is GpuParticles3D g)
 				{
 					g.Emitting = true;
-					g.Finished += AccumulateCompletedParticles;
 				}
 			}
 
@@ -62,11 +61,13 @@ public partial class ParticleSystemComponent : ComponentBase3D
 				{
 					c.OneShot = !Loop;
 					c.Emitting = false;
+					c.Finished += _AccumulateCompletedParticles;
 				}
 				else if (child is GpuParticles3D g)
 				{
 					g.OneShot = !Loop;
 					g.Emitting = false;
+					g.Finished += _AccumulateCompletedParticles;
 				}
 
 				_particles.Add(child);
@@ -116,7 +117,7 @@ public partial class ParticleSystemComponent : ComponentBase3D
 	}
 
 	// track particles as they finish and emit a signal when all are completed
-	private void AccumulateCompletedParticles()
+	private void _AccumulateCompletedParticles()
 	{
 		_completedParticleCount += 1;
 
@@ -125,6 +126,25 @@ public partial class ParticleSystemComponent : ComponentBase3D
 			_completedParticleCount = 0;
 			EmitSignal(SignalName.Finished);
 			Playing = false;
+
+			if (FreeOnFinish)
+			{
+				foreach (var particle in _particles)
+				{
+					if (particle is CpuParticles3D c)
+					{
+						c.Emitting = false;
+						c.Finished -= _AccumulateCompletedParticles;
+					}
+					else if (particle is GpuParticles3D g)
+					{
+						g.Emitting = false;
+						g.Finished -= _AccumulateCompletedParticles;
+					}
+				}
+				
+				QueueFree();
+			}
 		}
 	}
 }

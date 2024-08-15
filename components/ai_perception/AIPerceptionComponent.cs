@@ -15,6 +15,7 @@ public partial class AIPerceptionComponent : ComponentBase
 
     [ExportGroup("Perception")]
     [Export(PropertyHint.Range, "0,1,.1")] public float DetectionUpdateFrequency { get; private set; } = .1f;
+    [Export] public bool Enabled = true;
     
     [ExportSubgroup("Sight")] 
     [Export] public AISenseSight SightComponent;
@@ -40,6 +41,11 @@ public partial class AIPerceptionComponent : ComponentBase
 
     public override void _Ready()
     {
+        if (!Enabled)
+        {
+            return;
+        }
+
         base._Ready();
 
         _aiOwner = GetOwner<AICharacter>();
@@ -80,6 +86,12 @@ public partial class AIPerceptionComponent : ComponentBase
 
     private void _UpdateDetection()
     {
+
+        if (!Enabled)
+        {
+            return;
+        }
+        
         var agentState = _aiOwner.AIController.AgentState;
         var visibility = 1f;
 
@@ -112,14 +124,14 @@ public partial class AIPerceptionComponent : ComponentBase
             switch (agentState)
             {
                 case EAgentState.Combat:
-                    reductionRate *= .5f;
+                    reductionRate *= .1f;
                     break;
                 case EAgentState.Suspicious:
-                    reductionRate *= .75f;
+                    reductionRate *= .25f;
                     break;
             }
             
-            _detectionLevel -= DetectionReductionRate;
+            _detectionLevel -= reductionRate;
         }
         else
         {
@@ -130,7 +142,7 @@ public partial class AIPerceptionComponent : ComponentBase
 
     private void _CharacterEnterLineOfSight(CharacterBase character)
     {
-        if (_sightTarget != null)
+        if (_sightTarget != null && _sightTargetLineOfSight)
         {
             return;
         }

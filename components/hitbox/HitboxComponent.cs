@@ -5,83 +5,58 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class HitboxComponent : Area3D
 {
+	[Export] public DamageComponent DamageComponent { get; protected set; }
+	
+	public bool CanHit { get; private set; } = false;
 
+	private Array<CharacterBase> _hitCharacters;
+	private Array<Rid> _exclude;
+
+	public void SetExclude(Array<Rid> rid)
+	{
+		_exclude = rid;
+	}
+	
+	public void EnableHit()
+	{
+		CanHit = true;
+	}
+
+	public void DisableHit()
+	{
+		CanHit = false;
+		_hitCharacters = new();
+	}
+	
 	public override void _Ready()
 	{
 		BodyEntered += _CheckHit;
+		_hitCharacters = new();
 	}
 
 	private void _CheckHit(Node3D body)
 	{
-		GD.Print("checking hit+");
-		var damageComponent = body.GetNodeOrNull<DamageComponent>("%DamageComponent");
-		if (damageComponent != null)
+		GD.Print("HIT SOMETHING: ", body.Name);
+		if (!CanHit) return;
+		GD.Print("HIT SOMETHING");
+		if (body is CharacterBase c)
 		{
-			GD.Print("hit by something with damage component");
+			GD.Print("HIT A CHARACTER");
+			// do nothing if this is the wielder
+			if (_exclude.Contains(c.GetRid())) return;
+
+			GD.Print("HIT SOMETHING NOT IN EXCLUDE");
+			if (_hitCharacters.Contains(c)) return;
+			GD.Print("HIT SOMETHING NOT IN HIT CHARACTERS");
+			_hitCharacters.Add(c);
+			GD.Print("hit character: ", c.Name);
+		} else if (body.HasNode("HealthComponent"))
+		{
+			// handle a situation like a breakble door or something like that
+		}
+		else
+		{
+			GD.Print(body.Name);
 		}
 	}
-	// [Export] public double Damage = 10.0;
-	//
-	// public Array<Node3D> Exclude = new();
-	//
-	// [Signal] public delegate void HitCharacterEventHandler(CharacterBase character);
-	// [Signal] public delegate void HitNodeEventHandler(Node3D node);
-	//
-	// public bool CanHit
-	// {
-	// 	get { return _canHit; }
-	// 	set
-	// 	{
-	// 		_canHit = value;
-	// 		if (!_canHit)
-	// 		{
-	// 			_hitNodes.Clear();
-	// 		}
-	// 	}
-	// }
-	//
-	// private Array<Node3D> _hitNodes = new();
-	// private CharacterBase _owner;
-	// private bool _canHit = false;
-	//
-	// public void SetOwner(CharacterBase newOwner)
-	// {
-	// 	_owner = newOwner;
-	// }
-	//
-	// public override void _Ready()
-	// {
-	// 	base._Ready();
-	// 	if (!Active)
-	// 	{
-	// 		return;
-	// 	}
-	//
-	// 	// BodyEntered += CheckHit;
-	// }
-	//
-	// private void CheckHit(Node3D body)
-	// {
-	// 	// if we already hit the body, the body should be ignored
-	// 	if (_hitNodes.Contains(body) || Exclude.Contains(body))
-	// 	{
-	// 		return;
-	// 	}
-	//
-	// 	// this feels like something else should happen
-	// 	if (!CanHit)
-	// 	{
-	// 		return;
-	// 	}
-	//
-	// 	_hitNodes.Add(body);
-	//
-	// 	if (body is CharacterBase c && c != _owner)
-	// 	{
-	// 		c.CharacterHealth.ChangeHealth(Damage, true);
-	// 		EmitSignal(SignalName.HitCharacter, c);
-	// 	}
-	//
-	// 	EmitSignal(SignalName.HitNode, body);
-	// }
 }

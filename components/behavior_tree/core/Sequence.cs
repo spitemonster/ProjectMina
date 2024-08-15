@@ -4,24 +4,21 @@ using Godot;
 namespace ProjectMina.BehaviorTree;
 
 [Tool]
-[GlobalClass,Icon("res://_dev/icons/icon--sequence.svg")]
+[GlobalClass,Icon("res://resources/images/icons/icon--sequence.svg")]
 public partial class Sequence : Composite
 {
 	
 	private int _runningIndex = 0;
 	protected override EActionStatus _Tick(AIControllerComponent controller, BlackboardComponent blackboard)
 	{
-		GD.Print("child actions: ", ChildActions);
 		foreach (var action in ChildActions)
 		{
 			// skip 
 			if (action.GetIndex() < _runningIndex)
 			{
-				GD.Print("skipping");
 				continue;
 			}
 			
-			GD.Print("ticking action: ", action.Name);
 			var result = action.Tick(controller, blackboard);
 		
 			switch (result)

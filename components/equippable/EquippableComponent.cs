@@ -4,7 +4,6 @@ using Godot.Collections;
 namespace ProjectMina;
 public enum EEquipmentType
 {
-	None,
 	Weapon,
 	Tool
 };
@@ -16,18 +15,16 @@ public partial class EquippableComponent : InteractableComponent
 	[Signal] public delegate void EquippedEventHandler(CharacterBase character, Node3D slot);
 	[Signal] public delegate void UnequippedEventHandler(CharacterBase previousCharacter, Node3D slot);
 	[Signal] public delegate void UsedEventHandler(CharacterBase character);
-
-	[Export] public MeshInstance3D Mesh;
 	
-	public EEquipmentType EquipmentType { get; protected set; } = EEquipmentType.None;
+	public EEquipmentType EquipmentType { get; protected set; } = EEquipmentType.Tool;
 	public Node3D EquipmentSlot;
 	
 	public bool CanEquip { get; private set; } = true;
 	public bool CanUse { get; private set; } = true;
 
-	protected CharacterBase Wielder;
-	[Export] protected RigidBody3D Body;
-
+	protected RigidBody3D Body;
+	public CharacterBase Wielder { get; protected set; }
+	
 	private uint _defaultCollisionLayer;
 	private uint _defaultCollisionMask;
 	private uint _defaultVisibilityLayer;
@@ -57,22 +54,30 @@ public partial class EquippableComponent : InteractableComponent
 		return Wielder;
 	}
 
-	public virtual void Equip(CharacterBase character, Node3D slot)
+	public virtual void Equip(CharacterBase equippingCharacter, Node3D slot)
 	{
-		GD.Print("equipping");
-		Wielder = character;
+		Wielder = equippingCharacter;
 		_DisableEquip();
 		Body.Freeze = true;
 		Body.CollisionLayer = 0;
 		Body.CollisionMask = 0;
+		
 		Body.Reparent(slot);
+		//
+		// Body.RemoveParent();
+		// slot.AddChild(Body);
+		
 		Body.GlobalTransform = slot.GlobalTransform;
 
 		DebugDraw.Sphere(slot.GlobalTransform, .1f, Colors.Pink, 3f);
-		Mesh.SetLayerMaskValue(1, false);
-		Mesh.SetLayerMaskValue(2, true);
+
+		if (Mesh != null)
+		{
+			Mesh.SetLayerMaskValue(1, false);
+			Mesh.SetLayerMaskValue(2, true);	
+		}
 		
-		EmitSignal(SignalName.Equipped, character, slot);
+		EmitSignal(SignalName.Equipped, equippingCharacter, slot);
 	}
 
 	public virtual void Unequip(CharacterBase character, Node3D slot)
@@ -84,9 +89,12 @@ public partial class EquippableComponent : InteractableComponent
 		Body.CollisionLayer = _defaultCollisionLayer;
 		Body.CollisionMask = _defaultCollisionMask;
 		Body.Reparent(Global.Data.CurrentLevel);
-		
-		Mesh.SetLayerMaskValue(1, true);
-		Mesh.SetLayerMaskValue(2, false);
+
+		if (Mesh != null)
+		{
+			Mesh.SetLayerMaskValue(1, true);
+			Mesh.SetLayerMaskValue(2, false);
+		}
 		
 		EmitSignal(SignalName.Unequipped, character, slot);
 	}
@@ -103,20 +111,24 @@ public partial class EquippableComponent : InteractableComponent
 
 	public override void _Ready()
 	{
+		Body = GetOwner<RigidBody3D>();
+		
 		if (Body == null)
 		{
-			GD.PushError("Equippable component attached to non rigidbody.");
+			GD.PushError("Equippable component parent: ", Owner.Name, " is not RigidBody3D.");
+			_DisableEquip();
 			return;
 		}
 
 		if (Mesh == null)
 		{
-			GD.PushError("Equippable component does not have a mesh.");
 			return;
 		}
 
 		_defaultCollisionLayer = Body.CollisionLayer;
 		_defaultCollisionMask = Body.CollisionMask;
 		_defaultVisibilityLayer = Mesh.Layers;
+		
+		base._Ready();
 	}
 }

@@ -8,9 +8,9 @@ public partial class CharacterMovementState : State
 {
 	protected CharacterBase Character;
 
-	public AnimationTree AnimTree;
-	public AnimationNodeBlendTree AnimTreeRoot;
-	public AnimationNodeStateMachinePlayback AnimStateMachine;
+	public CharacterAnimationTree AnimTree;
+	public AnimationRootNode AnimTreeRoot;
+	public AnimationNodeStateMachinePlayback AnimStateMachineRoot;
 	
 	public CharacterMovementStateMachine MovementStateMachine;
 	
@@ -27,8 +27,7 @@ public partial class CharacterMovementState : State
 	public virtual void SetupAnimComponents()
 	{
 		AnimTree = Character.AnimTree;
-		AnimTreeRoot = (AnimationNodeBlendTree)AnimTree.GetTreeRoot();
-		AnimStateMachine = (AnimationNodeStateMachinePlayback)Character.AnimTree.Get("parameters/movement_anims/playback");
+		AnimTreeRoot = AnimTree.GetTreeRoot();
 	}
 	
 	public virtual bool Setup(CharacterBase character)

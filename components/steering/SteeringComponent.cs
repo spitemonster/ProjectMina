@@ -2,7 +2,7 @@ using Godot;
 
 namespace ProjectMina;
 
-[GlobalClass,Icon("res://_dev/icons/icon--steering.svg")]
+[GlobalClass,Icon("res://resources/images/icons/icon--steering.svg")]
 public partial class SteeringComponent : ComponentBase3D
 {
     [Export] protected RayCast3D ForwardCast;
@@ -22,7 +22,7 @@ public partial class SteeringComponent : ComponentBase3D
     // TODO: figure out why character steers into walls in hallways
     public Vector3 CalculateSteeringVelocity(Vector3 velocity)
     {
-        if (!SteeringEnabled)
+        if (!SteeringEnabled || !Active)
         {
             return velocity;
         }

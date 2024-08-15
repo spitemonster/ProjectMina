@@ -25,7 +25,6 @@ public partial class Wait : Action
 
 		_waitTimer.Timeout += () =>
 		{
-			GD.Print("SHOULD HAVE TIMED OUT");
 			_timerFinished = true;
 		};
 		
@@ -36,6 +35,7 @@ public partial class Wait : Action
 	{
 		if (!_timerStarted)
 		{
+			Dev.UI.PushDevNotification("am start wait timer");
 			_waitTimer.Start();
 			_timerStarted = true;
 			_timerFinished = false;

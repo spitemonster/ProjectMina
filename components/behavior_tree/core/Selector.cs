@@ -4,13 +4,11 @@ using Godot;
 namespace ProjectMina.BehaviorTree;
 
 [Tool]
-[GlobalClass,Icon("res://_dev/icons/icon--selector.svg")]
+[GlobalClass,Icon("res://resources/images/icons/icon--selector.svg")]
 public partial class Selector : Composite
 {
 	protected override EActionStatus _Tick(AIControllerComponent controller, BlackboardComponent blackboard)
 	{
-		GD.Print("child count: ", GetChildCount());
-		
 		foreach (Action child in GetChildren())
 		{
 			if (child == null)
@@ -19,10 +17,6 @@ public partial class Selector : Composite
 			}
 
 			EActionStatus status = child.Tick(controller, blackboard);
-			
-			
-			GD.Print("Ticking Action: ", child.Name, ". Status: ", status);
-
 			if (status == EActionStatus.Succeeded)
 			{
 				SetStatus(EActionStatus.Succeeded);

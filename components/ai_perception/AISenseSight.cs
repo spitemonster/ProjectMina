@@ -18,6 +18,7 @@ public partial class AISenseSight : AISenseComponent
 	// [Export] protected float SeenThreshold = 20f;
 
 	[Export] protected bool EnableDebug = false;
+	[Export] protected bool Enabled = true;
 
 	// private Array<AIStimulusSight> _stimuli = new();
 	private Array<Node3D> _nodesInSightArea = new();
@@ -28,11 +29,15 @@ public partial class AISenseSight : AISenseComponent
 	
 	public override void _Ready()
 	{
-		BodyEntered += _CheckOverlap;
-		BodyExited += _CheckExitOverlap;
+		if (Enabled)
+		{
+			BodyEntered += _CheckOverlap;
+			BodyExited += _CheckExitOverlap;
 
-		CallDeferred("_InitDevMonitor");
-		CallDeferred("_CheckInitialOverlaps");
+			CallDeferred("_InitDevMonitor");
+			CallDeferred("_CheckInitialOverlaps");	
+		}
+		
 
 		_owner = GetOwner<AICharacter>();
 	}
@@ -197,6 +202,11 @@ public partial class AISenseSight : AISenseComponent
 
 	private bool _RunSightTrace(Node3D target)
 	{
+		if (!Enabled)
+		{
+			return false;
+		}
+		
 		if (target == null)
 		{
 			if (EnableDebug) {
@@ -215,9 +225,10 @@ public partial class AISenseSight : AISenseComponent
 			From = GlobalPosition,
 			To = GlobalPosition + dir * dist,
 			Exclude = new() { GetRid(), _owner.GetRid() },
-			CollideWithAreas = true,
+			CollideWithAreas = false,
 			CollideWithBodies = true,
-			CollisionMask = 0b00000000_00001000_00000000_00000011
+			CollisionMask = 0b00000000_00001000_00000000_00000011,
+			
 		};
 
 		var res = spaceState.IntersectRay(traceQuery);

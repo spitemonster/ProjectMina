@@ -1,7 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bl8a735gawj58"]
-
-[ext_resource type="Script" path="res://components/character_movement/CharacterLandedState.cs" id="1_tyy4f"]
-
-[node name="CharacterLandedState" type="Node"]
-process_mode = 4
-script = ExtResource("1_tyy4f")

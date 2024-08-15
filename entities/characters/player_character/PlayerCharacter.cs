@@ -2,11 +2,14 @@ using System.Diagnostics;
 using System.Linq;
 using Godot;
 using Godot.Collections;
-using ProjectMina.EnvironmentQuerySystem;
+using ProjectMina.EQS;
 
 namespace ProjectMina;
 public partial class PlayerCharacter : CharacterBase
 {
+
+	[Signal] public delegate void WeaponEquippedEventHandler(EWeaponType weaponType);
+	
 	[Export] public Camera3D PrimaryCamera { get; protected set; }
 	
 	[ExportSubgroup("Grabbing")]
@@ -18,19 +21,21 @@ public partial class PlayerCharacter : CharacterBase
 	
 	[ExportSubgroup("Movement")]
 	[Export] public CharacterMovementStateMachine MovementStateMachine;
+
+	[Export] protected ShapeCast3D AttentionCast;
 	
 	public AnimationNodeTimeScale MovementAnimsTimeScale { get; protected set; }
-	
 	public float LookSpeedMultiplier = 1;
 	public Vector3 CameraForwardVector { get; private set; }
-
 	// use this to ignore the player when doing ray casts. probably a better way.
 	private Array<Rid> _exclude = new();
-	
 	private DevMonitor _floorMonitor;
 	private DevMonitor _floorSurfaceMonitor;
-
 	private RayCast3D _aimCast;
+
+	private Node3D _currentFocus;
+
+	private PlayerAnimationComponent _animationComponent;
 	
 	public override float GetVisibility()
 	{
@@ -59,13 +64,13 @@ public partial class PlayerCharacter : CharacterBase
 		
 		_exclude.Add(GetRid());
 
-		CharacterAttention?.AddExclude(this);
-
 		PrimaryCamera.MakeCurrent();
 
 		AnimTree.Active = true;
 
 		_aimCast = GetNode<RayCast3D>("%AimCast");
+
+		_animationComponent = GetNode<PlayerAnimationComponent>("%AnimationComponent");
 		
 		CallDeferred("InitEvents");
 	}
@@ -99,6 +104,11 @@ public partial class PlayerCharacter : CharacterBase
 		{
 			
 		};
+
+		CharacterEquipment.WeaponEquipped += (weaponComponent) =>
+		{
+			EmitSignal(SignalName.WeaponEquipped, (int)weaponComponent.WeaponType);
+		};
 	}
 
 	private void _OnActionPressed(StringName action)
@@ -106,28 +116,19 @@ public partial class PlayerCharacter : CharacterBase
 		switch (action)
 		{
 			case "use":
-				var start = PrimaryCamera.GlobalPosition;
-				// for (int i = 0; i < 12; i++)
-				// {
-				// 	var randVec = Utilities.Math.GetRandomConeVector(CameraForwardVector, 3f);
-				// 	var end = start + randVec * 25.0f;
-				// 	Cast.Ray(GetWorld3D().DirectSpaceState, start, end, new() {GetRid()}, true, true, 10.0f);
-				// }
-				if (CharacterEquipment.IsWeaponEquipped())
+				if (CharacterEquipment.IsWeaponEquipped && CanAttack)
 				{
-					CharacterEquipment.UseWeapon();
+					_animationComponent.PlayAttack();
 				}
 				break;
 			case "equip":
-				if (CharacterAttention.CurrentFocus != null &&
-				    CharacterEquipment.CanEquip(CharacterAttention.CurrentFocus) is { } f)
+				if (_currentFocus != null && _currentFocus is RigidBody3D r && 
+				    EquipmentComponent.CanEquip(r))
 				{
-					CharacterEquipment.Equip(f);
+					CharacterEquipment.Equip(r);
 				}
 				break;
 			case "run":
-				// CharacterMovement.ToggleSprint();
-				// _wishSprint = true;
 				MovementStateMachine.RequestTransition(
 					MovementStateMachine.CurrentState == "Sprint" ? "Walk" : "Sprint");
 				break;
@@ -136,7 +137,6 @@ public partial class PlayerCharacter : CharacterBase
 				break;
 			case "stealth":
 				MovementStateMachine.RequestTransition(MovementStateMachine.CurrentState == "Crouch" ? "Walk" : "Crouch");
-				// _controlContext.WishCrouch = true;
 				break;
 			case "interact":
 				if (GrabComponent.IsGrabbing())
@@ -152,9 +152,31 @@ public partial class PlayerCharacter : CharacterBase
 				MovementStateMachine.RequestTransition("Lean");
 				break;
 			case "reload":
-				if (CharacterEquipment.IsWeaponEquipped())
+				if (CharacterEquipment.IsWeaponEquipped)
 				{
-					CharacterEquipment.ReloadWeapon();
+					_animationComponent.PlayReload();
+				}
+				else
+				{
+					GD.Print("problem!");
+				}
+				break;
+		}
+	}
+	
+	private void _OnActionReleased(StringName action, bool actionCompleted)
+	{
+		switch (action)
+		{
+			case "jump":
+				break;
+			case "lean_left":
+				MovementStateMachine.RequestTransition("Idle");
+				break;
+			case "use":
+				if (CharacterEquipment.IsWeaponEquipped && CharacterEquipment.EquippedWeapon is RangedWeaponComponent)
+				{
+					CharacterEquipment.EndUseWeapon();
 				}
 				break;
 		}
@@ -163,16 +185,15 @@ public partial class PlayerCharacter : CharacterBase
 	private void _OnActionHoldStarted(StringName action)
 	{
 		// if the character is holding on interact it means they're trying to grab something
-		if (action == "interact" && CharacterAttention.CurrentFocus != null)
+		if (action == "interact" && _currentFocus != null)
 		{
 			// if we can't grab the item, interact with it as normal and prevent the hold from executing
-			if (!GrabbingComponent.CanGrab(CharacterAttention.CurrentFocus) &&
+			if (!GrabbingComponent.CanGrab(_currentFocus) &&
 			    CharacterInteraction.CanInteract())
 			{
 				CharacterInteraction.Interact();
 				PlayerInput.Manager.ClearActionHold(action);
 			}
-
 		}
 	}
 
@@ -187,28 +208,10 @@ public partial class PlayerCharacter : CharacterBase
 			}
 
 
-			if (CharacterAttention.CurrentFocus != null && GrabbingComponent.CanGrab(CharacterAttention.CurrentFocus))
+			if (_currentFocus != null && GrabbingComponent.CanGrab(_currentFocus))
 			{
-				GrabComponent.GrabItem((RigidBody3D)CharacterAttention.CurrentFocus);
+				GrabComponent.GrabItem((RigidBody3D)_currentFocus);
 			}
-		}
-	}
-
-	private void _OnActionReleased(StringName action, bool actionCompleted)
-	{
-		switch (action)
-		{
-			case "jump":
-				break;
-			case "lean_left":
-				MovementStateMachine.RequestTransition("Idle");
-				break;
-			case "use":
-				if (CharacterEquipment.IsWeaponEquipped())
-				{
-					CharacterEquipment.EndUseWeapon();
-				}
-				break;
 		}
 	}
 
@@ -222,11 +225,16 @@ public partial class PlayerCharacter : CharacterBase
 				return;
 			}
 			
-			if (CharacterAttention.CurrentFocus != null && GrabbingComponent.CanGrab(CharacterAttention.CurrentFocus))
+			if (_currentFocus != null && GrabbingComponent.CanGrab(_currentFocus))
 			{
-				GrabComponent.GrabItem((RigidBody3D)CharacterAttention.CurrentFocus);
+				GrabComponent.GrabItem((RigidBody3D)_currentFocus);
 			}
 		}
+	}
+
+	public override void Attack()
+	{
+		base.Attack();
 	}
 
 	public override void _Process(double delta)
@@ -242,6 +250,23 @@ public partial class PlayerCharacter : CharacterBase
 
 		Head.Rotation = _ClampHeadYaw(Head.Rotation.X);
 		ControlInput = Vector2.Zero;
+
+		if (CharacterEquipment.EquippedWeapon is RangedWeaponComponent r)
+		{
+			var target = new Vector3();
+		
+			_aimCast.ForceRaycastUpdate();
+			if (_aimCast.IsColliding())
+			{
+				target = _aimCast.GetCollisionPoint();
+			}
+			else
+			{
+				target = -PrimaryCamera.GlobalBasis.Z * 15f + PrimaryCamera.GlobalPosition;
+			}
+			
+			r.Aim(target);
+		}
 	}
 
 	private Vector3 _ClampHeadYaw(float baseHeadYaw, float min = -80f, float max = 80f)
@@ -260,24 +285,86 @@ public partial class PlayerCharacter : CharacterBase
 		_floorSurfaceMonitor?.SetValue(CurrentFloorMaterial != null ? CurrentFloorMaterial.ResourceName : "None");
 		
 		Velocity = MovementStateMachine.GetCharacterVelocity(MovementInput, delta);
-		if (CharacterEquipment.IsWeaponEquipped() && CharacterEquipment.IsRangedWeaponEquipped())
+
+		AttentionCast.ForceShapecastUpdate();
+
+		Node3D focus = null;
+		
+		Array<Node3D> colliderResults = new();
+
+		for (var i = 0; i < AttentionCast.CollisionResult.Count; i++)
 		{
-			Vector3 aimPosition = Vector3.Zero;
-			var weapon = (RangedWeaponComponent)CharacterEquipment.GetWeapon();
-			if (_aimCast.IsColliding())
+			if (AttentionCast.GetCollider(i) is Node3D n)
 			{
-				aimPosition = _aimCast.GetCollisionPoint();
+				colliderResults.Add(n);
 			}
-			else
-			{
-				aimPosition = _aimCast.TargetPosition + _aimCast.GlobalPosition;
-			}
-			
-			weapon.Aim(aimPosition);
 		}
 		
-		base._PhysicsProcess(delta);
+		foreach (var result in colliderResults)
+		{
+			if (!_TargetHasFocusableNode(result) && result is not RigidBody3D) continue;
+			focus = result;
+			break;
+		}
+
+		_SetFocus(focus);
 		
+		base._PhysicsProcess(delta);
+	}
+
+	private void _SetFocus(Node3D target)
+	{
+		if (target == _currentFocus)
+		{
+			return;
+		}
+		
+		if (target == null && _currentFocus != null)
+		{
+			_BreakFocus();
+			return;
+		}
+		
+		EmitSignal(SignalName.FocusChanged, target, _currentFocus);
+		_currentFocus = target;
+		
+		if (_GetTargetInteractableComponent(_currentFocus) is { } n)
+		{
+			n.ReceiveFocus(this);
+		}
+	}
+
+	private void _BreakFocus()
+	{
+		// EmitSignal(SignalName.FocusBroken, _currentFocus);
+		EmitSignal(SignalName.FocusChanged, (Node3D)null, _currentFocus );
+		if (_GetTargetInteractableComponent(_currentFocus) is { } n)
+		{
+			n.LoseFocus();
+		}
+		
+		_currentFocus = null;
+	}
+
+	private static bool _TargetHasFocusableNode(Node3D target)
+	{
+		return target.HasNode("Interactable") || target.HasNode("Equippable") || target.HasNode("Tool") ||
+		       target.HasNode("Weapon") || target.HasNode("RangedWeapon") || target.HasNode("MeleeWeapon");
+	}
+	
+	private static InteractableComponent _GetTargetInteractableComponent(Node3D target)
+	{
+		string[] nodeTests = {"Interactable", "Equippable", "Tool", "Weapon", "RangedWeapon", "MeleeWeapon", "Usable"};
+
+		foreach (var test in nodeTests)
+		{
+			if (target.GetNodeOrNull(test) is InteractableComponent i)
+			{
+				return i;
+			}
+		}
+
+		return null;
 	}
 
 	public void Save(SavedGame savedGame)

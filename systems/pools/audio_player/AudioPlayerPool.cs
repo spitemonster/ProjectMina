@@ -19,6 +19,15 @@ public partial class AudioPlayerPool : PoolBase
     // tracks instance ids of all players (queues and players) created and managed by this pool
     private Array<ulong> _managedPlayers = new();
 
+    public void PlaySoundAtPosition(Vector3 position, AudioStream stream)
+    {
+        var player = GetPlayer3D();
+        Global.Data.MainScene.AddChild(player);
+        player.SetStream(stream);
+        player.GlobalPosition = position;
+        player.Play();
+    }
+
     public SoundQueue3D GetQueue3D()
     {
         SoundQueue3D q;

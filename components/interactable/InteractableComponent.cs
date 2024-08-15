@@ -19,15 +19,47 @@ public abstract partial class InteractableComponent : ComponentBase
 	[Signal] public delegate void InteractionCanceledEventHandler();
 	[Signal] public delegate void InteractionDisabledEventHandler();
 	[Signal] public delegate void InteractionEnabledEventHandler();
+	
+	[Export] public MeshInstance3D Mesh { get; protected set; }
+
+	protected ShaderMaterial MeshMaterial;
 
 	public bool CanInteract { get; protected set; } = true;
 	private bool _interacting = false;
 	private CharacterBase _interactingCharacter;
 	
 	[Export] public string PromptOverride;
-	
-	public virtual void ReceiveFocus(CharacterBase character) {}
-	public virtual void LoseFocus() {}
+
+	public override void _Ready()
+	{
+		base._Ready();
+
+		if (Mesh != null)
+		{
+			MeshMaterial = (ShaderMaterial)Mesh.GetActiveMaterial(0);
+		}
+	}
+
+	public virtual void ReceivePlayerFocus(PlayerCharacter player)
+	{
+		GD.Print(Owner.Name, " received player focus.");
+		MeshMaterial?.SetShaderParameter("highlight", true);
+	}
+
+	public virtual void LosePlayerFocus()
+	{
+		MeshMaterial?.SetShaderParameter("highlight", false);
+	}
+
+	public virtual void ReceiveFocus(CharacterBase character)
+	{
+		MeshMaterial?.SetShaderParameter("highlight", true);
+	}
+
+	public virtual void LoseFocus()
+	{
+		MeshMaterial?.SetShaderParameter("highlight", false);
+	}
 	public virtual bool Interact(CharacterBase character)
 	{
 		if (!CanInteract || _interacting)

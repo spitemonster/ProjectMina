@@ -1,0 +1,53 @@
+[gd_resource type="AudioBusLayout" load_steps=5 format=3 uid="uid://cy38grtuw36gk"]
+
+[sub_resource type="AudioEffectLimiter" id="AudioEffectLimiter_sx2c3"]
+resource_name = "Limiter"
+
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_tfc60"]
+resource_name = "Reverb"
+
+[sub_resource type="AudioEffectPanner" id="AudioEffectPanner_0v6n2"]
+resource_name = "Panner"
+
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_nws5q"]
+resource_name = "Reverb"
+
+[resource]
+bus/0/effect/0/effect = SubResource("AudioEffectLimiter_sx2c3")
+bus/0/effect/0/enabled = true
+bus/1/name = &"PlayerEnvironment"
+bus/1/solo = false
+bus/1/mute = false
+bus/1/bypass_fx = false
+bus/1/volume_db = -0.130497
+bus/1/send = &"Master"
+bus/1/effect/0/effect = SubResource("AudioEffectReverb_tfc60")
+bus/1/effect/0/enabled = false
+bus/1/effect/1/effect = SubResource("AudioEffectPanner_0v6n2")
+bus/1/effect/1/enabled = false
+bus/2/name = &"TestRoom1"
+bus/2/solo = false
+bus/2/mute = false
+bus/2/bypass_fx = false
+bus/2/volume_db = 0.0
+bus/2/send = &"Master"
+bus/2/effect/0/effect = SubResource("AudioEffectReverb_nws5q")
+bus/2/effect/0/enabled = true
+bus/3/name = &"TestRoom2"
+bus/3/solo = false
+bus/3/mute = false
+bus/3/bypass_fx = false
+bus/3/volume_db = 0.0
+bus/3/send = &"Master"
+bus/4/name = &"TestRoom3"
+bus/4/solo = false
+bus/4/mute = false
+bus/4/bypass_fx = false
+bus/4/volume_db = 0.0
+bus/4/send = &"Master"
+bus/5/name = &"TestRoom4"
+bus/5/solo = false
+bus/5/mute = false
+bus/5/bypass_fx = false
+bus/5/volume_db = 0.0
+bus/5/send = &"Master"

@@ -4,14 +4,14 @@ using System.Linq;
 using Godot;
 using System.Threading.Tasks;
 using Godot.Collections;
-using ProjectMina.EnvironmentQuerySystem;
+using ProjectMina.EQS;
 namespace ProjectMina.BehaviorTree;
 
 [Tool]
 [GlobalClass]
 public partial class RunEnvironmentQuery : Action
 {
-    private Query _query;
+    private EnvironmentQuery _query;
     private int _queryRequestId = 0;
     
     protected override EActionStatus _Tick(AIControllerComponent controller, BlackboardComponent blackboard)
@@ -70,7 +70,7 @@ public partial class RunEnvironmentQuery : Action
             return;
         }
         
-        _query = GetChild<Query>(0);
+        _query = GetChild<EnvironmentQuery>(0);
         
         if (_query is null)
         {
@@ -82,7 +82,7 @@ public partial class RunEnvironmentQuery : Action
     {
         Godot.Collections.Array<string> warnings = new();
 		
-        if (GetChildCount() == 0 || GetChildCount() > 1 || GetChild<Query>(0) == null)
+        if (GetChildCount() == 0 || GetChildCount() > 1 || GetChild<EnvironmentQuery>(0) == null)
         {
             warnings.Add("A RunEnvironmentQuery node must have precisely one child Query node.");
         }
