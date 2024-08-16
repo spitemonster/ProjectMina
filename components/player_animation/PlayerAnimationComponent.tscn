@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://binb02otifnkr"]
+
+[ext_resource type="Script" path="res://components/player_animation/PlayerAnimationComponent.cs" id="1_ofcor"]
+
+[node name="PlayerAnimationComponent" type="Node"]
+script = ExtResource("1_ofcor")

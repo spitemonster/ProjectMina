@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://babghcyd40teh"]
+
+[ext_resource type="Script" path="res://systems/managers/environment/EnvironmentManager.cs" id="1_dpln3"]
+
+[node name="EnvironmentManager" type="Node"]
+script = ExtResource("1_dpln3")

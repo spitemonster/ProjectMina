@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://dysro6arc1lib"]
+
+[ext_resource type="Script" path="res://entities/combination_lock/CombinationLock.cs" id="1_08pqg"]
+[ext_resource type="PackedScene" uid="uid://c5i6uhhepmips" path="res://entities/combination_lock/Tumbler.tscn" id="1_ategx"]
+
+[node name="CombinationLock" type="Node3D" node_paths=PackedStringArray("Tumblers")]
+script = ExtResource("1_08pqg")
+Combination = "123"
+Tumblers = [NodePath("TumblerOne"), NodePath("TumblerTwo"), NodePath("TumblerThree")]
+
+[node name="TumblerOne" parent="." node_paths=PackedStringArray("_usableComponent") instance=ExtResource("1_ategx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0, 0)
+_usableComponent = NodePath("StaticBody3D/Usable")
+
+[node name="TumblerTwo" parent="." node_paths=PackedStringArray("_usableComponent") instance=ExtResource("1_ategx")]
+_usableComponent = NodePath("StaticBody3D/Usable")
+
+[node name="TumblerThree" parent="." node_paths=PackedStringArray("_usableComponent") instance=ExtResource("1_ategx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0, 0)
+_usableComponent = NodePath("StaticBody3D/Usable")

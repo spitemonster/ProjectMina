@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://c5qubv3d4m3yt"]
+
+[ext_resource type="Script" path="res://components/character_movement/movement_states/player/PlayerGrabState.cs" id="1_ucbf7"]
+
+[sub_resource type="Curve" id="Curve_gc20n"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.330729, 0.498497), 0.0, 0.0, 0, 0, Vector2(1, 0.0193423), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_k6bm3"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.25, 0.497099), 0.0, 0.0, 0, 0, Vector2(0.901515, 0.0507736), 0.0, 0.0, 0, 0, Vector2(1, 0.0193423), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="PlayerGrabState" type="Node"]
+script = ExtResource("1_ucbf7")
+SpeedMultiplierCurve = SubResource("Curve_gc20n")
+LookMultiplierCurve = SubResource("Curve_k6bm3")

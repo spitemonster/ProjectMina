@@ -1,0 +1,31 @@
+[gd_scene load_steps=7 format=3 uid="uid://cjcubutoknxjj"]
+
+[ext_resource type="Script" path="res://systems/environment_query/core/Query.cs" id="1_6sql5"]
+[ext_resource type="PackedScene" uid="uid://un5u0m7rygr7" path="res://systems/environment_query/contexts/GridAroundQuerier.tscn" id="2_xgw5k"]
+[ext_resource type="Script" path="res://systems/environment_query/tests/Debug.cs" id="3_8phlg"]
+[ext_resource type="PackedScene" uid="uid://fatnqjju8y64" path="res://systems/environment_query/tests/IsPointReachable.tscn" id="3_gjwu0"]
+[ext_resource type="PackedScene" uid="uid://bcwu1qjfddjgu" path="res://systems/environment_query/tests/IdealDistance.tscn" id="4_btvjo"]
+[ext_resource type="Script" path="res://systems/environment_query/tests/SelectRandom.cs" id="5_avfoe"]
+
+[node name="ReachablePoint" type="Node"]
+script = ExtResource("1_6sql5")
+
+[node name="GridAroundQuerier" parent="." instance=ExtResource("2_xgw5k")]
+HalfExtent = Vector3(5, 5, 5)
+
+[node name="Debug" type="Node" parent="GridAroundQuerier"]
+script = ExtResource("3_8phlg")
+TestType = 1
+
+[node name="IsPointReachable" parent="GridAroundQuerier" instance=ExtResource("3_gjwu0")]
+TestType = 1
+
+[node name="IdealDistance" parent="GridAroundQuerier" instance=ExtResource("4_btvjo")]
+MinDistance = 3.0
+MaxDistance = 5.5
+TestType = 1
+
+[node name="SelectRandom" type="Node" parent="GridAroundQuerier"]
+script = ExtResource("5_avfoe")
+FromTop = 20
+TestType = 1

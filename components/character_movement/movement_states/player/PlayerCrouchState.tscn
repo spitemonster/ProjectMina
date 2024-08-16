@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2uvnp4xb4lbc"]
+
+[ext_resource type="Script" path="res://components/character_movement/movement_states/player/PlayerCrouchState.cs" id="1_k4es4"]
+
+[node name="PlayerCrouchState" type="Node"]
+script = ExtResource("1_k4es4")
+AnyPreviousState = false
+AllowedPreviousStates = [&"Walk", &"Idle", &"Sprint"]
+AnyNextState = false
+AllowedNextStates = [&"Walk", &"Jump", &"Sprint", &"Idle"]

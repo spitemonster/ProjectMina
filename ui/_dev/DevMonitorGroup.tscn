@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://duckmvwpxoa23"]
+
+[ext_resource type="Script" path="res://ui/_dev/DevMonitorGroup.cs" id="1_kjyg7"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mvxh8"]
+font_size = 24
+
+[node name="DevMonitorGroup" type="VBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_kjyg7")
+
+[node name="Heading" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Monitor Group"
+label_settings = SubResource("LabelSettings_mvxh8")

@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://c37sghih0u831"]
+
+[ext_resource type="Script" path="res://entities/levels/level_base/LevelBase.cs" id="1_2guyt"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_o7sw1"]
+
+[node name="LevelBase" type="Node3D"]
+script = ExtResource("1_2guyt")
+
+[node name="PlayerStart" type="Marker3D" parent="."]
+unique_name_in_owner = true
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_o7sw1")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+unique_name_in_owner = true
+shadow_enabled = true

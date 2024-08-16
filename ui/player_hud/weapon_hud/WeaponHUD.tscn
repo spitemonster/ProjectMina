@@ -1,0 +1,57 @@
+[gd_scene load_steps=4 format=3 uid="uid://da43isb7b6wlh"]
+
+[ext_resource type="Script" path="res://ui/player_hud/weapon_hud/WeaponHUD.cs" id="1_2q63f"]
+
+[sub_resource type="Theme" id="Theme_r8jmd"]
+default_font_size = 48
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_44bbw"]
+color = Color(1, 1, 1, 1)
+thickness = 5
+
+[node name="WeaponHUD" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme = SubResource("Theme_r8jmd")
+script = ExtResource("1_2q63f")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = -43.0
+offset_top = -162.0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 8
+
+[node name="AmmoCounter" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CurrentAmmoCounter" type="Label" parent="PanelContainer/MarginContainer/AmmoCounter"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/MarginContainer/AmmoCounter"]
+layout_mode = 2
+theme_override_constants/separation = 10
+theme_override_styles/separator = SubResource("StyleBoxLine_44bbw")
+
+[node name="ReserveAmmoCounter" type="Label" parent="PanelContainer/MarginContainer/AmmoCounter"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1

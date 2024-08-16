@@ -1,0 +1,55 @@
+[gd_scene load_steps=9 format=3 uid="uid://csxctt2rxjdk"]
+
+[ext_resource type="PackedScene" uid="uid://cvvqjmdnrb1ku" path="res://entities/levels/gyms/gym_base/GymBase.tscn" id="1_wrq2j"]
+[ext_resource type="PackedScene" uid="uid://bg4ai4bsck0t3" path="res://entities/weapons/ranged/test_ranged_weapon/TestRangedWeapon.tscn" id="2_0hp05"]
+[ext_resource type="PackedScene" uid="uid://dfv5180ow31uc" path="res://entities/weapons/melee/Sword.tscn" id="3_6vknv"]
+[ext_resource type="PackedScene" uid="uid://wa4ssas5b83c" path="res://entities/characters/ai_character/Dummy.tscn" id="4_bj0ph"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_a474b"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rb3on"]
+albedo_color = Color(0.140447, 0.140447, 0.140447, 1)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_rysyx"]
+data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cn6oq"]
+size = Vector3(20, 10, 20)
+
+[node name="GymBase" node_paths=PackedStringArray("PlayerStart") instance=ExtResource("1_wrq2j")]
+PlayerStart = NodePath("PlayerStart")
+
+[node name="PlayerStart" parent="." index="0"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.628911, -1.19209e-07, 3.85161)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D/Map" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("BoxMesh_a474b")
+surface_material_override/0 = SubResource("StandardMaterial3D_rb3on")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Map/MeshInstance3D" index="0"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Map/MeshInstance3D/StaticBody3D" index="0"]
+shape = SubResource("ConcavePolygonShape3D_rysyx")
+
+[node name="TestWeapon" parent="NavigationRegion3D/Map" index="2" instance=ExtResource("2_0hp05")]
+transform = Transform3D(0.721374, 0.692546, 0, -0.692546, 0.721374, 0, 0, 0, 1, -0.257424, 1.1302, -0.268656)
+
+[node name="Sun" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+
+[node name="Sword" parent="." index="3" instance=ExtResource("3_6vknv")]
+transform = Transform3D(1, 0, 0, 0, 0.0596549, 0.998219, 0, -0.998219, 0.0596549, 0.129775, 1.28701, 0.407422)
+
+[node name="AICharacter" parent="." index="4" instance=ExtResource("4_bj0ph")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.75664, -0.0192001, 0.9263)
+
+[node name="Area3D" type="Area3D" parent="." index="5"]
+audio_bus_override = true
+reverb_bus_enabled = true
+reverb_bus_name = &"TestRoom1"
+reverb_bus_amount = 0.2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -0.5)
+shape = SubResource("BoxShape3D_cn6oq")

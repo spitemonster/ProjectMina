@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://un5u0m7rygr7"]
+
+[ext_resource type="Script" path="res://systems/environment_query/contexts/GridAroundQuerier.cs" id="1_rk1oc"]
+
+[node name="GridAroundQuerier" type="Node"]
+script = ExtResource("1_rk1oc")
+HalfExtent = Vector3(5, 1, 5)

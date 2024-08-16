@@ -9,6 +9,8 @@ public partial class PlayerCharacter : CharacterBase
 {
 
 	[Signal] public delegate void WeaponEquippedEventHandler(EWeaponType weaponType);
+
+	[Signal] public delegate void RangedWeaponFiredEventHandler(RangedWeaponComponent rangedWeaponComponent);
 	
 	[Export] public Camera3D PrimaryCamera { get; protected set; }
 	
@@ -109,6 +111,11 @@ public partial class PlayerCharacter : CharacterBase
 		{
 			EmitSignal(SignalName.WeaponEquipped, (int)weaponComponent.WeaponType);
 		};
+
+		CharacterEquipment.RangedWeaponFired += (rangedWeapon) =>
+		{
+			EmitSignal(SignalName.RangedWeaponFired, rangedWeapon);
+		};
 	}
 
 	private void _OnActionPressed(StringName action)
@@ -116,9 +123,17 @@ public partial class PlayerCharacter : CharacterBase
 		switch (action)
 		{
 			case "use":
-				if (CharacterEquipment.IsWeaponEquipped && CanAttack)
+				if (CharacterEquipment.IsWeaponEquipped && CharacterEquipment.EquippedWeapon.CanUse)
 				{
-					_animationComponent.PlayAttack();
+					switch (CharacterEquipment.EquippedWeapon)
+					{
+						case RangedWeaponComponent rangedWeapon:
+							rangedWeapon.PullTrigger();
+							break;
+						case MeleeWeaponComponent meleeWeapon:
+							_animationComponent.PlayAttack();
+							break;
+					}
 				}
 				break;
 			case "equip":
@@ -126,6 +141,7 @@ public partial class PlayerCharacter : CharacterBase
 				    EquipmentComponent.CanEquip(r))
 				{
 					CharacterEquipment.Equip(r);
+					// _animationComponent.PlayEquip();
 				}
 				break;
 			case "run":
@@ -174,9 +190,17 @@ public partial class PlayerCharacter : CharacterBase
 				MovementStateMachine.RequestTransition("Idle");
 				break;
 			case "use":
-				if (CharacterEquipment.IsWeaponEquipped && CharacterEquipment.EquippedWeapon is RangedWeaponComponent)
+				if (CharacterEquipment.IsWeaponEquipped)
 				{
-					CharacterEquipment.EndUseWeapon();
+					switch (CharacterEquipment.EquippedWeapon)
+					{
+						case RangedWeaponComponent rangedWeapon:
+							rangedWeapon.ReleaseTrigger();
+							break;
+						case MeleeWeaponComponent meleeWeapon:
+							// _animationComponent.PlayAttack();
+							break;
+					}
 				}
 				break;
 		}

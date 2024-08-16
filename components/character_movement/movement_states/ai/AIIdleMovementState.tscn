@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dtuxwwnth5xx5"]
+
+[ext_resource type="Script" path="res://components/character_movement/movement_states/ai/AIIdleMovementState.cs" id="1_il17h"]
+
+[node name="AiIdleMovementState" type="Node"]
+script = ExtResource("1_il17h")

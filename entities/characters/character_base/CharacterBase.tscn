@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://byh3hlhe1fd0j"]
+
+[ext_resource type="Script" path="res://entities/characters/character_base/CharacterBase.cs" id="1_5qytg"]
+[ext_resource type="Script" path="res://components/health/HealthComponent.cs" id="2_gokx2"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_d1qpq"]
+radius = 0.22367
+height = 1.65072
+
+[node name="CharacterBase" type="CharacterBody3D" node_paths=PackedStringArray("CharacterBody", "CharacterHealth")]
+collision_layer = 5
+script = ExtResource("1_5qytg")
+CharacterBody = NodePath("CharacterBody")
+CharacterHealth = NodePath("HealthComponent")
+PushForce = 25.0
+
+[node name="CharacterBody" type="CollisionShape3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_d1qpq")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_gokx2")
+
+[node name="StairsAheadTrace" type="RayCast3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.5)
+target_position = Vector3(0, -0.75, 0)
+
+[node name="StairsBelowTrace" type="RayCast3D" parent="."]
+unique_name_in_owner = true
+target_position = Vector3(0, -0.75, 0)

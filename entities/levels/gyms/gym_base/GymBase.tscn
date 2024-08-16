@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://cvvqjmdnrb1ku"]
+
+[ext_resource type="PackedScene" uid="uid://c37sghih0u831" path="res://entities/levels/level_base/LevelBase.tscn" id="1_gc4vq"]
+[ext_resource type="Script" path="res://entities/levels/gyms/gym_base/GymBase.cs" id="2_bivct"]
+[ext_resource type="PackedScene" uid="uid://cmjhf16ocrx1k" path="res://entities/_dev/LevelBox.tscn" id="2_jromu"]
+[ext_resource type="PackedScene" uid="uid://c45weam7tjqmw" path="res://entities/characters/player_character/PlayerCharacter.tscn" id="3_fi8ot"]
+
+[node name="GymBase" node_paths=PackedStringArray("NavigationRegion") instance=ExtResource("1_gc4vq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0227094, 0, 0)
+script = ExtResource("2_bivct")
+NavigationRegion = NodePath("NavigationRegion3D")
+PlayerClass = ExtResource("3_fi8ot")
+
+[node name="PlayerStart" parent="." index="0"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
+
+[node name="NavigationRegion3D" parent="." index="1"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00124073, -0.0062561, 0.000607491)
+
+[node name="Map" parent="NavigationRegion3D" index="0" instance=ExtResource("2_jromu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00352764, -0.0129447, 0.00059557)

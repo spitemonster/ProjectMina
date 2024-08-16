@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://jkn6nm2mn6au"]
+
+[ext_resource type="Script" path="res://components/spatial_audio/SpatialAudioComponent.cs" id="1_57n83"]
+
+[node name="SpatialAudioComponent" type="Node3D" groups=["spatial_audio_nodes"]]
+script = ExtResource("1_57n83")

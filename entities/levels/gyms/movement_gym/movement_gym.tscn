@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://dipbn8na14fc5"]
+
+[ext_resource type="PackedScene" uid="uid://cvvqjmdnrb1ku" path="res://entities/levels/gyms/gym_base/GymBase.tscn" id="1_4glxl"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_x2m21"]
+
+[node name="GymBase" node_paths=PackedStringArray("NavigationRegion", "PlayerStart") instance=ExtResource("1_4glxl")]
+NavigationRegion = NodePath("NavigationRegion3D")
+PlayerStart = NodePath("PlayerStart")
+
+[node name="PlayerStart" parent="." index="0"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.808, 0, -4.547)
+
+[node name="NavigationRegion3D" parent="." index="1"]
+navigation_mesh = SubResource("NavigationMesh_x2m21")
+
+[node name="Sun" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 0.611002, 0.791629, 0, -0.791629, 0.611002, 0, 0, 0)
+light_energy = 1.12
+sky_mode = 1

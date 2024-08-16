@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ProjectileStats" load_steps=2 format=3 uid="uid://d1jcjagw8ljxg"]
+
+[ext_resource type="Script" path="res://components/projectile_component/ProjectileData.cs" id="1_8upup"]
+
+[resource]
+script = ExtResource("1_8upup")
+Damage = 1.0
+Lifetime = 3.0
+Speed = 200.0
+ImpactSounds = null
+TravelSounds = null

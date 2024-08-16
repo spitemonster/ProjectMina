@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=4 uid="uid://ckb80y0rxvwaq"]
+
+[ext_resource type="PhysicsMaterial" uid="uid://ci4nl541kjurt" path="res://resources/physics_materials/concrete.tres" id="1_rh3lc"]
+[ext_resource type="Material" uid="uid://ehlue8xya6d8" path="res://resources/materials/asphalt/asphalt.tres" id="1_rnr4c"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_johrb"]
+_surfaces = [{
+"aabb": AABB(-5, -0.5, -0.5, 10, 1.00001, 1.00001),
+"attribute_data": PackedByteArray("AAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAA"),
+"format": 34359738391,
+"material": ExtResource("1_rnr4c"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 36,
+"vertex_data": PackedByteArray("AACgQAAAAD8AAAA/AACgQAAAAD8AAAC/AACgQAAAAL8AAAC/AACgQAAAAL8AAAC/AACgQAAAAL8AAAA/AACgQAAAAD8AAAA/AACgQAAAAD8AAAA/AACgwAAAAD8AAAA/AACgwAAAAD8AAAC/AACgwAAAAD8AAAC/AACgQAAAAD8AAAC/AACgQAAAAD8AAAA/AACgQAAAAD8AAAA/AACgQAAAAL8AAAA/AACgwAAAAL8AAAA/AACgwAAAAL8AAAA/AACgwAAAAD8AAAA/AACgQAAAAD8AAAA/AACgwAAAAD8AAAC/AACgwAAAAD8AAAA/AACgwAAAAL8AAAA/AACgwAAAAL8AAAA/AACgwAAAAL8AAAC/AACgwAAAAD8AAAC/AACgwAAAAL8AAAA/AACgQAAAAL8AAAA/AACgQAAAAL8AAAC/AACgQAAAAL8AAAC/AACgwAAAAL8AAAC/AACgwAAAAL8AAAA/AACgQAAAAL8AAAC/AACgQAAAAD8AAAC/AACgwAAAAD8AAAC/AACgwAAAAD8AAAC/AACgwAAAAL8AAAC/AACgQAAAAL8AAAC/////f/9//n////9//3/+f////3//f/5/////f/9//n////9//3/+f////3//f/5//3//////AAD/f/////8AAP9//////wAA/3//////AAD/f/////8AAP9//////wAA/3//fwAA/z//f/9/AAD/P/9//38AAP8//3//fwAA/z//f/9/AAD/P/9//38AAP8/AAD/f/9//n8AAP9//3/+fwAA/3//f/5/AAD/f/9//n8AAP9//3/+fwAA/3//f/5//38AAP//AAD/fwAA//8AAP9/AAD//wAA/38AAP//AAD/fwAA//8AAP9/AAD//wAA/////wAA/z//////AAD/P/////8AAP8//////wAA/z//////AAD/P/////8AAP8/")
+}]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_t06h1"]
+points = PackedVector3Array(5, 0.5, 0.5, 5, 0.5, -0.5, -5, 0.5, 0.5, 5, -0.5, 0.5, 5, -0.5, -0.5, -5, 0.5, -0.5, -5, -0.5, 0.5, -5, -0.5, -0.5)
+
+[node name="10x1x1Block" type="StaticBody3D"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+visible = false
+collision_layer = 0
+collision_mask = 0
+physics_material_override = ExtResource("1_rh3lc")
+
+[node name="10x1x1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("ArrayMesh_johrb")
+skeleton = NodePath("../../LevelBox")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("ConvexPolygonShape3D_t06h1")

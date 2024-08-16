@@ -1,0 +1,41 @@
+[gd_scene load_steps=9 format=3 uid="uid://d2r7tsyvv6gsp"]
+
+[ext_resource type="PhysicsMaterial" uid="uid://co0btkf8k4j25" path="res://resources/physics_materials/wood.tres" id="1_ui6ti"]
+[ext_resource type="Material" uid="uid://bm4jeamo1q22w" path="res://resources/materials/gold/gold.tres" id="2_ngo4c"]
+[ext_resource type="PackedScene" uid="uid://do7fbomwbyldg" path="res://entities/_dev/gizmo.tscn" id="5_wlyjh"]
+[ext_resource type="AudioStream" uid="uid://5i0ejd03tq0k" path="res://assets/audio/hits/wood_hit_01/wood_hit_6_16_44.wav" id="7_016s4"]
+[ext_resource type="Script" path="res://components/audio/sound_player/SoundPlayer3D.cs" id="7_77juh"]
+[ext_resource type="PackedScene" uid="uid://c4lbnfkrm3e5v" path="res://components/impact/ImpactComponent.tscn" id="8_jul71"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_16s4j"]
+material = ExtResource("2_ngo4c")
+size = Vector3(1.02, 1.02, 1.02)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_crahu"]
+points = PackedVector3Array(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5)
+
+[node name="Crate" type="RigidBody3D"]
+physics_interpolation_mode = 1
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0, -5, 0)
+mass = 100.0
+physics_material_override = ExtResource("1_ui6ti")
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 16
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_16s4j")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_crahu")
+
+[node name="Gizmo" parent="." instance=ExtResource("5_wlyjh")]
+
+[node name="StreamPlayer" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("7_016s4")
+
+[node name="SoundPlayer" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("7_016s4")
+script = ExtResource("7_77juh")
+
+[node name="ImpactComponent" parent="." instance=ExtResource("8_jul71")]

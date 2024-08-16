@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://bo08tbqd20k1c"]
+
+[ext_resource type="Script" path="res://entities/dev_drone/DevDrone.cs" id="1_q435b"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_32jla"]
+
+[node name="Drone" type="CharacterBody3D"]
+motion_mode = 1
+script = ExtResource("1_q435b")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_32jla")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+current = true

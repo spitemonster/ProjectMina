@@ -3,11 +3,14 @@ using Godot;
 namespace ProjectMina;
 public partial class SoundPlayer3D : AudioStreamPlayer3D
 {
+    [Signal] public delegate void PlayerFinishedEventHandler(SoundPlayer3D player);
     [Signal] public delegate void PlayedEventHandler();
     [Signal] public delegate void PausedEventHandler();
     [Signal] public delegate void StoppedEventHandler(float timeRemaining);
 
     [Export] public bool Loop = false;
+
+    [Export] public bool FreeOnFinish = false;
 
     private float _pausedPlaybackTime;
     
@@ -49,6 +52,13 @@ public partial class SoundPlayer3D : AudioStreamPlayer3D
             if (Loop)
             {
                 Play();
+            } else if (FreeOnFinish)
+            {
+                QueueFree();
+            }
+            else
+            {
+                EmitSignal(SignalName.PlayerFinished, this);
             }
         };
     }

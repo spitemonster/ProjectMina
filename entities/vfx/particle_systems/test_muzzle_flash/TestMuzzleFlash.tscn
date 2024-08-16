@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://b2cahufy5ycpc"]
+
+[ext_resource type="Script" path="res://components/vfx/particle_system/ParticleSystemComponent.cs" id="1_r458n"]
+
+[sub_resource type="Curve" id="Curve_7fdkw"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.48254, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_41j1d"]
+curve = SubResource("Curve_7fdkw")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_04yxr"]
+angle_min = -180.0
+angle_max = 180.0
+spread = 15.0
+initial_velocity_min = 1.0
+initial_velocity_max = 7.0
+gravity = Vector3(0, -2.45, 0)
+scale_curve = SubResource("CurveTexture_41j1d")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_quklx"]
+albedo_color = Color(1, 0, 0, 1)
+emission_enabled = true
+emission = Color(0.856899, 0.296814, 0, 1)
+emission_energy_multiplier = 10.0
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_k7so1"]
+material = SubResource("StandardMaterial3D_quklx")
+size = Vector2(0.01, 0.01)
+
+[node name="TestMuzzleFlash" type="Node3D"]
+script = ExtResource("1_r458n")
+FreeOnFinish = false
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+emitting = false
+amount = 50
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_04yxr")
+draw_pass_1 = SubResource("QuadMesh_k7so1")

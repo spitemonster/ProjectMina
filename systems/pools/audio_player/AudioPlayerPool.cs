@@ -1,4 +1,5 @@
 using System.Collections;
+using GDebugPanelGodot.Extensions;
 using Godot;
 using Godot.Collections;
 
@@ -8,7 +9,7 @@ public partial class AudioPlayerPool : PoolBase
 {
     [Signal] public delegate void PoolEmptiedEventHandler();
 
-    [Export] public int QueuePlayerCount = 4;
+    [Export] public int QueuePlayerCount = 64;
     public static AudioPlayerPool Manager { get; private set; }
     
     private Array<SoundQueue3D> _queuePool3D = new();
@@ -22,6 +23,7 @@ public partial class AudioPlayerPool : PoolBase
     public void PlaySoundAtPosition(Vector3 position, AudioStream stream)
     {
         var player = GetPlayer3D();
+        
         Global.Data.MainScene.AddChild(player);
         player.SetStream(stream);
         player.GlobalPosition = position;
@@ -76,7 +78,7 @@ public partial class AudioPlayerPool : PoolBase
         q.QueueFree();
     }
 
-    public SoundPlayer3D GetPlayer3D(bool returnOnFinished = true)
+    public SoundPlayer3D GetPlayer3D()
     {
         SoundPlayer3D p;
 
@@ -101,12 +103,7 @@ public partial class AudioPlayerPool : PoolBase
                 return null;
             }
         }
-
-        if (returnOnFinished)
-        {
-            p.Finished += () => ReturnPlayer3D(p);
-        }
-
+        
         return p;
     }
 
@@ -115,13 +112,13 @@ public partial class AudioPlayerPool : PoolBase
     /// </summary>
     /// <param name="p">the player to return to the queue</param>
     /// <returns>whether the player was added to the pool</returns>
-    public bool ReturnPlayer3D(SoundPlayer3D p)
+    public void ReturnPlayer3D(SoundPlayer3D p)
     {
         // don't accept players we don't manage
         if (!_managedPlayers.Contains(p.GetInstanceId()))
         {
             if (EnableDebug) GD.PushError("Attempted to return a SoundPlayer3D to the audio player pool that is not managed by it.");
-            return false;
+            return;
         } 
         
         //  or players that loop or players that are playing
@@ -129,20 +126,21 @@ public partial class AudioPlayerPool : PoolBase
         if (p.Loop || p.Playing)
         {
             if (EnableDebug) GD.PushError("You must stop and disable looping on any SoundPlayer3Ds returned to the Audio Player Pool.");
-            return false;
+            return;
         }
         
         // otherwise if we've got space, send it back to the pool
         if (_playerPool3D.Count < PoolSize)
         {
+            if (EnableDebug) GD.Print("Successfully returned audio player.");
+            p.Reparent(this);
             _playerPool3D.Add(p);
-            return true;
+            return;
         }
         
         // if we end up here the pool is full so we can torch this player
         _managedPlayers.Remove(p.GetInstanceId());
         p.QueueFree();
-        return false;
     }
     
     public SoundQueue2D GetQueue2D()
@@ -254,7 +252,7 @@ public partial class AudioPlayerPool : PoolBase
     
     public override void _Ready()
     {
-        PoolSize = 8;
+        PoolSize = 64;
 
         CallDeferred("SetupPlayers");
     }
@@ -265,7 +263,7 @@ public partial class AudioPlayerPool : PoolBase
         {
             SoundQueue3D q3D = new();
             SoundQueue2D q2D = new();
-            SoundPlayer3D p3D = new();
+            var p3D = _CreatePlayer3D();
             SoundPlayer2D p2D = new();
 
             q3D.PlayerCount = QueuePlayerCount;
@@ -281,6 +279,8 @@ public partial class AudioPlayerPool : PoolBase
             //
             _queuePool3D.Add(q3D);
             _queuePool2D.Add(q2D);
+
+            
             
             _playerPool3D.Add(p3D);
             _playerPool2D.Add(p2D);
@@ -289,7 +289,21 @@ public partial class AudioPlayerPool : PoolBase
             _managedPlayers.Add(q2D.GetInstanceId());
             _managedPlayers.Add(p3D.GetInstanceId());
             _managedPlayers.Add(p2D.GetInstanceId());
+            
+            
         }
+    }
+
+    private SoundPlayer3D _CreatePlayer3D(bool FreeOnFinish = true)
+    {
+        SoundPlayer3D p3D = new();
+        if (!FreeOnFinish)
+        {
+            p3D.FreeOnFinish = false;
+            p3D.PlayerFinished += ReturnPlayer3D;
+        }
+
+        return p3D;
     }
     
     public override void _EnterTree()

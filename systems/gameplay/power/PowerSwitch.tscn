@@ -1,0 +1,236 @@
+[gd_scene load_steps=13 format=3 uid="uid://cdsngnciwodka"]
+
+[ext_resource type="PackedScene" uid="uid://swtfjtba482x" path="res://components/interactable/InteractableComponent.tscn" id="1_4ctsi"]
+[ext_resource type="Script" path="res://systems/gameplay/power/PowerSwitch.cs" id="1_l4lrx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_lqgt7"]
+size = Vector3(0.2, 0.3, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3naox"]
+albedo_color = Color(0.521569, 0.541176, 0.6, 1)
+metallic = 1.0
+roughness = 0.6
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_qyv0r"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lqyvx"]
+albedo_color = Color(0, 1, 0, 1)
+roughness = 0.0
+emission_enabled = true
+emission = Color(0, 1, 0, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3125x"]
+size = Vector3(0.08, 0.1, 0.07)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_405jn"]
+albedo_color = Color(1, 0, 0, 1)
+roughness = 0.0
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 0.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rfrya"]
+size = Vector3(0.08, 0.1, 0.07)
+
+[sub_resource type="Animation" id="Animation_r7h6o"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("OmniLight3D:light_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 1, 0, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("OmniLight3D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0.0691552, 0.11234)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("OmniLight3D:light_energy")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.1]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("OnButton/MeshInstance3D:surface_material_override/0:emission_energy_multiplier")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [3.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("OffButton/MeshInstance3D2:surface_material_override/0:emission_energy_multiplier")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_rflsp"]
+resource_name = "switch"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("OmniLight3D:light_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(0, 1, 0, 1), Color(0, 1, 0, 1), Color(1, 0, 0, 1), Color(1, 0, 0, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("OmniLight3D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0.0691552, 0.11234), Vector3(0, 0.0691552, 0.11234), Vector3(0, -0.0492159, 0.11234), Vector3(0, -0.0492159, 0.11234)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("OmniLight3D:light_energy")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.1, 0.0, 0.0, 0.1]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("OnButton/MeshInstance3D:surface_material_override/0:emission_energy_multiplier")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [3.0, 3.0, 0.0, 0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("OffButton/MeshInstance3D2:surface_material_override/0:emission_energy_multiplier")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 3.0, 3.0]
+}
+tracks/5/type = "method"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("OnButton/InteractableComponent")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_jghs7"]
+_data = {
+"RESET": SubResource("Animation_r7h6o"),
+"switch": SubResource("Animation_rflsp")
+}
+
+[node name="Switch" type="Node3D" node_paths=PackedStringArray("OnButtonInteraction", "OffButtonInteraction", "OnButtonMesh", "OffButtonMesh", "_animPlayer")]
+script = ExtResource("1_l4lrx")
+SwitchState = true
+OnButtonInteraction = NodePath("OnButton/InteractableComponent")
+OffButtonInteraction = NodePath("OffButton/InteractableComponent")
+OnButtonMesh = NodePath("OnButton/MeshInstance3D")
+OffButtonMesh = NodePath("OffButton/MeshInstance3D2")
+_animPlayer = NodePath("AnimationPlayer")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_lqgt7")
+skeleton = NodePath("../OnButton")
+surface_material_override/0 = SubResource("StandardMaterial3D_3naox")
+
+[node name="OnButton" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="OnButton"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0700428, 0.053539)
+mesh = SubResource("CylinderMesh_qyv0r")
+surface_material_override/0 = SubResource("StandardMaterial3D_lqyvx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OnButton"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.0700428, 0.053539)
+shape = SubResource("BoxShape3D_3125x")
+
+[node name="InteractableComponent" parent="OnButton" instance=ExtResource("1_4ctsi")]
+
+[node name="OffButton" type="StaticBody3D" parent="."]
+collision_layer = 129
+collision_mask = 129
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="OffButton"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.0486019, 0.053539)
+mesh = SubResource("CylinderMesh_qyv0r")
+surface_material_override/0 = SubResource("StandardMaterial3D_405jn")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="OffButton"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -0.0486019, 0.053539)
+shape = SubResource("BoxShape3D_rfrya")
+
+[node name="InteractableComponent" parent="OffButton" instance=ExtResource("1_4ctsi")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_jghs7")
+}
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0691552, 0.11234)
+light_color = Color(0, 1, 0, 1)
+light_energy = 0.1
+light_volumetric_fog_energy = 5.0
+light_size = 0.032
+omni_range = 0.25

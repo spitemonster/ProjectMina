@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://h1tx5wlhydbj"]
+
+[ext_resource type="Script" path="res://ui/_dev/DevMonitor.cs" id="1_2gfs2"]
+
+[node name="DevMonitor" type="HBoxContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_2gfs2")
+
+[node name="Label" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Label"
+
+[node name="Value" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Value"

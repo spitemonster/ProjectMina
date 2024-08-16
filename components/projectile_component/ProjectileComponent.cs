@@ -96,8 +96,8 @@ public partial class ProjectileComponent : ComponentBase
 
         var t = new AudioStreamPlayer3D();
         Global.Data.MainScene.AddChild(t);
-        t.SetStream(Data.ImpactSounds.PickRandom());
-        t.Play();
+        // t.SetStream(Data.ImpactSounds.PickRandom());
+        // t.Play();
         t.Finished += () =>
         {
             t.QueueFree();

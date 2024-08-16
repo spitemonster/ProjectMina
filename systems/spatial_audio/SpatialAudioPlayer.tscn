@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2ikce5p3p4eh"]
+
+[ext_resource type="Script" path="res://systems/spatial_audio/SpatialAudioPlayer.cs" id="1_ytnrf"]
+
+[node name="SpatialAudioPlayer" type="AudioStreamPlayer3D"]
+script = ExtResource("1_ytnrf")
+MaxDistance = 5.0

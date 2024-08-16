@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5w23iun6kq84"]
+
+[ext_resource type="Script" path="res://components/weapon/ranged_weapon/RangedWeaponComponent.cs" id="1_ffnxx"]
+
+[node name="RangedWeaponComponent" type="Node"]
+script = ExtResource("1_ffnxx")

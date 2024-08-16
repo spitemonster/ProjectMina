@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://b803t2vd5ylrh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0lj44"]
+albedo_color = Color(0.258978, 0.277333, 9.62615e-08, 1)
+metallic_specular = 1.0
+roughness = 0.0
+refraction_enabled = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_o0suy"]
+material = SubResource("StandardMaterial3D_0lj44")
+top_radius = 0.1
+bottom_radius = 0.2
+height = 0.3
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_6vinm"]
+points = PackedVector3Array(-0.195731, -0.147607, -0.0366747, 0.193101, -0.139593, 0.0361815, 0.19573, -0.147604, 0.0366739, -0.0366646, -0.147588, 0.195725, -0.0660006, 0.143215, -0.078, 0.0367045, -0.147582, -0.195718, 0.101962, 0.143199, 0.00597619, -0.0660026, 0.14322, 0.0780025, 0.10302, -0.146279, 0.169714, 0.169709, -0.146288, -0.103035, 0.0595695, 0.142206, -0.0833885, -0.169709, -0.14629, 0.103036, -0.103018, -0.146281, -0.169716, 0.0359192, 0.142854, 0.0957649, -0.101961, 0.143201, 0.0059763, -0.00597369, 0.14319, -0.101965, 0.154368, -0.113595, 0.106877, -0.169704, -0.146286, -0.103034, -0.120997, -0.146029, 0.157329, 0.120998, -0.146027, -0.157327, 0.083404, 0.14218, 0.0595631, 0.195726, -0.147601, -0.0366732, -0.195727, -0.147604, 0.036674, -0.0366638, -0.147585, -0.195722, 0.0367038, -0.147579, 0.195714, 0.0957693, 0.142872, -0.0358883, -0.0239174, 0.136642, 0.101563, -0.0957558, 0.142913, -0.0358985, -0.0957531, 0.142909, 0.0358975, -0.0358818, 0.142867, -0.0957735, -0.0913676, -0.147022, 0.176687, 0.182398, -0.146748, 0.0790538)
+
+[node name="RigidBody3D" type="RigidBody3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CylinderMesh_o0suy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("ConvexPolygonShape3D_6vinm")

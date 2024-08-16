@@ -4,8 +4,19 @@ namespace ProjectMina;
 
 public static class Utilities
 {
-    private static readonly RandomNumberGenerator Random = new();
     
+    private static readonly RandomNumberGenerator Random = new();
+
+    public static int RandomInt(int min = 0, int max = 0)
+    {
+        Random.Randomize();
+        if (min == 0 && max == 0)
+        {
+            return (int)Random.Randi();
+        }
+
+        return Random.RandiRange(min, max);
+    }
     public static PhysicsMaterial GetPhysicsMaterialFromPhysicsBody(PhysicsBody3D physicsBody)
     {
         return physicsBody switch

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://xfm5qtcrssgj"]
+
+[ext_resource type="Script" path="res://systems/environment_query/EnvironmentQuerySystem.cs" id="1_soojf"]
+
+[node name="EnvironmentQuerySystem" type="Node3D"]
+script = ExtResource("1_soojf")

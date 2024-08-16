@@ -1,0 +1,57 @@
+[gd_scene load_steps=12 format=3 uid="uid://cwwra0g4sn1xb"]
+
+[ext_resource type="PackedScene" uid="uid://ipr08g28lljf" path="res://components/hitbox/HitboxComponent.tscn" id="1_05803"]
+[ext_resource type="ArrayMesh" uid="uid://debqp2c2l8tc2" path="res://entities/projectiles/test_projectile/MauserBullet.res" id="1_bs3e3"]
+[ext_resource type="Script" path="res://components/projectile_component/ProjectileComponent.cs" id="1_vvuta"]
+[ext_resource type="Script" path="res://components/projectile_component/ProjectileData.cs" id="2_5524u"]
+[ext_resource type="AudioStream" uid="uid://dftgnhov2hq0" path="res://assets/audio/hits/bullet_impact/bullet_impact_default_1.wav" id="3_24svp"]
+[ext_resource type="Script" path="res://components/damage/DamageComponent.cs" id="4_38frx"]
+[ext_resource type="AudioStream" uid="uid://dub378iet23va" path="res://assets/audio/hits/bullet_impact/bullet_impact_default_2.wav" id="4_hhe3c"]
+[ext_resource type="Script" path="res://components/damage/DamageStats.cs" id="5_d8mn8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yliv4"]
+radius = 0.0107773
+height = 0.0471742
+
+[sub_resource type="Resource" id="Resource_dxxcl"]
+script = ExtResource("2_5524u")
+Damage = 1.0
+Lifetime = 3.0
+Speed = 200.0
+ImpactSounds = Array[AudioStreamWAV]([ExtResource("3_24svp"), ExtResource("4_hhe3c")])
+TravelSounds = null
+
+[sub_resource type="Resource" id="Resource_6asip"]
+script = ExtResource("5_d8mn8")
+DamageAmount = 0.0
+
+[node name="TestProjectile" type="RigidBody3D"]
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0.00268555)
+shape = SubResource("CapsuleShape3D_yliv4")
+
+[node name="HitboxComponent" parent="." node_paths=PackedStringArray("DamageComponent") instance=ExtResource("1_05803")]
+DamageComponent = NodePath("../DamageComponent")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="HitboxComponent"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0.00268555)
+shape = SubResource("CapsuleShape3D_yliv4")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.005, 0, 0, 0, -2.18557e-10, 0.005, 0, -0.005, -2.18557e-10, 0, 0, 0)
+mesh = ExtResource("1_bs3e3")
+
+[node name="Projectile" type="Node" parent="." node_paths=PackedStringArray("Hitbox")]
+unique_name_in_owner = true
+script = ExtResource("1_vvuta")
+Data = SubResource("Resource_dxxcl")
+Hitbox = NodePath("../HitboxComponent")
+
+[node name="DamageComponent" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_38frx")
+_damageStats = SubResource("Resource_6asip")

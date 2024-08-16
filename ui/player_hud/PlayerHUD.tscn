@@ -1,0 +1,152 @@
+[gd_scene load_steps=4 format=3 uid="uid://8l8u7s0m7awg"]
+
+[ext_resource type="Script" path="res://ui/player_hud/PlayerHUD.cs" id="1_xdxxf"]
+[ext_resource type="PackedScene" uid="uid://da43isb7b6wlh" path="res://ui/player_hud/weapon_hud/WeaponHUD.tscn" id="2_q0kqt"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x7tv5"]
+bg_color = Color(1, 0.298039, 0.517647, 1)
+
+[node name="PlayerHUD" type="Control" node_paths=PackedStringArray("_reticle", "_healthBar", "_indicatorContainer", "_useIndicator", "_grabIndicator", "_equipIndicator")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xdxxf")
+_reticle = NodePath("MarginContainer/Inner Menu/Reticle Container/Reticle")
+_healthBar = NodePath("MarginContainer/Inner Menu/Health Bar Container/HealthBar/ProgressBar")
+_indicatorContainer = NodePath("MarginContainer/Inner Menu/Reticle Container/VBoxContainer")
+_useIndicator = NodePath("MarginContainer/Inner Menu/Reticle Container/VBoxContainer/UseIndicator")
+_grabIndicator = NodePath("MarginContainer/Inner Menu/Reticle Container/VBoxContainer/GrabIndicator")
+_equipIndicator = NodePath("MarginContainer/Inner Menu/Reticle Container/VBoxContainer/EquipIndicator")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 64
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 64
+
+[node name="Inner Menu" type="Control" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Reticle Container" type="Control" parent="MarginContainer/Inner Menu"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Inner Menu/Reticle Container"]
+clip_children = 2
+y_sort_enabled = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 14.0
+offset_top = 3.0
+offset_right = 287.0
+offset_bottom = 151.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UseIndicator" type="RichTextLabel" parent="MarginContainer/Inner Menu/Reticle Container/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_font_sizes/normal_font_size = 24
+text = "LMB - Use"
+fit_content = true
+scroll_active = false
+
+[node name="GrabIndicator" type="RichTextLabel" parent="MarginContainer/Inner Menu/Reticle Container/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 24
+text = "RMB - Grab"
+fit_content = true
+
+[node name="EquipIndicator" type="RichTextLabel" parent="MarginContainer/Inner Menu/Reticle Container/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 24
+text = "F - Equip
+"
+fit_content = true
+
+[node name="CollectIndicator" type="RichTextLabel" parent="MarginContainer/Inner Menu/Reticle Container/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 24
+text = "Hold F - Place In Inventory
+"
+fit_content = true
+
+[node name="Reticle" type="ColorRect" parent="MarginContainer/Inner Menu/Reticle Container"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -6.0
+offset_top = -6.00001
+offset_right = 6.0
+offset_bottom = 5.99999
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.785398
+pivot_offset = Vector2(8, 8)
+
+[node name="Health Bar Container" type="Control" parent="MarginContainer/Inner Menu"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -14.0
+offset_bottom = -14.0
+grow_vertical = 0
+
+[node name="HealthBar" type="AspectRatioContainer" parent="MarginContainer/Inner Menu/Health Bar Container"]
+layout_mode = 0
+offset_top = -18.0
+offset_right = 256.0
+offset_bottom = 14.0
+ratio = 8.0
+stretch_mode = 3
+
+[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/Inner Menu/Health Bar Container/HealthBar"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_styles/fill = SubResource("StyleBoxFlat_x7tv5")
+max_value = 1.0
+value = 1.0
+show_percentage = false
+
+[node name="WeaponHUD" parent="MarginContainer/Inner Menu" instance=ExtResource("2_q0kqt")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

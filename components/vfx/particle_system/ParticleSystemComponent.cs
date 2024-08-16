@@ -6,17 +6,29 @@ namespace ProjectMina;
 [GlobalClass]
 public partial class ParticleSystemComponent : ComponentBase3D
 {
+	// primarily used in the editor to trigger play
+	[Export] public bool Playing { protected set {
+			_playing = value;
+			if (value)
+			{
+				
+				Play();
+			}
+		}
+		get => _playing; }
+	
 	[Signal] public delegate void FinishedEventHandler();
 	[Export] public bool Loop { get; protected set; } = false;
 	[Export] public bool Autostart { get; protected set; } = false;
 
 	[Export] public bool FreeOnFinish = true;
-	public bool Playing { get; private set; } = false;
-
+	
 	protected AnimationPlayer animationPlayer;
 	
 	private Godot.Collections.Array<Node> _particles = new();
 	private int _completedParticleCount = 0;
+
+	private bool _playing = false;
 
 	public void Play()
 	{
@@ -32,20 +44,22 @@ public partial class ParticleSystemComponent : ComponentBase3D
 		}
 		else
 		{
+			GD.Print("should play anim: ", Name);
 			foreach (var particle in _particles)
 			{
 				if (particle is CpuParticles3D c)
 				{
+					GD.Print(Name, "Playing test particle");
 					c.Emitting = true;
-
 				}
 				else if (particle is GpuParticles3D g)
 				{
+					GD.Print(Name, "Playing test particle");
 					g.Emitting = true;
 				}
 			}
 
-			Playing = true;
+			_playing = true;
 		}
 	}
 
@@ -124,10 +138,16 @@ public partial class ParticleSystemComponent : ComponentBase3D
 		if (_completedParticleCount == _particles.Count)
 		{
 			_completedParticleCount = 0;
-			EmitSignal(SignalName.Finished);
-			Playing = false;
+			if (Loop)
+			{
+				Play();
+				return;
+			}
 
-			if (FreeOnFinish)
+			Playing = false;
+			EmitSignal(SignalName.Finished);
+			
+			if (FreeOnFinish && !Engine.IsEditorHint())
 			{
 				foreach (var particle in _particles)
 				{

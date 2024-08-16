@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://criuktxrj0lio"]
+
+[ext_resource type="Script" path="res://components/character_movement/movement_states/ai/AIWalkMovementState.cs" id="1_hlps7"]
+
+[node name="AiWalkMovementState" type="Node"]
+script = ExtResource("1_hlps7")

@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://cfbsu1i7xyqy5"]
+
+[ext_resource type="Script" path="res://systems/gameplay/patrol/PatrolPoint.cs" id="1_kky1j"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_fnnee"]
+
+[node name="PatrolPoint" type="Node3D"]
+script = ExtResource("1_kky1j")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 135
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_fnnee")
+
+[node name="Marker3D" type="Marker3D" parent="."]

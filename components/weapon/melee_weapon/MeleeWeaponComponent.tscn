@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cn3ee38t8qtjy"]
+
+[ext_resource type="Script" path="res://components/weapon/melee_weapon/MeleeWeaponComponent.cs" id="1_or4xl"]
+
+[node name="MeleeWeaponComponent" type="Node"]
+script = ExtResource("1_or4xl")

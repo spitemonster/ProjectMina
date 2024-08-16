@@ -1,0 +1,53 @@
+[gd_scene load_steps=10 format=3 uid="uid://dgr7s2f3uopfu"]
+
+[ext_resource type="PackedScene" uid="uid://cvvqjmdnrb1ku" path="res://entities/levels/gyms/gym_base/GymBase.tscn" id="1_846qe"]
+[ext_resource type="PackedScene" uid="uid://d2r7tsyvv6gsp" path="res://entities/crate/Crate.tscn" id="2_wngr7"]
+[ext_resource type="PackedScene" uid="uid://babghcyd40teh" path="res://systems/managers/environment/EnvironmentManager.tscn" id="3_4rq0o"]
+[ext_resource type="PackedScene" uid="uid://bg4ai4bsck0t3" path="res://entities/weapons/ranged/test_ranged_weapon/TestRangedWeapon.tscn" id="4_ua2yn"]
+[ext_resource type="PackedScene" uid="uid://883wd7hsypnh" path="res://entities/_dev/Target.tscn" id="5_i2p18"]
+[ext_resource type="PackedScene" uid="uid://da4ycdbuui7sb" path="res://entities/_dev/MovingPlatform.tscn" id="6_8uwqn"]
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_katmq"]
+rayleigh_color = Color(0.250629, 0.402919, 0.658003, 1)
+mie_eccentricity = 0.93
+
+[sub_resource type="Sky" id="Sky_u0uac"]
+sky_material = SubResource("PhysicalSkyMaterial_katmq")
+
+[sub_resource type="Environment" id="Environment_rpjsx"]
+background_mode = 2
+sky = SubResource("Sky_u0uac")
+
+[node name="GymBase" node_paths=PackedStringArray("NavigationRegion") instance=ExtResource("1_846qe")]
+NavigationRegion = NodePath("NavigationRegion3D")
+
+[node name="PlayerStart" parent="." index="0"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.400934, 0, -4.81075)
+
+[node name="Crate" parent="NavigationRegion3D/Map" index="1" instance=ExtResource("2_wngr7")]
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, -0.733709, 0.562305, -6.94183)
+
+[node name="Crate2" parent="NavigationRegion3D/Map" index="2" instance=ExtResource("2_wngr7")]
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 1.84977, 0.519201, -0.868203)
+
+[node name="Crate3" parent="NavigationRegion3D/Map" index="3" instance=ExtResource("2_wngr7")]
+transform = Transform3D(1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0, 0, 1, 0.706571, 0.519201, -1.28795)
+
+[node name="Target" parent="NavigationRegion3D/Map" index="4" instance=ExtResource("5_i2p18")]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -3.77186, 1.15651, 7.17497)
+
+[node name="TestWeapon" parent="NavigationRegion3D/Map" index="5" instance=ExtResource("4_ua2yn")]
+transform = Transform3D(-0.00957819, 0.514754, 0.857285, -0.999827, -0.0186041, -4.26898e-10, 0.015949, -0.857136, 0.514843, 1.6243, 1.12217, -0.637414)
+
+[node name="Sun" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, 0.0292301, 0.999573, 0, -0.999573, 0.0292301, 0, 0, 0)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." index="3"]
+environment = SubResource("Environment_rpjsx")
+
+[node name="EnvironmentManager" parent="." index="4" instance=ExtResource("3_4rq0o")]
+Enabled = false
+Enabled = false
+
+[node name="MovingPlatform" parent="." index="5" instance=ExtResource("6_8uwqn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.2136, 0.980802, 1.53337)

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://irddv1mmnyws"]
+
+[ext_resource type="Script" path="res://systems/spatial_audio/SpatialAudioRoom.cs" id="1_okibd"]
+
+[node name="SpatialAudioRoom" type="Node3D" node_paths=PackedStringArray("Portals") groups=["spatial_audio_nodes"]]
+script = ExtResource("1_okibd")
+Portals = []

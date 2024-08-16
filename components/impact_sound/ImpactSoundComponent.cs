@@ -32,7 +32,7 @@ public partial class ImpactSoundComponent : ComponentBase
 			Body = GetParent<RigidBody3D>();
 		}
 
-		_player = AudioPlayerPool.Manager.GetPlayer3D(false);
+		// _player = AudioPlayerPool.Manager.GetPlayer3D();
 		
 		if (EnableDebug) Debug.Assert(_player != null, "Impact Sound Component should have an audio player");
 		if (EnableDebug) Debug.Assert(ImpactSound != null, "Impact Sound Component should have an impact sound");

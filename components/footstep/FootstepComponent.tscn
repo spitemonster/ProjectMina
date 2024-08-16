@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://txbg3jyuygby"]
+
+[ext_resource type="Script" path="res://components/footstep/FootstepComponent.cs" id="1_ounxa"]
+
+[node name="FootstepComponent" type="Node"]
+script = ExtResource("1_ounxa")

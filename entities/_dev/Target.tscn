@@ -1,0 +1,86 @@
+[gd_scene load_steps=12 format=3 uid="uid://883wd7hsypnh"]
+
+[ext_resource type="PackedScene" uid="uid://deagggwvcpss3" path="res://components/health/HealthComponent.tscn" id="1_a2k87"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_k34v8"]
+resource_local_to_scene = true
+height = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_it54q"]
+albedo_color = Color(0.45098, 0.45098, 0.45098, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_nug63"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_it54q")
+top_radius = 0.4
+bottom_radius = 0.4
+height = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c2bs8"]
+albedo_color = Color(0.678431, 0.545098, 0.545098, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ld62n"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_c2bs8")
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_72yj3"]
+albedo_color = Color(0.678431, 0.352941, 0.352941, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2y5iw"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_72yj3")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xamka"]
+albedo_color = Color(0.678431, 0.141176, 0.141176, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_gtj4s"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_xamka")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 0.1
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_fo1ci"]
+points = PackedVector3Array(0.0897432, 0.05, 0.479005, -0.0951635, -0.0579256, -0.507937, -0.158705, -0.0579256, -0.492026, 0.158705, -0.0579256, 0.492026, 0.464001, 0.05, -0.149666, -0.479005, 0.05, -0.0897432, -0.444395, -0.0579256, 0.269779, 0.507937, -0.0579256, 0.0951635, -0.0897432, 0.05, -0.479005, 0.317411, -0.0579256, -0.412674, -0.299331, 0.05, 0.389168, -0.444395, -0.0579256, -0.269779, 0.389168, 0.05, 0.299331, -0.158705, -0.0579256, 0.492026, 0.194584, 0.05, -0.448997, -0.299331, 0.05, -0.389168, 0.476116, -0.0579256, -0.206337, 0.317411, -0.0579256, 0.412674, -0.448997, 0.05, 0.194584, -0.507937, -0.0579256, 0.0951635, 0.389168, 0.05, -0.299331, 0.479005, 0.05, 0.0897432, 0.0951635, -0.0579256, -0.507937, -0.0897432, 0.05, 0.479005, 0.444395, -0.0579256, 0.269779, 0.254413, 0.05, 0.419083, -0.317411, -0.0579256, -0.412674, -0.317411, -0.0579256, 0.412674, -0.389168, 0.05, -0.299331, -0.507937, -0.0579256, -0.0951635, 0.507937, -0.0579256, -0.0951635, 0.0951635, -0.0579256, 0.507937)
+
+[node name="Target" type="Node3D"]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_k34v8")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.0132114)
+mesh = SubResource("CylinderMesh_nug63")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.0248356)
+mesh = SubResource("CylinderMesh_ld62n")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.0324399)
+mesh = SubResource("CylinderMesh_2y5iw")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.0378938)
+mesh = SubResource("CylinderMesh_gtj4s")
+skeleton = NodePath("")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("ConvexPolygonShape3D_fo1ci")
+
+[node name="HealthComponent" parent="." instance=ExtResource("1_a2k87")]
+unique_name_in_owner = true

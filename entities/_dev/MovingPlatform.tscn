@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=3 uid="uid://da4ycdbuui7sb"]
+
+[ext_resource type="Script" path="res://entities/_dev/MovingPlatform.cs" id="1_ghjoe"]
+
+[sub_resource type="Curve3D" id="Curve3D_bku65"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 2.274, 0, 7.873, 1.312, 0, 0.515, -1.312, 0, -0.515, -5, 0, 5, -4.339, 0, 1.355, 4.339, 0, -1.355, -5.006, 0, -4.98, -5.228, 0, -1.635, 5.228, 0, 1.635, 10.303, 5, -8.97036, 2.847, 0, -1.471, -2.847, 0, 1.471, 10.74, 0, 7.344, 0, 0, 0, 0, 0, 0, 4.8834, 0.0560317, 8.45376, 0, 0, 0, 0, 0, 0, 2.274, 0, 7.873),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 7
+
+[sub_resource type="BoxMesh" id="BoxMesh_3h6qe"]
+size = Vector3(3, 0.1, 2)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_fy32f"]
+points = PackedVector3Array(1.52351, 0.0690336, 1.02381, -1.52351, -0.0737955, -1.02381, -1.52351, 0.0690336, -1.02381, 1.52351, -0.0737955, -1.02381, -1.52351, -0.0737955, 1.02381, -1.52351, 0.0690336, 1.02381, 1.52351, 0.0690336, -1.02381, 1.52351, -0.0737955, 1.02381)
+
+[node name="MovingPlatform" type="Node3D"]
+script = ExtResource("1_ghjoe")
+TravelRate = 1.0
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource("Curve3D_bku65")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="Path3D"]
+unique_name_in_owner = true
+transform = Transform3D(0.329915, 0.0118584, 0.94377, 0, 0.999774, -0.0125618, -0.943843, 0.00414503, 0.329889, 10.4098, 4.99929, -8.935)
+progress = 36.4865
+rotation_mode = 2
+use_model_front = true
+tilt_enabled = false
+
+[node name="RigidBody3D" type="RigidBody3D" parent="Path3D/PathFollow3D"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+freeze = true
+freeze_mode = 1
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Path3D/PathFollow3D/RigidBody3D"]
+mesh = SubResource("BoxMesh_3h6qe")
+skeleton = NodePath("")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Path3D/PathFollow3D/RigidBody3D"]
+shape = SubResource("ConvexPolygonShape3D_fy32f")

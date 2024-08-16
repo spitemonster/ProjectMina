@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcwu1qjfddjgu"]
+
+[ext_resource type="Script" path="res://systems/environment_query/tests/IdealDistance.cs" id="1_7md2t"]
+
+[node name="IdealDistance" type="Node"]
+script = ExtResource("1_7md2t")

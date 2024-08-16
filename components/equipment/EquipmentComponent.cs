@@ -15,6 +15,8 @@ public partial class EquipmentComponent : ComponentBase
 	[Signal] public delegate void WeaponUnequippedEventHandler();
 	[Signal] public delegate void ToolUnequippedEventHandler();
 
+    [Signal] public delegate void RangedWeaponFiredEventHandler(RangedWeaponComponent rangedWeapon);
+
     [Export] public Node3D WeaponSlot { get; protected set; }
     public WeaponComponent EquippedWeapon = null;
     public bool IsWeaponEquipped => EquippedWeapon != null;
@@ -29,6 +31,16 @@ public partial class EquipmentComponent : ComponentBase
         {
             r.PullTrigger();
         }
+    }
+
+    public void DisableWeapon()
+    {
+        EquippedWeapon?.DisableUse();
+    }
+
+    public void EnableWeapon()
+    {
+        EquippedWeapon?.EnableUse();
     }
     
     public override void _Ready()
@@ -66,23 +78,44 @@ public partial class EquipmentComponent : ComponentBase
         
     }
 
+    // TODO: find a more elegant way to do this
     private void _EquipWeapon(WeaponComponent weapon)
     {
         if (EquippedWeapon != null)
         {
             return;
         }
-        
+
         EquippedWeapon = weapon;
-		weapon.Equip(_owner, WeaponSlot);
-		EmitSignal(SignalName.WeaponEquipped, EquippedWeapon);
+        EmitSignal(SignalName.WeaponEquipped, EquippedWeapon);
+
+        if (EquippedWeapon is RangedWeaponComponent r)
+        {
+            r.Fired += WeaponFired;
+        }
+    }
+
+    public void AttachWeapon()
+    {
+        EquippedWeapon.Equip(_owner, WeaponSlot);
     }
 
     public void DropWeapon()
     {
         EquippedWeapon?.Unequip(_owner, WeaponSlot);
 		EmitSignal(SignalName.WeaponUnequipped, EquippedWeapon);
+        
+        if (EquippedWeapon is RangedWeaponComponent r)
+        {
+            r.Fired -= WeaponFired;
+        }
+        
         EquippedWeapon = null;
+    }
+
+    public void WeaponFired(int remainingAmmoInClip, int remainingAmmoInReserve)
+    {
+        EmitSignal(SignalName.RangedWeaponFired, (RangedWeaponComponent)EquippedWeapon);
     }
     
     public void UseWeapon()

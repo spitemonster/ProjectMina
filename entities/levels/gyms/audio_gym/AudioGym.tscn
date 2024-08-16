@@ -1,0 +1,161 @@
+[gd_scene load_steps=15 format=4 uid="uid://b2qv7irny8trp"]
+
+[ext_resource type="PackedScene" uid="uid://c37sghih0u831" path="res://entities/levels/level_base/LevelBase.tscn" id="1_q0cnr"]
+[ext_resource type="Script" path="res://entities/levels/gyms/gym_base/GymBase.cs" id="2_37717"]
+[ext_resource type="PackedScene" uid="uid://c45weam7tjqmw" path="res://entities/characters/player_character/PlayerCharacter.tscn" id="3_yjdvs"]
+[ext_resource type="PackedScene" uid="uid://cmjhf16ocrx1k" path="res://entities/_dev/LevelBox.tscn" id="4_5xrnv"]
+[ext_resource type="PackedScene" uid="uid://irddv1mmnyws" path="res://systems/spatial_audio/SpatialAudioRoom.tscn" id="5_5mr5f"]
+[ext_resource type="ArrayMesh" uid="uid://jvheysqxxrq5" path="res://assets/models/Paladin.res" id="5_7qek5"]
+[ext_resource type="Script" path="res://systems/spatial_audio/SpatialAudioRoomSettings.cs" id="6_05pr2"]
+[ext_resource type="PackedScene" uid="uid://bsheoq736q5l" path="res://systems/spatial_audio/SpatialAudioPortal.tscn" id="6_e4mop"]
+[ext_resource type="AudioStream" uid="uid://1nmfwt7heufk" path="res://assets/audio/music/test/chopin.mp3" id="7_0mu3x"]
+[ext_resource type="PackedScene" uid="uid://b2ikce5p3p4eh" path="res://systems/spatial_audio/SpatialAudioPlayer.tscn" id="8_fsd28"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_t847n"]
+_surfaces = [{
+"aabb": AABB(-3, 0, -3, 6.00001, 6.00001, 6.00001),
+"attribute_data": PackedByteArray("AAAAAAAAAAAAAAAAAACAPwAAgD8AAIA/AACAPwAAAAAAAAAAAAAAAAAAAAAAAIA/AACAPwAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAAAAAAAAAAACAP1VVFT8AACA/AACAPwAAgD9VVRU/VVUVPwAAID8AACA/VFUVP2M73z5WVRU/VlUVPwAAgD8AAAAAVVUVP/3/vz4AAIA/AAAgPy75ZT8AACA/AQAgPwEAID8AAIA/AADAPidcLz///78+AAAAAAAAgD8AAIA/AACAP6uqaj+rqmo/qKqqPaiqqj0AAAAAAAAAAK+qqj2rqmo/AACAPwAAAAACAMA+AAAAAKuqqj2rqqo9AQAgP+iiCz0AACA/AAAAAAIAwD4uumg9qqpqP6yqqj0AAMA+L7poPQAAwD6rqqo9AAAgP+iiCz0AACA/q6qqPQAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAAAAAAIA/AACAPwAAAAAAAIA/AACAPwAAAAAAAAAAAAAAAAAAgD8AAIA/AAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAgD8AAAAAZmYmP2ZmJj8AAIA/AACAPwAAAD9mZiY/AAAAAAAAAAAAAAA/AAAAPwAAAAAAAIA//v//Pv7//z4AAAA/EhT/PgAAgD8AAAAAAAAAPzYzsz4AAIA/ZmYmP5zEQD9mZiY/AACAPzMzsz5jOz8/MzOzPgAAAAAAAAAAAACAPwAAgD8AAAAAAACAPwAAgD8AAAAAAAAAPzeJAT83iQE/N4kBPzeJQT83iUE/q6oqPjmJQT8AAAAAOIlBPwAAAAA4iQE/N4kBPzeJAT8AAIA/OIkBPwAAgD84iUE/NolBPzaJQT84iUE/AACAPzmJAT85iQE/OIlBPziJQT9Q5hU/AACAPziJAT8AAIA/OIlBP8rMzD04iQE/AAAAADiJQT8AAAAAOIkBPziJAT85iQE/mpmZPjiJQT8AAIA/N4kBPzeJAT84iUE/OIlBPziJAT8AAIA/OIkBPziJAT84iQE/AAAAAKxaJz8AAAAAOIlBPwAAAAA="),
+"format": 34359742487,
+"index_count": 204,
+"index_data": PackedByteArray("AAABAAIAAgADAAAABAAFAAYABgAHAAQACAAJAAoACgALAAgADAANAA4ADQAPAA4AEAAMAA4ADgAPABEAEgAMABMAFAAMABUADAASABUADwAWABcAGAAPABcAGQAUABoAFQAaABQAGwAcAB0AHgAfACAAHwAbACAAGwAdACAAHQAcACEAIgAfACMAJAAhACUAIgAjACYAHQAhACcAKAAjACkAJwAhACoAKgArACcALAAtAC4ALgAvACwAMAAxADIAMQAwADMANAA1ADYANQA0ADcAOAA5ADoAOQA4ADsAPAA9AD4APgA/AEAAPQBBAD4AQQA/AD4AQgA/AEMAPwBEAEUAQwA/AEUARgA9AEcARwA9ADwARABIAEkASQBFAEQASgBLAEwASwBKAE0ATgBPAFAAUQBOAFAATgBSAFMATgBRAFIAVABVAFYAVABWAFcAWABZAFoAWQBYAFsAXABZAFsAXQBeAF8AYABhAFoAWgBhAF0AYQBeAF0AYgBjAGQAYwBiAGUAZgBnAGQAZABnAGgAZABoAGkA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 106,
+"vertex_data": PackedByteArray("AABAQAAAwEAAAEBAAABAQAAAwEAAAEDAAABAQAAAAAAAAEDAAABAQAAAAAAAAEBAAABAQAAAwEAAAEBAAABAwAAAwEAAAEBAAABAwAAAwEAAAEDAAABAQAAAwEAAAEDAAABAQAAAwEAAAEBAAABAQAAAAAAAAEBAAABAwAAAAAAAAEBAAABAwAAAwEAAAEBAAABAwAAAwEAAAEDAAABAwAAAwEAAAEBAAABAwAAAIEAAAEA/AABAwAAAAAAAAEBAAABAwAAAIEAAAAA/AABAwAAAEEAAAEA/AABAwAAAIECom8S+AABAwAAAIEAAAAA/AABAwAAAAAAAAEDAAABAwAAAIEAAAEC/AABAwAAAAAAAAEA/AABAwPQoHD8AAEA/AABAwAAAEEAAAEA/AABAwAAAAAAAAEC/AABAwIbr8T8AAEC/AABAQAAAAAAAAEBAAABAQAAAAAAAAEDAAAAgQAAAAAAAACDAAAAgwAAAAAAAACBAAABAwAAAAAAAAEBAAAAgQAAAAAAAACBAAABAwAAAAAAAAEDAAABAwAAAAAAAAEA/AAAgwAAAAAAAACBAuegywAAAAAAAAEC/AABAwAAAAAAAAEC/jC4qwAAAAAAAAEA/AAAgwAAAAAAAACDAjC4qwAAAAAAAAEA/AAAgwAAAAAAAAEA/uegywAAAAAAAAEC/AAAgwAAAAAAAAEC/AABAQAAAAAAAAEDAAABAQAAAwEAAAEDAAABAwAAAwEAAAEDAAABAwAAAAAAAAEDAAAAgQAAAoEAAACBAAAAgQAAAAAAAACDAAAAgQAAAoEAAACDAAAAgQAAAAAAAACBAAAAgQAAAoEAAACBAAAAgwAAAoEAAACDAAAAgwAAAoEAAACBAAAAgQAAAoEAAACDAAAAgQAAAoEAAACBAAAAgwAAAAAAAACBAAAAgQAAAAAAAACBAAAAgwAAAoEAAACBAAAAgwAAA4D8AAEA/AAAgwAAAAAAAACBAAAAgwAAAIEAAAEA/AAAgwAAAoEAAACDAAAAgwAAAIEAAAAAAAAAgwAAAoEAAACBAAAAgwAAAIEAAAAAAAAAgwAAAIEAAdRO8AAAgwAAAAAAAACDAAAAgwAAAIEAAAEC/AAAgwAAAAAAAAEA/AAAgwHoUnj8AAEA/AAAgwAAAAAAAAEC/AAAgwIbroT8AAEC/AAAgQAAAAAAAACDAAAAgwAAAoEAAACDAAAAgQAAAoEAAACDAAAAgwAAAAAAAACDAAAAgwAAAIEAAAAAAAAAgwAAAIEAAdRO8AABAwAAAIECom8S+AABAwAAAIEAAAAA/AABAwAAAIEAAAEA/AAAgwAAAIEAAAEA/AAAgwAAAIEAAdRO8AAAgwAAAIEAAAEC/AABAwAAAIEAAAEC/AABAwAAAIECom8S+AABAwAAAAAAAAEA/AAAgwHoUnj8AAEA/AABAwPQoHD8AAEA/jC4qwAAAAAAAAEA/AAAgwAAAAAAAAEA/AABAwAAAEEAAAEA/AAAgwAAAIEAAAEA/AABAwAAAIEAAAEA/AAAgwHoUnj8AAEA/AAAgwAAA4D8AAEA/AABAwAAAIEAAAEC/AAAgwIbroT8AAEC/AABAwIbr8T8AAEC/AAAgwAAAIEAAAEC/AAAgwIbroT8AAEC/AAAgwAAAAAAAAEC/uegywAAAAAAAAEC/AABAwAAAAAAAAEC///8AgP9//n///wCA/3/+f///AID/f/5///8AgP9//n8AgP////8AAACA/////wAAAID/////AAAAgP////8AAP9//38AAP8//3//fwAA/z//f/9/AAD/P/9//38AAP8/AAAAgP9//n8AAACA/3/+fwAAAID/f/5/AAAAgP9//n8AAACA/3/+fwAAAID/f/5/AAAAgP9//n8AAACA/3/+fwAAAID/f/5/AAAAgP9//n8AAACA/3/+fwAAAID/f/5/AAAAgP9//n8AAACA/3/+fwAAAID/f/5/AIAAAP//AAAAgAAA//8AAACAAAD//wAAAIAAAP//AAAAgAAA//8AAACAAAD//wAAAIAAAP//AAAAgAAA//8AAACAAAD//wAAAIAAAP//AAAAgAAA//8AAACAAAD//wAAAIAAAP//AAAAgAAA//8AAACAAAD//wAAAIAAAP//AAAAgAAA//8AAP////8AAP8//////wAA/z//////AAD/P/////8AAP8/AAAAgP9/AIAAAACA/38AgAAAAID/fwCAAAAAgP9/AIAAgAAA/////wCAAAD/////AIAAAP////8AgAAA//////////8AAP+//////wAA/7//////AAD/v/////8AAP+///8AgP9/AID//wCA/38AgP//AID/fwCA//8AgP9/AID//wCA/38AgP//AID/fwCA//8AgACAAID//wCAAIAAgP//AID/fwCA//8AgP9/AID//wCA/38AgP//AID/fwCA//8AgP9/AID//wCA/38AgP9//38AAP+//3//fwAA/7//f/9/AAD/v/9//38AAP+/AIAAAP////8AgAAA/////wCAAAAAAP7/AIAAAP///v8AgAAA/////wCAAAAAAP7/AIAAAP///v8AgAAA///+/wCAAAD///7/AIAAAP///v//////AAD/v/////8AAP+//////wAA/7//////AAD/v/////8AAP+//////wAA/7//////AAD/v/////8AAP+//////wAA/7//////AAD/v/9//38AAP+//3//fwAA/7//f/9/AAD/v/9//38AAP+//3//fwAA/7//f/9/AAD/v/9//38AAP+//3//fwAA/78=")
+}]
+
+[sub_resource type="AudioEffectReverb" id="AudioEffectReverb_qi1w0"]
+
+[sub_resource type="Resource" id="Resource_oc5ht"]
+script = ExtResource("6_05pr2")
+Effects = Array[AudioEffect]([SubResource("AudioEffectReverb_qi1w0")])
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_cvjic"]
+data = PackedVector3Array(3, 6, 3, 3, 6, -3, 3, 0, -3, 3, 0, -3, 3, 0, 3, 3, 6, 3, 3, 6, 3, -3, 6, 3, -3, 6, -3, -3, 6, -3, 3, 6, -3, 3, 6, 3, 3, 6, 3, 3, 0, 3, -3, 0, 3, -3, 0, 3, -3, 6, 3, 3, 6, 3, -3, 6, -3, -3, 6, 3, -3, 2.5, 0.75, -3, 6, 3, -3, 0, 3, -3, 2.5, 0.75, -3, 2.5, 0.5, -3, 6, -3, -3, 2.5, 0.75, -3, 2.5, 0.75, -3, 0, 3, -3, 2.25, 0.75, -3, 2.5, -0.384, -3, 6, -3, -3, 2.5, 0.5, -3, 0, -3, -3, 6, -3, -3, 2.5, -0.75, -3, 6, -3, -3, 2.5, -0.384, -3, 2.5, -0.75, -3, 0, 3, -3, 0, 0.75, -3, 0.61, 0.75, -3, 2.25, 0.75, -3, 0, 3, -3, 0.61, 0.75, -3, 0, -0.75, -3, 0, -3, -3, 1.89, -0.75, -3, 2.5, -0.75, -3, 1.89, -0.75, -3, 0, -3, 3, 0, 3, 3, 0, -3, 2.5, 0, -2.5, -2.5, 0, 2.5, -3, 0, 3, 2.5, 0, 2.5, -3, 0, 3, 3, 0, 3, 2.5, 0, 2.5, 3, 0, 3, 2.5, 0, -2.5, 2.5, 0, 2.5, 2.5, 0, -2.5, 3, 0, -3, -3, 0, -3, -3, 0, 0.75, -3, 0, 3, -2.5, 0, 2.5, -2.7955, 0, -0.75, -3, 0, -3, -3, 0, -0.75, -3, 0, 0.75, -2.5, 0, 2.5, -2.6591, 0, 0.75, 2.5, 0, -2.5, -3, 0, -3, -2.5, 0, -2.5, -2.6591, 0, 0.75, -2.5, 0, 2.5, -2.5, 0, 0.75, -2.5, 0, -2.5, -3, 0, -3, -2.7955, 0, -0.75, -2.7955, 0, -0.75, -2.5, 0, -0.75, -2.5, 0, -2.5, 3, 0, -3, 3, 6, -3, -3, 6, -3, -3, 6, -3, -3, 0, -3, 3, 0, -3, 2.5, 5, 2.5, 2.5, 0, -2.5, 2.5, 5, -2.5, 2.5, 0, -2.5, 2.5, 5, 2.5, 2.5, 0, 2.5, 2.5, 5, 2.5, -2.5, 5, -2.5, -2.5, 5, 2.5, -2.5, 5, -2.5, 2.5, 5, 2.5, 2.5, 5, -2.5, 2.5, 5, 2.5, -2.5, 0, 2.5, 2.5, 0, 2.5, -2.5, 0, 2.5, 2.5, 5, 2.5, -2.5, 5, 2.5, -2.5, 1.75, 0.75, -2.5, 0, 2.5, -2.5, 2.5, 0.75, -2.5, 2.5, 0.75, -2.5, 5, -2.5, -2.5, 2.5, 0, -2.5, 0, 2.5, -2.5, 5, 2.5, -2.5, 2.5, 0.75, -2.5, 5, 2.5, -2.5, 5, -2.5, -2.5, 2.5, 0.75, -2.5, 2.5, 0, -2.5, 5, -2.5, -2.5, 2.5, -0.009, -2.5, 5, -2.5, -2.5, 0, -2.5, -2.5, 2.5, -0.75, -2.5, 2.5, -0.009, -2.5, 5, -2.5, -2.5, 2.5, -0.75, -2.5, 0, 0.75, -2.5, 0, 2.5, -2.5, 1.235, 0.75, -2.5, 1.235, 0.75, -2.5, 0, 2.5, -2.5, 1.75, 0.75, -2.5, 0, -2.5, -2.5, 0, -0.75, -2.5, 1.265, -0.75, -2.5, 1.265, -0.75, -2.5, 2.5, -0.75, -2.5, 0, -2.5, 2.5, 0, -2.5, -2.5, 5, -2.5, 2.5, 5, -2.5, -2.5, 5, -2.5, 2.5, 0, -2.5, -2.5, 0, -2.5, -2.5, 2.5, 0, -2.5, 2.5, -0.009, -3, 2.5, -0.384, -3, 2.5, 0.5, -2.5, 2.5, 0, -3, 2.5, -0.384, -2.5, 2.5, 0, -3, 2.5, 0.75, -2.5, 2.5, 0.75, -2.5, 2.5, 0, -3, 2.5, 0.5, -3, 2.5, 0.75, -2.5, 2.5, -0.009, -2.5, 2.5, -0.75, -3, 2.5, -0.75, -2.5, 2.5, -0.009, -3, 2.5, -0.75, -3, 2.5, -0.384, -3, 0, 0.75, -2.5, 1.235, 0.75, -3, 0.61, 0.75, -2.5, 1.235, 0.75, -3, 0, 0.75, -2.6591, 0, 0.75, -2.5, 0, 0.75, -2.5, 1.235, 0.75, -2.6591, 0, 0.75, -3, 2.25, 0.75, -2.5, 2.5, 0.75, -3, 2.5, 0.75, -2.5, 1.235, 0.75, -2.5, 1.75, 0.75, -3, 0.61, 0.75, -3, 0.61, 0.75, -2.5, 1.75, 0.75, -3, 2.25, 0.75, -2.5, 1.75, 0.75, -2.5, 2.5, 0.75, -3, 2.25, 0.75, -3, 2.5, -0.75, -2.5, 1.265, -0.75, -3, 1.89, -0.75, -2.5, 1.265, -0.75, -3, 2.5, -0.75, -2.5, 2.5, -0.75, -2.5, 1.265, -0.75, -2.5, 0, -0.75, -3, 1.89, -0.75, -3, 1.89, -0.75, -2.5, 0, -0.75, -2.7955, 0, -0.75, -3, 1.89, -0.75, -2.7955, 0, -0.75, -3, 0, -0.75)
+
+[node name="GymBase" node_paths=PackedStringArray("NavigationRegion", "PlayerStart") instance=ExtResource("1_q0cnr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0227094, 0, 0)
+script = ExtResource("2_37717")
+NavigationRegion = NodePath("NavigationRegion3D")
+PlayerClass = ExtResource("3_yjdvs")
+PlayerStart = NodePath("PlayerStart")
+
+[node name="PlayerStart" parent="." index="0"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
+
+[node name="NavigationRegion3D" parent="." index="1"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00124073, -0.0062561, 0.000607491)
+
+[node name="Map" parent="NavigationRegion3D" index="0" instance=ExtResource("4_5xrnv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00352764, -0.0129447, 0.00059557)
+
+[node name="TestRoom" type="MeshInstance3D" parent="NavigationRegion3D/Map" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.00353, 0.0129447, -0.00059557)
+mesh = SubResource("ArrayMesh_t847n")
+skeleton = NodePath("../..")
+
+[node name="Room1" parent="NavigationRegion3D/Map/TestRoom" index="0" node_paths=PackedStringArray("Portals") instance=ExtResource("5_5mr5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+Portals = [NodePath("../Portal1")]
+RoomSettings = SubResource("Resource_oc5ht")
+
+[node name="Portal1" parent="NavigationRegion3D/Map/TestRoom" index="1" instance=ExtResource("6_e4mop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.75, 1, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Map/TestRoom" index="2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Map/TestRoom/StaticBody3D" index="0"]
+shape = SubResource("ConcavePolygonShape3D_cvjic")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="NavigationRegion3D/Map/TestRoom" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.79374, 0)
+light_color = Color(0.929412, 0.458824, 0.298039, 1)
+light_energy = 1.79
+light_bake_mode = 1
+omni_range = 3.5
+
+[node name="SpatialAudioPlayer" parent="NavigationRegion3D/Map/TestRoom" index="4" instance=ExtResource("8_fsd28")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+stream = ExtResource("7_0mu3x")
+autoplay = true
+
+[node name="TestRoom2" type="MeshInstance3D" parent="NavigationRegion3D/Map" index="2"]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.00585845, 0.0129447, -7.04954)
+mesh = SubResource("ArrayMesh_t847n")
+skeleton = NodePath("../..")
+
+[node name="Room2" parent="NavigationRegion3D/Map/TestRoom2" index="0" node_paths=PackedStringArray("Portals") instance=ExtResource("5_5mr5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+Portals = [NodePath("../Portal2")]
+
+[node name="Portal2" parent="NavigationRegion3D/Map/TestRoom2" index="1" instance=ExtResource("6_e4mop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.75, 1, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Map/TestRoom2" index="2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Map/TestRoom2/StaticBody3D" index="0"]
+shape = SubResource("ConcavePolygonShape3D_cvjic")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="NavigationRegion3D/Map/TestRoom2" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.79374, 0)
+light_energy = 1.79
+light_bake_mode = 1
+omni_range = 3.5
+
+[node name="TestRoom3" type="MeshInstance3D" parent="NavigationRegion3D/Map" index="3"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, -7.00586, 0.0129447, -0.0495353)
+mesh = SubResource("ArrayMesh_t847n")
+skeleton = NodePath("../..")
+
+[node name="Room3" parent="NavigationRegion3D/Map/TestRoom3" index="0" node_paths=PackedStringArray("Portals") instance=ExtResource("5_5mr5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+Portals = [NodePath("../Portal3")]
+
+[node name="Portal3" parent="NavigationRegion3D/Map/TestRoom3" index="1" instance=ExtResource("6_e4mop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.75, 1, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Map/TestRoom3" index="2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Map/TestRoom3/StaticBody3D" index="0"]
+shape = SubResource("ConcavePolygonShape3D_cvjic")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="NavigationRegion3D/Map/TestRoom3" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.79374, 0)
+light_energy = 1.79
+light_bake_mode = 1
+omni_range = 3.5
+
+[node name="TestRoom4" type="MeshInstance3D" parent="NavigationRegion3D/Map" index="4"]
+transform = Transform3D(1.31134e-07, 0, -1, 0, 1, 0, 1, 0, 1.31134e-07, -0.00585798, 0.0129447, 6.95046)
+mesh = SubResource("ArrayMesh_t847n")
+skeleton = NodePath("../..")
+
+[node name="Room4" parent="NavigationRegion3D/Map/TestRoom4" index="0" node_paths=PackedStringArray("Portals") instance=ExtResource("5_5mr5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+Portals = [NodePath("../Portal4")]
+
+[node name="Portal4" parent="NavigationRegion3D/Map/TestRoom4" index="1" instance=ExtResource("6_e4mop")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.75, 1, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/Map/TestRoom4" index="2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/Map/TestRoom4/StaticBody3D" index="0"]
+shape = SubResource("ConcavePolygonShape3D_cvjic")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="NavigationRegion3D/Map/TestRoom4" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.79374, 0)
+light_energy = 1.79
+light_bake_mode = 1
+omni_range = 3.5
+
+[node name="Room5" parent="NavigationRegion3D/Map" index="5" node_paths=PackedStringArray("Portals") instance=ExtResource("5_5mr5f")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1665e-08, 1, 0)
+Portals = [NodePath("../TestRoom/Portal1"), NodePath("../TestRoom2/Portal2"), NodePath("../TestRoom3/Portal3"), NodePath("../TestRoom4/Portal4")]
+
+[node name="Sun" parent="." index="2"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+
+[node name="Paladin" type="MeshInstance3D" parent="." index="3"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13.2519, -0.0191984, -8.04215)
+mesh = ExtResource("5_7qek5")

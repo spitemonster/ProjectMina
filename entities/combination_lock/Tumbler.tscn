@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=3 uid="uid://c5i6uhhepmips"]
+
+[ext_resource type="PackedScene" uid="uid://bx6qdtogqxphv" path="res://components/usable/UsableComponent.tscn" id="1_aajdx"]
+[ext_resource type="Script" path="res://entities/combination_lock/Tumbler.cs" id="1_ubyoj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5kbc7"]
+specular_mode = 2
+albedo_color = Color(0.576562, 0.459955, 0, 1)
+metallic = 1.0
+metallic_specular = 1.0
+roughness = 0.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_kyby5"]
+material = SubResource("StandardMaterial3D_5kbc7")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 0.1
+radial_segments = 10
+
+[sub_resource type="SphereMesh" id="SphereMesh_wsbj3"]
+radius = 0.02
+height = 0.04
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vo6v2"]
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_eo2ld"]
+points = PackedVector3Array(-0.0931257, -0.0496605, -0.0336194, 0.0910953, 0.05, 0.0327879, 0.0851122, 0.05, 0.0417368, 0.093183, -0.0495421, 0.0335405, 0.0165382, 0.05, -0.0924413, -0.0580011, 0.05, 0.0775326, -0.00747225, -0.0495173, 0.0975728, 0.059785, -0.0496887, -0.0795432, -0.0908191, 0.05, -0.0327879, -0.0534247, -0.0497225, -0.0826461, -0.0931257, -0.0496605, 0.0336194, 0.0910953, 0.05, -0.0327879, 0.052312, 0.05, 0.0805031, -0.0580011, 0.05, -0.0775326, 0.059785, -0.0496887, 0.0795432, 0.00474936, -0.0499734, -0.0984573, 0.093183, -0.0495421, -0.0335405, -0.0908191, 0.05, 0.0327879, 0.0046076, 0.05, 0.0954305, -0.0596492, -0.0498075, 0.0797303, 0.0582773, 0.05, -0.0775326, -0.00730516, 0.05, -0.0954305, 0.00474936, -0.0499734, 0.0984573, -0.00730516, 0.05, 0.0954305, -0.0596492, -0.0498075, -0.0797303, 0.0612511, 0.05, 0.0745434, -0.00747225, -0.0495173, -0.0975728, 0.0536528, -0.0496772, -0.0825719, -0.0699317, 0.05, 0.0626239, -0.0699317, 0.05, -0.0626239, -0.0534247, -0.0497225, 0.0826461, 0.0612511, 0.05, -0.0745434)
+
+[node name="Tumbler" type="Node3D" node_paths=PackedStringArray("_usableComponent")]
+script = ExtResource("1_ubyoj")
+_usableComponent = NodePath("StaticBody3D/Usable")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(0.951057, 0, -0.309017, 0, 1, 0, 0.309017, 0, 0.951057, 0, 0, 0)
+mesh = SubResource("CylinderMesh_kyby5")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D/MeshInstance3D"]
+transform = Transform3D(1, -8.88178e-16, 0, -8.88178e-16, 1, 0, 0, 0, 1, 0.0298433, -1.30449e-09, 0.0918481)
+mesh = SubResource("SphereMesh_wsbj3")
+surface_material_override/0 = SubResource("StandardMaterial3D_vo6v2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(0.951057, 0, -0.309017, 0, 1, 0, 0.309017, 0, 0.951057, 0, 0, 0)
+shape = SubResource("ConvexPolygonShape3D_eo2ld")
+
+[node name="Usable" parent="StaticBody3D" instance=ExtResource("1_aajdx")]

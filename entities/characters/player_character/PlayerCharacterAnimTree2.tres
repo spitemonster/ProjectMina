@@ -1,4 +1,4 @@
-[gd_resource type="AnimationNodeBlendTree" load_steps=23 format=3 uid="uid://ctgkotukq83b3"]
+[gd_resource type="AnimationNodeBlendTree" load_steps=28 format=3 uid="uid://ctgkotukq83b3"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_shchq"]
 animation = &"idle"
@@ -8,7 +8,7 @@ filter_enabled = true
 filters = [".", "CharacterBody/Hips/Head/RightHandSlot:position:x", "CharacterBody/Hips/Head/RightHandSlot:position:y", "CharacterBody/Hips/Head/RightHandSlot:position:z", "CharacterBody/Hips/Head/RightHandSlot:rotation:x", "CharacterBody/Hips/Head/RightHandSlot:rotation:y", "CharacterBody/Hips/Head/RightHandSlot:rotation:z", "EquipmentComponent"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ouqk0"]
-animation = &"right_hand_test"
+animation = &"RESET"
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_ifbwh"]
 nodes/Animation/node = SubResource("AnimationNodeAnimation_ouqk0")
@@ -34,33 +34,56 @@ nodes/os_attack/position = Vector2(780, 120)
 nodes/output/position = Vector2(1380, 220)
 node_connections = [&"os_attack", 0, &"Animation", &"os_attack", 1, &"anim_attack", &"output", 0, &"os_attack"]
 
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_8c2kg"]
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_72ord"]
 animation = &"pistol_attack"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_salpl"]
+animation = &"pistol_empty"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_iewvb"]
+animation = &"pistol_equip"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gnvk8"]
-animation = &"RESET"
+animation = &"pistol_idle"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_yiql4"]
 animation = &"reload"
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_thjxu"]
+fadeout_time = 0.1
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_4ocrx"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_pd2r0"]
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_2gl0f"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_p8xb4"]
-graph_offset = Vector2(-635.64, -67.9)
+graph_offset = Vector2(-1191.79, -35.152)
+nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_8c2kg")
+nodes/TimeScale/position = Vector2(-751.64, 33.1)
 nodes/anim_attack/node = SubResource("AnimationNodeAnimation_72ord")
-nodes/anim_attack/position = Vector2(160, 160)
+nodes/anim_attack/position = Vector2(220, 160)
+nodes/anim_empty/node = SubResource("AnimationNodeAnimation_salpl")
+nodes/anim_empty/position = Vector2(-622.516, 597.004)
+nodes/anim_eqip/node = SubResource("AnimationNodeAnimation_iewvb")
+nodes/anim_eqip/position = Vector2(-772.64, 268.1)
 nodes/anim_pistol_root/node = SubResource("AnimationNodeAnimation_gnvk8")
-nodes/anim_pistol_root/position = Vector2(-560, 40)
+nodes/anim_pistol_root/position = Vector2(-1040, 40)
 nodes/anim_reload/node = SubResource("AnimationNodeAnimation_yiql4")
-nodes/anim_reload/position = Vector2(-400, 200)
+nodes/anim_reload/position = Vector2(-180, 180)
 nodes/os_attack/node = SubResource("AnimationNodeOneShot_thjxu")
 nodes/os_attack/position = Vector2(380, 60)
+nodes/os_empty/node = SubResource("AnimationNodeOneShot_4ocrx")
+nodes/os_empty/position = Vector2(-405.563, 485.2)
+nodes/os_equip/node = SubResource("AnimationNodeOneShot_pd2r0")
+nodes/os_equip/position = Vector2(-517.64, 154.1)
 nodes/os_reload/node = SubResource("AnimationNodeOneShot_2gl0f")
-nodes/os_reload/position = Vector2(-180, 100)
+nodes/os_reload/position = Vector2(-40, 80)
 nodes/output/position = Vector2(680, 60)
-node_connections = [&"os_attack", 0, &"os_reload", &"os_attack", 1, &"anim_attack", &"os_reload", 0, &"anim_pistol_root", &"os_reload", 1, &"anim_reload", &"output", 0, &"os_attack"]
+node_connections = [&"TimeScale", 0, &"anim_pistol_root", &"os_attack", 0, &"os_reload", &"os_attack", 1, &"anim_attack", &"os_empty", 0, &"os_equip", &"os_empty", 1, &"anim_empty", &"os_equip", 0, &"TimeScale", &"os_equip", 1, &"anim_eqip", &"os_reload", 0, &"os_empty", &"os_reload", 1, &"anim_reload", &"output", 0, &"os_attack"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_c45su"]
 advance_mode = 2
@@ -85,9 +108,10 @@ states/melee/position = Vector2(603, 335)
 states/ranged/node = SubResource("AnimationNodeBlendTree_p8xb4")
 states/ranged/position = Vector2(332, 335)
 transitions = ["Start", "empty", SubResource("AnimationNodeStateMachineTransition_c45su"), "empty", "ranged", SubResource("AnimationNodeStateMachineTransition_u2lvd"), "ranged", "empty", SubResource("AnimationNodeStateMachineTransition_p7xae"), "empty", "melee", SubResource("AnimationNodeStateMachineTransition_mgesy"), "melee", "empty", SubResource("AnimationNodeStateMachineTransition_1hdax"), "melee", "ranged", SubResource("AnimationNodeStateMachineTransition_3dgds"), "ranged", "melee", SubResource("AnimationNodeStateMachineTransition_g2du1")]
+graph_offset = Vector2(-278, -32)
 
 [resource]
-graph_offset = Vector2(0, -203)
+graph_offset = Vector2(34, -105)
 nodes/anim_root/node = SubResource("AnimationNodeAnimation_shchq")
 nodes/anim_root/position = Vector2(660, -100)
 nodes/output/position = Vector2(1660, -120)

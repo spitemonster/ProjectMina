@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://rtqfruweqge"]
+
+[ext_resource type="Script" path="res://systems/environment_query/core/EQSTestingNode.cs" id="1_udnpp"]
+[ext_resource type="PackedScene" uid="uid://un5u0m7rygr7" path="res://systems/environment_query/contexts/GridAroundQuerier.tscn" id="2_kbgfa"]
+
+[node name="EqsTestingPawn" type="Node3D"]
+script = ExtResource("1_udnpp")
+
+[node name="GridAroundQuerier" parent="." instance=ExtResource("2_kbgfa")]

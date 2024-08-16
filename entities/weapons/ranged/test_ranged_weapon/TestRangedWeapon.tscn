@@ -1,0 +1,145 @@
+[gd_scene load_steps=14 format=3 uid="uid://bg4ai4bsck0t3"]
+
+[ext_resource type="ArrayMesh" uid="uid://bo1wdqtk668bc" path="res://entities/weapons/ranged/test_ranged_weapon/mauser.res" id="1_giyag"]
+[ext_resource type="PackedScene" uid="uid://c5w23iun6kq84" path="res://components/weapon/ranged_weapon/RangedWeaponComponent.tscn" id="2_3t2jy"]
+[ext_resource type="AudioStream" uid="uid://g272pr3nmv4v" path="res://assets/audio/hits/alright.wav" id="3_01p2f"]
+[ext_resource type="PackedScene" uid="uid://cwwra0g4sn1xb" path="res://entities/projectiles/test_projectile/TestProjectile.tscn" id="3_fjqqa"]
+[ext_resource type="AudioStream" uid="uid://bloncbc4xrxvh" path="res://assets/audio/hits/gunshot/ar_01/ar_01_single_01.wav" id="4_cqbvi"]
+[ext_resource type="Script" path="res://systems/interaction/RangedWeaponData.cs" id="4_qkde7"]
+[ext_resource type="AudioStream" uid="uid://c03cbx46y807x" path="res://assets/audio/hits/gunshot/ar_01/ar_01_single_02.wav" id="5_3umnm"]
+[ext_resource type="AudioStream" uid="uid://b0bt70gn0fy4j" path="res://assets/audio/hits/gunshot/ar_01/ar_01_single_03.wav" id="6_suprp"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ddhw4"]
+size = Vector3(0.0418701, 0.13678, 0.374146)
+
+[sub_resource type="Animation" id="Animation_n3mbn"]
+resource_name = "Empty"
+length = 0.0333367
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Weapon")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"PlayEmptySound"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_ji3we"]
+resource_name = "Fire"
+length = 0.3
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Weapon")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"PlayMuzzleFlash"
+}]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AudioStreamPlayer3D")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0.0],
+"method": &"play"
+}]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Weapon")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"PlayFiringSound"
+}]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Weapon")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"LaunchProjectile"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_plda5"]
+_data = {
+"Empty": SubResource("Animation_n3mbn"),
+"Fire": SubResource("Animation_ji3we")
+}
+
+[sub_resource type="Resource" id="Resource_gnxt1"]
+script = ExtResource("4_qkde7")
+AmmoPerClip = 30
+MaxReserveClips = 6
+FireRate = 4.0
+Automatic = false
+ReloadDuration = 0.5
+Spread = 1.0
+Projectile = true
+ProjectileScene = ExtResource("3_fjqqa")
+FiringSounds = Array[AudioStream]([ExtResource("4_cqbvi"), ExtResource("5_3umnm"), ExtResource("6_suprp")])
+EmptySounds = Array[AudioStream]([ExtResource("3_01p2f")])
+WeaponName = "Weapon"
+WeaponType = 2
+
+[node name="TestWeapon" type="RigidBody3D"]
+mass = 2.0
+continuous_cd = true
+contact_monitor = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, 1.50996e-07, 0, 1, 0, -1.50996e-07, 0, -1, 0, 0.0130658, 0.0779615)
+layers = 3
+mesh = ExtResource("1_giyag")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(-1, 0, 1.50996e-07, 0, 1, 0, -1.50996e-07, 0, -1, 0.000305191, 0.00339173, -0.0552782)
+shape = SubResource("BoxShape3D_ddhw4")
+
+[node name="ProjectileSpawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.055088, -0.244838)
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+max_polyphony = 4
+bus = &"PlayerWeapons"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_plda5")
+}
+
+[node name="Weapon" parent="." node_paths=PackedStringArray("ProjectileSpawn", "AnimPlayer", "AudioPlayer", "Mesh") instance=ExtResource("2_3t2jy")]
+ProjectileSpawn = NodePath("../ProjectileSpawn")
+AnimPlayer = NodePath("../AnimationPlayer")
+AudioPlayer = NodePath("../AudioStreamPlayer3D")
+Data = SubResource("Resource_gnxt1")
+Mesh = NodePath("../MeshInstance3D")

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://fatnqjju8y64"]
+
+[ext_resource type="Script" path="res://systems/environment_query/tests/IsPointReachable.cs" id="1_1n84d"]
+
+[node name="IsPointReachable" type="Node"]
+script = ExtResource("1_1n84d")

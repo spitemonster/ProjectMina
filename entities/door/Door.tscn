@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://dthkgruo86yys"]
+
+[ext_resource type="Script" path="res://entities/door/Door.cs" id="1_6v7ht"]
+[ext_resource type="Script" path="res://components/usable/UsableComponent.cs" id="2_sbhcm"]
+[ext_resource type="PackedScene" uid="uid://cqil3ny8cjq7o" path="res://components/lockable/LockableComponent.tscn" id="3_5ymrs"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_471hd"]
+size = Vector3(1, 2, 0.1)
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ug10r"]
+points = PackedVector3Array(-0.5, -1, -0.05, -0.5, -1, 0.05, -0.5, 1, -0.05, 0.5, -1, -0.05, 0.5, -1, 0.05, -0.5, 1, 0.05, 0.5, 1, -0.05, 0.5, 1, 0.05)
+
+[node name="Door" type="StaticBody3D"]
+collision_mask = 11
+script = ExtResource("1_6v7ht")
+OpenRotation = Vector3(0, 118, 0)
+OpenDuration = 1.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
+mesh = SubResource("BoxMesh_471hd")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
+shape = SubResource("ConvexPolygonShape3D_ug10r")
+
+[node name="Usable" type="Node" parent="."]
+script = ExtResource("2_sbhcm")
+
+[node name="Lockable" parent="." instance=ExtResource("3_5ymrs")]
+CanLock = true
+Locked = true
